@@ -1,3 +1,7 @@
 DMS.*
 .cproject
 .project
+*make*
+*Make*
+*.so*
+build/
