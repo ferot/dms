@@ -5,6 +5,7 @@
  *      Author: tf
  */
 #include "ServerStub.hpp"
+#include <iostream>
 
 StubServer::StubServer(AbstractServerConnector &connector) :
     AbstractStubServer(connector)

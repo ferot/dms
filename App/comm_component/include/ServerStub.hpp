@@ -7,8 +7,12 @@
 
 #ifndef SERVERSTUB_HPP_
 #define SERVERSTUB_HPP_
+#include "abstractstubserver.h"
 #include <jsonrpccpp/server/connectors/httpserver.h>
+#include <string.h>
 
+using namespace std;
+using namespace jsonrpc;
 
 class StubServer : public AbstractStubServer
 {
