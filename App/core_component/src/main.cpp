@@ -6,12 +6,14 @@
  */
 #include "main.hpp"
 #include "CommunicationEngine.hpp"
+//#include "../../common/include/logger.h"
 
 using namespace jsonrpc;
 using namespace std;
 
 int main() {
-	CommunicationEngine ce(string("localhost"), 8888);
-	ce.send();
+	mylog_init();
+	LOGMSG(LOG_DEBUG, "Starting core_app main!");
+	CommunicationEngine ce("dupa", 1);
 	return 0;
 }

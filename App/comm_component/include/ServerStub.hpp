@@ -14,16 +14,14 @@
 using namespace std;
 using namespace jsonrpc;
 
-class StubServer : public AbstractStubServer
-{
-    public:
-        StubServer(AbstractServerConnector &connector);
+class ServerStub: public AbstractStubServer {
+private:
+	string id;
+public:
+	ServerStub(AbstractServerConnector &connector);
 
-        virtual void notifyServer();
-        virtual std::string sayHello(const std::string& name);
+	virtual void notifyServer();
+	virtual std::string sayHello(const std::string& name);
 };
-
-
-
 
 #endif /* SERVERSTUB_HPP_ */

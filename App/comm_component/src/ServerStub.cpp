@@ -7,15 +7,15 @@
 #include "ServerStub.hpp"
 #include <iostream>
 
-StubServer::StubServer(AbstractServerConnector &connector) :
+ServerStub::ServerStub(AbstractServerConnector &connector) :
     AbstractStubServer(connector)
 {
 }
-void StubServer::notifyServer()
+void ServerStub::notifyServer()
 {
     cout << "Server got notified" << endl;
 }
-string StubServer::sayHello(const string &name)
+string ServerStub::sayHello(const string &name)
 {
     return "Hello " + name;
 }

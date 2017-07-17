@@ -1,8 +1,12 @@
+### Communication Engine Cmake
+
 file( GLOB comm_comp_srcs "src/*.cpp" )
-include_directories (include)
+set ( common_dir ../../common/ )
+include_directories (include  ${common_dir}/include)
 
 find_library(JsonRpcCppCommon_LIB "jsonrpccpp-common")
 find_library(JsonRpcCppServer_LIB "jsonrpccpp-server")
+find_library(JsonRpcCppClient_LIB "jsonrpccpp-client")
 find_library(JsonCpp_LIB "jsoncpp")
 find_library(microhttpd_LIB "microhttpd")
 
@@ -18,5 +22,7 @@ target_include_directories(comm_engine PUBLIC include)
 target_link_libraries(comm_engine PUBLIC
 	${JsonRpcCppCommon_LIB}
     ${JsonRpcCppServer_LIB}
+    ${JsonRpcCppClient_LIB}
     ${JsonCpp_LIB}
-    ${microhttpd_LIB})
+    ${microhttpd_LIB}
+    log4c)
