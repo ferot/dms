@@ -1,6 +1,8 @@
 
 #include "log4c.h"
 
+#pragma once
+
 #ifndef MYLOG_CATEGORY_NAME
 #define MYLOG_CATEGORY_NAME "dms"
 #endif

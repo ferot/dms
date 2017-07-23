@@ -1,3 +1,5 @@
+#Core component
+
 file( GLOB core_comp_srcs "src/*.cpp" )
 include_directories(include)
 
