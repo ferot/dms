@@ -5,3 +5,4 @@ DMS.*
 *Make*
 *.so*
 build/
+/Debug
