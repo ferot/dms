@@ -11,6 +11,7 @@ add_subdirectory(comm_component)
 add_subdirectory(core_component)
 add_subdirectory(video_component)
 add_subdirectory(test_tools)
+add_subdirectory(common)
 
 install (DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 DESTINATION "/usr")
