@@ -95,9 +95,15 @@ void CommunicationEngine::printConnections() {
 /*
  * Send event to host via specific connection
  */
-void CommunicationEngine::send(Connection c) {
-	//TODO: send event to host via connetc
-	std::cout << "helloworld";
+string CommunicationEngine::send(string connectionId) {
+//	CommEngineRetCode ret = COMM_ENG_SUCCESS;
+string ret;
+	auto search = m_connections.find(connectionId);
+	if (search != m_connections.end()) {
+		ret = search->second->m_clientStub->sayHello(string("hi ") +connectionId);
+		search->second->m_clientStub->notifyServer();
+	}
+	return ret;
 }
 
 /*

@@ -25,8 +25,9 @@ private:
 
 	int m_port;
 	unique_ptr<HttpClient> m_client;
-	unique_ptr<StubClient> m_clientStub;
 public:
+	unique_ptr<StubClient> m_clientStub;
+
 	Connection(string ip, int port);
 	~Connection();
 	string m_ip_address;

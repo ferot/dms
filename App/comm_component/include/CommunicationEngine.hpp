@@ -49,7 +49,7 @@ public:
 	CommEngineRetCode stopServer();
 	void printConnections();
 	//SEND METHODS
-	void send(Connection);
+	string send(string);
 };
 
 #endif /* COMMUNICATIONENGINE_HPP_ */
