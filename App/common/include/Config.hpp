@@ -22,6 +22,7 @@
 using std::string;
 class Config {
 private:
+	static Config* m_instance;
 	std::mutex m_mut;
 
 	std::string m_filepath;
@@ -31,6 +32,11 @@ private:
 	Json::StyledStreamWriter m_writer;
 
 public:
+	Config(Config const&) = delete;
+	void operator=(Config const&) = delete;
+	static Config* getInstance(std::string filename = std::string("config.ini"));
+
+
 	Config(std::string);
 	std::string getValue(string, string);
 	bool setValue(string, string, string);

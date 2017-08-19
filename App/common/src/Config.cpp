@@ -7,12 +7,21 @@
 #include "Config.hpp"
 #include <jsoncpp/json/reader.h>
 #include <jsoncpp/json/writer.h>
+
+Config* Config::m_instance = nullptr;
+
 /*
  * Default Constructor. Initializes object with proper filename string.
  */
-Config::Config(std::string filename = std::string("config.ini")) :
+Config::Config(string filename) :
 		m_filepath(filename) {
+}
 
+Config* Config::getInstance(std::string filename) {
+	if (!m_instance) {
+		m_instance = new Config(filename);
+	}
+	return m_instance;
 }
 
 /*
