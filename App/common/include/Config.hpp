@@ -18,18 +18,22 @@
  * from config file.
  * Settings are stored in Json format
  */
+
+using std::string;
 class Config {
 private:
 	std::mutex m_mut;
-	std::once_flag m_oflag;
 
 	std::string m_filepath;
-	std::ifstream m_file_handler;
+	std::ifstream m_read_file_handler;
+	std::ofstream m_write_file_handler;
 	Json::Reader m_reader;
+	Json::StyledStreamWriter m_writer;
+
 public:
 	Config(std::string);
-	std::string getValue(std::string val);
-	bool setValue(std::string val);
+	std::string getValue(string, string);
+	bool setValue(string, string, string);
 };
 
 #endif /* CONFIG_HPP_ */
