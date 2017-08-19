@@ -16,7 +16,12 @@ int main() {
 	mylog_init();
 
     Config conf("conf.json");
-    std::cout<<"\nconf value "<< conf.getValue(std::string("dupa"))<<std::endl;
+    conf.setValue(std::string("other2"), std::string("conf"), std::string("dupaaa"));
+    std::cout<<"\nconfig file: "<< conf.getValue(std::string("other2"), std::string("conf"))<<std::endl;
+
+    conf.setValue(std::string("other3"), std::string("co11nf"), std::string("du23232paaa"));
+
+    std::cout<<"\nconfig file: "<< conf.getValue(std::string("other3"), std::string("co11nf"))<<std::endl;
 
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 	CommunicationEngine ce("dupa", 8383);

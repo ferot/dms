@@ -33,19 +33,21 @@ bool Config::setValue(string section, string key, string val) {
 		if (!m_reader.parse(m_read_file_handler, root)) {
 			LOGMSG_ARG(LOG_ERROR, "Couldn't parse %s config file",
 					m_filepath.c_str());
-			return ret;
-		}
-		m_read_file_handler.close();
-		m_write_file_handler.open(m_filepath.c_str());
+			m_read_file_handler.close();
 
-		if (m_write_file_handler.fail()) {
-			LOGMSG_ARG(LOG_ERROR, "Error on attempt to open %s conf file!",
-					m_filepath.c_str());
 		} else {
-			root[section][key] = val;
-			m_writer.write(m_write_file_handler, root);
-			ret = true;
-			m_write_file_handler.close();
+			m_read_file_handler.close();
+			m_write_file_handler.open(m_filepath.c_str());
+
+			if (m_write_file_handler.fail()) {
+				LOGMSG_ARG(LOG_ERROR, "Error on attempt to open %s conf file!",
+						m_filepath.c_str());
+			} else {
+				root[section][key] = val;
+				m_writer.write(m_write_file_handler, root);
+				ret = true;
+				m_write_file_handler.close();
+			}
 		}
 	}
 

@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     // Set up tracker.
     // Instead of MIL, you can also use
     // BOOSTING, KCF, TLD, MEDIANFLOW or GOTURN
-    Ptr<Tracker> tracker = Tracker::create( "MIL" );
+    Ptr<Tracker> tracker = Tracker::create( "KCF" );
 
     // Read video
     VideoCapture video("/dev/video0");

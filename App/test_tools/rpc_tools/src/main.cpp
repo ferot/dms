@@ -6,6 +6,7 @@
  */
 #include <iostream>
 #include "logger.h"
+
 //#include "CommunicationEngine.hpp"
 
 #include "stubclient.h"
@@ -19,6 +20,7 @@ int main() {
 	LOGMSG(LOG_DEBUG, "Starting rpc test tool");
 	HttpClient client("http://localhost:8383");
     StubClient c(client);
+
     try
     {
         cout << c.sayHello("Peter Knafl") << endl;
