@@ -4,10 +4,12 @@
  *  Created on: Jul 9, 2017
  *      Author: tf
  */
-#include "CommunicationEngine.hpp"
 #include <iostream>
 #include <utility>
 #include <map>
+
+#include "CommunicationEngine.hpp"
+#include "Common.hpp"
 /*
  * Initializes logger instance
  */
@@ -16,12 +18,16 @@ int CommunicationEngine::initLogger() {
 }
 
 /*
- * Gets ip address from OS
+ * Gets ip address from config file.
  */
 CommEngineRetCode CommunicationEngine::obtainServerIP() {
 	CommEngineRetCode ret = COMM_ENG_SUCCESS;
-	//TODO: obtain iface address
-	//m_server_ip = ip;
+	m_server_ip = config->getValue("nodes", "host");
+
+	if (m_server_ip.empty()) {
+		LOGMSG(LOG_ERROR, "Cannot get addres from config file!");
+		ret = COMM_ENG_ERROR;
+	}
 	return ret;
 }
 /*
@@ -45,17 +51,26 @@ int CommunicationEngine::getServerPort() {
 CommunicationEngine::CommunicationEngine(string ip, int port) :
 		m_server_ip(ip), m_server_port(port) {
 
-	if (!initLogger())
+	config = Config::getInstance();
+
+	if (!initLogger()) {
 		LOGMSG(LOG_DEBUG, "Logger initialized!");
-	else
+	} else {
 		printf("Logger init failed");
+	}
 
 	LOGMSG_ARG(LOG_TRACE, "Server starting with port_num %d", m_server_port);
+
 	m_server = make_shared<HttpServer>(HttpServer(m_server_port));
 	m_stubserver_handle = shared_ptr<ServerStub>(
 			new ServerStub(*(m_server.get())));
 
-	LOGMSG(LOG_DEBUG, "Communication Engine initialized...");
+	if (m_stubserver_handle) {
+		config->setValue(string("nodes"), string("host"), ip);
+		LOGMSG(LOG_DEBUG, "Communication Engine initialized...");
+	} else {
+		LOGMSG(LOG_ERROR, "Communication Engine initialization failed!");
+	}
 }
 
 /*
@@ -75,10 +90,14 @@ CommunicationEngine::~CommunicationEngine() {
 CommEngineRetCode CommunicationEngine::addConnection(string ip, int port,
 		string id = nullptr) {
 	CommEngineRetCode ret = COMM_ENG_SUCCESS;
-	if (id.empty())
+	if (id.empty()){
 		id = "not_assigned_id";
+		//TODO:generate UUID
+	}
 
 	m_connections.insert(make_pair(id, new Connection(ip, port)));
+	config->setValue("nodes","client-" + id, ip + ":" + numToString(port));
+
 	return ret;
 }
 
@@ -97,10 +116,11 @@ void CommunicationEngine::printConnections() {
  */
 string CommunicationEngine::send(string connectionId) {
 //	CommEngineRetCode ret = COMM_ENG_SUCCESS;
-string ret;
+	string ret;
 	auto search = m_connections.find(connectionId);
 	if (search != m_connections.end()) {
-		ret = search->second->m_clientStub->sayHello(string("hi ") +connectionId);
+		ret = search->second->m_clientStub->sayHello(
+				string("hi ") + connectionId);
 		search->second->m_clientStub->notifyServer();
 	}
 	return ret;

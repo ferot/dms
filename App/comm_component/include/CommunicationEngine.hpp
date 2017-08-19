@@ -16,6 +16,7 @@
 #include "logger.h"
 #include "ServerStub.hpp"
 #include "Connection.hpp"
+#include "Config.hpp"
 
 using namespace jsonrpc;
 using namespace std;
@@ -38,6 +39,7 @@ private:
 
 	int initLogger();
 	CommEngineRetCode obtainServerIP();
+	Config* config;
 public:
 	string getServerIp();
 	int getServerPort();
