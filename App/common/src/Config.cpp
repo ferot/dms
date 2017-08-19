@@ -73,6 +73,7 @@ std::string Config::getValue(string section, string key) {
 		if (!m_reader.parse(m_read_file_handler, root)) {
 			LOGMSG_ARG(LOG_ERROR, "Couldn't parse %s config file",
 					m_filepath.c_str());
+			m_read_file_handler.close();
 			return value;
 		}
 		value = root[section][key].asString();
