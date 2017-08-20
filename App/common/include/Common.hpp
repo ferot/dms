@@ -16,4 +16,5 @@ static std::string numToString(T num){
 	return ss.str();
 }
 
+
 #endif /* COMMON_HPP_ */

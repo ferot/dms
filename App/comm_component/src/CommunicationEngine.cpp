@@ -10,6 +10,7 @@
 
 #include "CommunicationEngine.hpp"
 #include "Common.hpp"
+
 /*
  * Initializes logger instance
  */
@@ -30,6 +31,7 @@ CommEngineRetCode CommunicationEngine::obtainServerIP() {
 	}
 	return ret;
 }
+
 /*
  * Returns server ip associated http server
  */
@@ -102,7 +104,7 @@ CommEngineRetCode CommunicationEngine::addConnection(string ip, int port,
 }
 
 /*
- * Prints all connections
+ * Prints all connections to logfile.
  */
 void CommunicationEngine::printConnections() {
 	for (auto it : m_connections) {
@@ -111,6 +113,7 @@ void CommunicationEngine::printConnections() {
 
 	}
 }
+
 /*
  * Send event to host via specific connection
  */
@@ -122,6 +125,8 @@ string CommunicationEngine::send(string connectionId) {
 		ret = search->second->m_clientStub->sayHello(
 				string("hi ") + connectionId);
 		search->second->m_clientStub->notifyServer();
+	} else {
+		LOGMSG_ARG(LOG_WARN, "Couldn't find connection with %s id!", connectionId);
 	}
 	return ret;
 }

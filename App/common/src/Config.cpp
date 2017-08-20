@@ -17,7 +17,7 @@ Config::Config(string filename) :
 		m_filepath(filename) {
 }
 
-Config* Config::getInstance(std::string filename) {
+Config* Config::getInstance(string filename) {
 	if (!m_instance) {
 		m_instance = new Config(filename);
 	}
@@ -67,8 +67,8 @@ bool Config::setValue(string section, string key, string val) {
  * Method allowing to get value for specific section, and key.
  * returns value on success, otherwise empty string.
  */
-std::string Config::getValue(string section, string key) {
-	std::string value("");
+string Config::getValue(string section, string key) {
+	string value;
 	Json::Value root;
 
 	std::unique_lock<std::mutex> lock(m_mut);
