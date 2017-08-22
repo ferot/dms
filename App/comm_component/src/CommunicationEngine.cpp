@@ -90,11 +90,11 @@ CommunicationEngine::~CommunicationEngine() {
  * If id is not provided, generates unique
  */
 CommEngineRetCode CommunicationEngine::addConnection(string ip, int port,
-		string id = nullptr) {
+		string id) {
 	CommEngineRetCode ret = COMM_ENG_SUCCESS;
 	if (id.empty()){
-		id = "not_assigned_id";
-		//TODO:generate UUID
+		//not user-friendly format
+		id = boost::lexical_cast<string>(boost::uuids::random_generator()());
 	}
 
 	m_connections.insert(make_pair(id, new Connection(ip, port)));
@@ -126,7 +126,7 @@ string CommunicationEngine::send(string connectionId) {
 				string("hi ") + connectionId);
 		search->second->m_clientStub->notifyServer();
 	} else {
-		LOGMSG_ARG(LOG_WARN, "Couldn't find connection with %s id!", connectionId);
+		LOGMSG_ARG(LOG_WARN, "Couldn't find connection with %s id!", connectionId.c_str());
 	}
 	return ret;
 }
