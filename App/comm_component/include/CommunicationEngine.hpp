@@ -46,7 +46,7 @@ public:
 	CommunicationEngine(string ip, int port);
 	~CommunicationEngine();
 
-	CommEngineRetCode addConnection(string ip, int port, string id);
+	CommEngineRetCode addConnection(string ip, int port, string id = "");
 	CommEngineRetCode startServer();
 	CommEngineRetCode stopServer();
 	void printConnections();
