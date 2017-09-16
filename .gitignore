@@ -6,3 +6,4 @@ DMS.*
 *.so*
 build/
 /Debug
+*.jpg
