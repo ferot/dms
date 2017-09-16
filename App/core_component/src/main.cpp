@@ -4,11 +4,16 @@
  *  Created on: Jul 9, 2017
  *      Author: tf
  */
+
+#include <iostream>
+
 #include "main.hpp"
 #include "CommunicationEngine.hpp"
+#include "StorageEngine.hpp"
 #include "Config.hpp"
 #include "NodeEngine.hpp"
 #include <iostream>
+#include "Event.hpp"
 
 using namespace jsonrpc;
 using namespace std;
@@ -16,7 +21,6 @@ using namespace std;
 int main() {
 	mylog_init();
 	NodeEngine *ne = NodeEngine::getInstance();
-//	ne.getNodeList();
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
 	CommunicationEngine *ce = CommunicationEngine::getInstance("127.0.0.3", 8383);
@@ -31,5 +35,9 @@ int main() {
 	LOGMSG_ARG(LOG_DEBUG, "server sent : %s", ce->send(string("lol1")).c_str());
 
 	ce->stopServer();
+	
+	StorageEngine se("testdb.db");
+	se.create_table();
+
 	return 0;
 }
