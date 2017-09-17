@@ -30,15 +30,12 @@ enum StrgEngineRetCode{
 class StorageEngine {
 private:
 	string m_db_filename;
-//	int m_server_port;
-//	shared_ptr<ServerStub> m_stubserver_handle;
-//	shared_ptr<HttpServer> m_server;
-//	map<string, Connection *> m_connections;
-
 	Config* config;
 public:
 	StorageEngine(string file = "");
 	~StorageEngine();
+
+	std::string getDbFilename();
 	void create_table();
 };
 

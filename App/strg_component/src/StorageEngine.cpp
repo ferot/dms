@@ -7,9 +7,14 @@
 #include <iostream>
 #include <utility>
 #include <map>
+#include <time.h>
 
 #include "StorageEngine.hpp"
 #include "Common.hpp"
+
+const int TIME_STRING_LENGTH = 20;
+//Used only in generateDateTime
+char timestampBuffer[TIME_STRING_LENGTH] = { 0 };
 
 /*
  * Constructor of Storage engine.
@@ -30,22 +35,45 @@ StorageEngine::StorageEngine(string db_file) {
 StorageEngine::~StorageEngine() {
 }
 
+/*
+ * Returns SQLite expected date string format "YYYY-MM-DD HH:MM:SS"
+ * Date is based on local time.
+ */
+const char * generateDateTime() {
+	time_t rawtime;
+	struct tm *currentTime;
+	time(&rawtime);
+
+	currentTime = localtime(&rawtime);
+	strftime(timestampBuffer, TIME_STRING_LENGTH, "%Y-%m-%d %H:%M:%S",
+			currentTime);
+
+	return timestampBuffer;
+}
+
+/*
+ * Creates sqlite3 tables if not existing.
+ */
 void StorageEngine::create_table() {
 	database db(m_db_filename);
-	// executes the query and creates a 'user' table
-	db << "create table if not exists user ("
-			"   _id integer primary key autoincrement not null,"
-			"   age int,"
-			"   name text,"
-			"   weight real"
-			");";
+	try {
+		db << "create table if not exists events ("
+				"   _id integer primary key autoincrement not null,"
+				"   timestamp date,"
+				"   nodename text,"
+				"   objectid int"
+				");";
+	} catch (exception& e) {
+		LOGMSG_ARG(LOG_ERROR,
+				"Exception %s when trying to create database tables !",
+				e.what());
+	}
+}
 
-	db << "insert into user (age,name,weight) values (?,?,?);" << 20 << u"bob"
-	<< 83.25;
-	int age = 21;
-	float weight = 68.5;
-	string name = "jack";
-	// you can also extract multiple column rows
-	db << "select age, name from user where _id=1;" >> tie(age, name);
-	cout << "Age = " << age << ", name = " << name << endl;
+/*
+ * Returns database's full path with filename
+ */
+std::string StorageEngine::getDbFilename() {
+
+	return m_db_filename;
 }
