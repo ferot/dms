@@ -20,7 +20,7 @@ int main() {
 	ce.addConnection("localhost",8383,"lol");
 	ce.addConnection("10.0.2.15",8383,"lol1");
 	ce.printConnections();
-	CommEngineRetCode ret = ce.startServer();
+	ComEnRc ret = ce.startServer();
 	if(ret != COMM_ENG_SUCCESS)
 		LOGMSG(LOG_ERROR, "Server didn't start prperly!");
 	LOGMSG_ARG(LOG_DEBUG, "server sent : %s", ce.send(string("lol")).c_str());

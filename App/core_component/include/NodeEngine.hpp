@@ -9,20 +9,32 @@
 #define NODEMANAGER_HPP_
 
 #include <vector>
+#include <string>
 
-typedef NodeVec std::vector<NodeEntry>;
-
-enum NodeEngineRetCode {
+/*
+ * Node Engine Return Code.
+ * Represents status of operation
+ */
+enum NodEnRc {
 	NODE_ENG_SUCCESS,
 	NODE_ENG_ERROR
 };
 
+/*
+ * Node State.
+ * Represents [in memory] state of node.
+ */
 enum NodeState {
 	ACTIVE,
 	DISABLED,
 	NOT_RESPONDING
 };
 
+/*
+ * Node Entry.
+ * Represents actual status of node.
+ * Consists of few fields which should be filled.
+ */
 struct NodeEntry {
 	std::string ip;
 	int port;
@@ -30,7 +42,6 @@ struct NodeEntry {
 };
 
 typedef std::vector<NodeEntry> NodeVec;
-
 
 /*
  * Class responsible for node information management.
@@ -40,9 +51,9 @@ typedef std::vector<NodeEntry> NodeVec;
 class NodeEngine {
 	NodeVec nodes;
 public:
-	NodeEngineRetCode getNodeList();
-	NodeEngineRetCode setEntry(NodeEntry);
-	NodeEngineRetCode refreshNodeList();
+	NodEnRc getNodeList();
+	NodEnRc setEntry(NodeEntry);
+	NodEnRc refreshNodeList();
 };
 
 #endif /* NODEMANAGER_HPP_ */

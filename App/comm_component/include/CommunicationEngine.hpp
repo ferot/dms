@@ -21,7 +21,11 @@
 using namespace jsonrpc;
 using namespace std;
 
-enum CommEngineRetCode{
+/*
+ * Node Engine Return Code.
+ * Represents status of operation
+ */
+enum ComEnRc{
 	COMM_ENG_SUCCESS,
 	COMM_ENG_ERROR
 };
@@ -38,7 +42,7 @@ private:
 	map<string, Connection *> m_connections;
 
 	int initLogger();
-	CommEngineRetCode obtainServerIP();
+	ComEnRc obtainServerIP();
 	Config* config;
 public:
 	string getServerIp();
@@ -46,9 +50,9 @@ public:
 	CommunicationEngine(string ip, int port);
 	~CommunicationEngine();
 
-	CommEngineRetCode addConnection(string ip, int port, string id = "");
-	CommEngineRetCode startServer();
-	CommEngineRetCode stopServer();
+	ComEnRc addConnection(string ip, int port, string id = "");
+	ComEnRc startServer();
+	ComEnRc stopServer();
 	void printConnections();
 	//SEND METHODS
 	string send(string);

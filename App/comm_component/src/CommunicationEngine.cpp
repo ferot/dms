@@ -21,8 +21,8 @@ int CommunicationEngine::initLogger() {
 /*
  * Gets ip address from config file.
  */
-CommEngineRetCode CommunicationEngine::obtainServerIP() {
-	CommEngineRetCode ret = COMM_ENG_SUCCESS;
+ComEnRc CommunicationEngine::obtainServerIP() {
+	ComEnRc ret = COMM_ENG_SUCCESS;
 	m_server_ip = config->getValue("nodes", "host");
 
 	if (m_server_ip.empty()) {
@@ -89,9 +89,9 @@ CommunicationEngine::~CommunicationEngine() {
  * Inserts entry to connections map.
  * If id is not provided, generates unique
  */
-CommEngineRetCode CommunicationEngine::addConnection(string ip, int port,
+ComEnRc CommunicationEngine::addConnection(string ip, int port,
 		string id) {
-	CommEngineRetCode ret = COMM_ENG_SUCCESS;
+	ComEnRc ret = COMM_ENG_SUCCESS;
 	if (id.empty()){
 		//not user-friendly format
 		id = boost::lexical_cast<string>(boost::uuids::random_generator()());
@@ -118,7 +118,7 @@ void CommunicationEngine::printConnections() {
  * Send event to host via specific connection
  */
 string CommunicationEngine::send(string connectionId) {
-//	CommEngineRetCode ret = COMM_ENG_SUCCESS;
+//	ComEnRc ret = COMM_ENG_SUCCESS;
 	string ret;
 	auto search = m_connections.find(connectionId);
 	if (search != m_connections.end()) {
@@ -134,8 +134,8 @@ string CommunicationEngine::send(string connectionId) {
 /*
  * Start listening server for RPC commands
  */
-CommEngineRetCode CommunicationEngine::startServer() {
-	CommEngineRetCode ret = COMM_ENG_SUCCESS;
+ComEnRc CommunicationEngine::startServer() {
+	ComEnRc ret = COMM_ENG_SUCCESS;
 	LOGMSG(LOG_DEBUG, "Starting http server...");
 
 	if (!m_stubserver_handle->StartListening()) {
@@ -147,8 +147,8 @@ CommEngineRetCode CommunicationEngine::startServer() {
 /*
  * Stops listening server for RPC commands
  */
-CommEngineRetCode CommunicationEngine::stopServer() {
-	CommEngineRetCode ret = COMM_ENG_SUCCESS;
+ComEnRc CommunicationEngine::stopServer() {
+	ComEnRc ret = COMM_ENG_SUCCESS;
 	if (!m_stubserver_handle->StopListening()) {
 		ret = COMM_ENG_ERROR;
 		LOGMSG(LOG_ERROR, "Error while stopping http server...");
