@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 
+#include "Config.hpp"
+
 /*
  * Node Engine Return Code.
  * Represents status of operation
@@ -49,8 +51,14 @@ typedef std::vector<NodeEntry> NodeVec;
  * Synchronizes state of nodes with each other on demand.
  */
 class NodeEngine {
+	static NodeEngine* m_instance;
+	NodeEngine();
+
+	Config* config;
 	NodeVec nodes;
 public:
+	static NodeEngine* getInstance();
+
 	NodEnRc getNodeList();
 	NodEnRc setEntry(NodeEntry);
 	NodEnRc refreshNodeList();

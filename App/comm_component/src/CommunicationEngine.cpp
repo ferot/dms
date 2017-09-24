@@ -11,6 +11,19 @@
 #include "CommunicationEngine.hpp"
 #include "Common.hpp"
 
+CommunicationEngine* CommunicationEngine::m_instance = nullptr;
+
+/*
+ * Returns instance of engine if it already exists.
+ * In other case creates new one, with provided (or default) params.
+ */
+CommunicationEngine* CommunicationEngine::getInstance(string ip, int port) {
+	if (!m_instance) {
+		m_instance = new CommunicationEngine(ip, port);
+	}
+	return m_instance;
+}
+
 /*
  * Initializes logger instance
  */

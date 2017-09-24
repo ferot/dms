@@ -35,6 +35,11 @@ enum ComEnRc{
  */
 class CommunicationEngine {
 private:
+	static CommunicationEngine* m_instance;
+
+	CommunicationEngine(string ip, int port);
+	~CommunicationEngine();
+
 	string m_server_ip;
 	int m_server_port;
 	shared_ptr<ServerStub> m_stubserver_handle;
@@ -45,10 +50,10 @@ private:
 	ComEnRc obtainServerIP();
 	Config* config;
 public:
+	static CommunicationEngine* getInstance(string ip = "", int port = 0);
+
 	string getServerIp();
 	int getServerPort();
-	CommunicationEngine(string ip, int port);
-	~CommunicationEngine();
 
 	ComEnRc addConnection(string ip, int port, string id = "");
 	ComEnRc startServer();
