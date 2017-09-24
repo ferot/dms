@@ -11,18 +11,23 @@
 Config* Config::m_instance = nullptr;
 
 /*
- * Default Constructor. Initializes object with proper filename string.
+ * Returns instance of engine if it already exists.
+ * In other case creates new one, with provided (or default) params.
  */
-Config::Config(string filename) :
-		m_filepath(filename) {
-}
-
 Config* Config::getInstance(string filename) {
 	if (!m_instance) {
 		m_instance = new Config(filename);
 	}
 	return m_instance;
 }
+
+/*
+ * Default Constructor. Initializes object with proper filename string.
+ */
+Config::Config(string filename) :
+		m_filepath(filename) {
+}
+
 
 /*
  * Method allowing to set value for specific section, and key.

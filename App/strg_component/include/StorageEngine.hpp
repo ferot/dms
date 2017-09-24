@@ -29,11 +29,15 @@ enum StrgEngineRetCode{
  */
 class StorageEngine {
 private:
+	static StorageEngine* m_instance;
+
+	StorageEngine(string file = "");
+	~StorageEngine();
+
 	string m_db_filename;
 	Config* config;
 public:
-	StorageEngine(string file = "");
-	~StorageEngine();
+	static StorageEngine* getInstance(string file = "");
 
 	std::string getDbFilename();
 	void create_table();

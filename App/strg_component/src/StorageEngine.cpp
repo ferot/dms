@@ -12,9 +12,22 @@
 #include "StorageEngine.hpp"
 #include "Common.hpp"
 
+StorageEngine* StorageEngine::m_instance = nullptr;
+
 const int TIME_STRING_LENGTH = 20;
 //Used only in generateDateTime
 char timestampBuffer[TIME_STRING_LENGTH] = { 0 };
+
+/*
+ * Returns instance of engine if it already exists.
+ * In other case creates new one, with provided (or default) params.
+ */
+StorageEngine* StorageEngine::getInstance(string file) {
+	if (!m_instance) {
+		m_instance = new StorageEngine(file);
+	}
+	return m_instance;
+}
 
 /*
  * Constructor of Storage engine.
@@ -22,7 +35,7 @@ char timestampBuffer[TIME_STRING_LENGTH] = { 0 };
  */
 StorageEngine::StorageEngine(string db_file) {
 	if (db_file.empty()) {
-		config->getInstance();
+		config = Config::getInstance();
 		m_db_filename = config->getValue("Storage", "db_path");
 	} else {
 		m_db_filename = db_file;

@@ -36,8 +36,8 @@ int main() {
 
 	ce->stopServer();
 	
-	StorageEngine se("testdb.db");
-	se.create_table();
+	StorageEngine* se = StorageEngine::getInstance();
+	se->create_table();
 
 	return 0;
 }

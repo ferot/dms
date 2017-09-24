@@ -25,41 +25,6 @@ CommunicationEngine* CommunicationEngine::getInstance(string ip, int port) {
 }
 
 /*
- * Initializes logger instance
- */
-int CommunicationEngine::initLogger() {
-	return mylog_init();
-}
-
-/*
- * Gets ip address from config file.
- */
-ComEnRc CommunicationEngine::obtainServerIP() {
-	ComEnRc ret = COMM_ENG_SUCCESS;
-	m_server_ip = config->getValue("nodes", "host");
-
-	if (m_server_ip.empty()) {
-		LOGMSG(LOG_ERROR, "Cannot get addres from config file!");
-		ret = COMM_ENG_ERROR;
-	}
-	return ret;
-}
-
-/*
- * Returns server ip associated http server
- */
-string CommunicationEngine::getServerIp() {
-	return m_server_ip;
-}
-
-/*
- * Returns server port associated with http server
- */
-int CommunicationEngine::getServerPort() {
-	return m_server_port;
-}
-
-/*
  * Constructor of communication engine.
  * Creates fundamental objects essential for RPC communication
  */
@@ -96,6 +61,42 @@ CommunicationEngine::~CommunicationEngine() {
 		delete connect_handler.second;
 	}
 }
+
+/*
+ * Initializes logger instance
+ */
+int CommunicationEngine::initLogger() {
+	return mylog_init();
+}
+
+/*
+ * Gets ip address from config file.
+ */
+ComEnRc CommunicationEngine::obtainServerIP() {
+	ComEnRc ret = COMM_ENG_SUCCESS;
+	m_server_ip = config->getValue("nodes", "host");
+
+	if (m_server_ip.empty()) {
+		LOGMSG(LOG_ERROR, "Cannot get addres from config file!");
+		ret = COMM_ENG_ERROR;
+	}
+	return ret;
+}
+
+/*
+ * Returns server ip associated http server
+ */
+string CommunicationEngine::getServerIp() {
+	return m_server_ip;
+}
+
+/*
+ * Returns server port associated with http server
+ */
+int CommunicationEngine::getServerPort() {
+	return m_server_port;
+}
+
 
 /*
  * Add connection.
