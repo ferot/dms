@@ -1,56 +1,107 @@
-// Standard include files
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
+#include <opencv2/core/ocl.hpp>
 
 using namespace cv;
 using namespace std;
 
-int main(int argc, char **argv)
-{
-    // Set up tracker.
-    // Instead of MIL, you can also use
-    // BOOSTING, KCF, TLD, MEDIANFLOW or GOTURN
-    Ptr<Tracker> tracker = Tracker::create( "KCF" );
+// Convert to string
+#define SSTR( x ) static_cast< std::ostringstream & >( \
+( std::ostringstream() << std::dec << x ) ).str()
 
-    // Read video
-    VideoCapture video("/dev/video0");
+int main(int argc, char **argv) {
+	// List of tracker types in OpenCV 3.2
+	// NOTE : GOTURN implementation is buggy and does not work.
+	string trackerTypes[6] = { "BOOSTING", "MIL", "KCF", "TLD", "MEDIANFLOW",
+			"GOTURN" };
+	// vector <string> trackerTypes(types, std::end(types));
 
-    // Check video is open
-    if(!video.isOpened())
-    {
-        cout << "Could not read video file" << endl;
-        return 1;
-    }
+	// Create a tracker
+	string trackerType = trackerTypes[2];
 
-    // Read first frame.
-    Mat frame;
-    video.read(frame);
+	Ptr<Tracker> tracker;
 
-    // Define an initial bounding box
-    Rect2d bbox(287, 23, 86, 320);
+#if (CV_MINOR_VERSION < 3)
+	{
+		tracker = Tracker::create(trackerType);
+	}
+#else
+	{
+		if (trackerType == "BOOSTING")
+		tracker = TrackerBoosting::create();
+		if (trackerType == "MIL")
+		tracker = TrackerMIL::create();
+		if (trackerType == "KCF")
+		tracker = TrackerKCF::create();
+		if (trackerType == "TLD")
+		tracker = TrackerTLD::create();
+		if (trackerType == "MEDIANFLOW")
+		tracker = TrackerMedianFlow::create();
+		if (trackerType == "GOTURN")
+		tracker = TrackerGOTURN::create();
+	}
+#endif
+	// Read video
+	VideoCapture video("/dev/video0");
 
-    // Uncomment the line below if you
-//     want to choose the bounding box
-     bbox = selectROI(frame, false);
+	// Exit if video is not opened
+	if (!video.isOpened()) {
+		cout << "Could not read video file" << endl;
+		return 1;
 
-    // Initialize tracker with first frame and bounding box
-    tracker->init(frame, bbox);
+	}
 
-    while(video.read(frame))
-    {
-        // Update tracking results
-        tracker->update(frame, bbox);
+	// Read first frame
+	Mat frame;
+	bool ok = video.read(frame);
 
-        // Draw bounding box
-        rectangle(frame, bbox, Scalar( 255, 0, 0 ), 2, 1 );
+	// Define initial boundibg box
+	Rect2d bbox(287, 23, 86, 320);
 
-        // Display result
-        imshow("Tracking", frame);
-        int k = waitKey(1);
-        if(k == 27) break;
+	// Uncomment the line below to select a different bounding box
+	bbox = selectROI(frame, false);
 
-    }
+	// Display bounding box.
+	rectangle(frame, bbox, Scalar(255, 0, 0), 2, 1);
+	imshow("Tracking", frame);
 
-    return 0;
+	tracker->init(frame, bbox);
 
+	while (video.read(frame)) {
+		// Start timer
+		double timer = (double) getTickCount();
+
+		// Update the tracking result
+		bool ok = tracker->update(frame, bbox);
+
+		// Calculate Frames per second (FPS)
+		float fps = getTickFrequency() / ((double) getTickCount() - timer);
+
+		if (ok) {
+			// Tracking success : Draw the tracked object
+			rectangle(frame, bbox, Scalar(255, 0, 0), 2, 1);
+		} else {
+			// Tracking failure detected.
+			putText(frame, "Tracking failure detected", Point(100, 80),
+					FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 2);
+		}
+
+		// Display tracker type on frame
+		putText(frame, trackerType + " Tracker", Point(100, 20),
+				FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50, 170, 50), 2);
+
+		// Display FPS on frame
+		putText(frame, "FPS : " + SSTR(int(fps)), Point(100, 50),
+				FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50, 170, 50), 2);
+
+		// Display frame.
+		imshow("Tracking", frame);
+
+		// Exit if ESC pressed.
+		int k = waitKey(1);
+		if (k == 27) {
+			break;
+		}
+
+	}
 }
