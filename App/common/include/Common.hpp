@@ -22,5 +22,13 @@ static inline std::string numToString(T num){
 	return ss.str();
 }
 
-
+/*
+ * Vision Engine Return Code.
+ * Represents status of operation
+ */
+enum TrcEnRc{
+	TRCK_ENG_SUCCESS,
+	TRCK_ENG_ERROR,
+	TRCK_ENG_VIDDEV_ERROR
+};
 #endif /* COMMON_HPP_ */

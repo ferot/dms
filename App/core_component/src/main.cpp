@@ -10,6 +10,7 @@
 #include "main.hpp"
 #include "CommunicationEngine.hpp"
 #include "StorageEngine.hpp"
+#include "VisionEngine.hpp"
 #include "Config.hpp"
 #include "NodeEngine.hpp"
 #include <iostream>
@@ -22,7 +23,9 @@ int main() {
 	mylog_init();
 	NodeEngine *ne = NodeEngine::getInstance();
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
-
+	VisionEngine *ve = VisionEngine::getInstance();
+	ve->addTracker("KCF", 0);
+	ve->displayDebugWindow();
 	CommunicationEngine *ce = CommunicationEngine::getInstance("127.0.0.3", 8383);
 	ce->addConnection("localhost",8383,"lol");
 	ce->addConnection("10.0.2.15",8383,"lol1");
