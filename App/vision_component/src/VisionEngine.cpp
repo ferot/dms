@@ -65,24 +65,39 @@ TrcEnRc VisionEngine::addTracker(string trackerType, int id) {
 	return ret;
 }
 
-TrcEnRc VisionEngine::startAllTrackers(){
+TrcEnRc VisionEngine::startAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
+
 	for (auto it : m_trackers) {
-		m_th_trackers.push_back(std::thread(&Tracker::startTracking, it.second));
+		m_th_trackers.push_back(
+				std::thread(&Tracker::startTracking, it.second));
 		auto id = m_th_trackers.back().get_id();
 		m_mapIdtrckTothr.insert(make_pair(it.first, id));
-		LOGMSG_ARG(LOG_TRACE, "Spawning tracker thread with id: %d", (it.first));
+		LOGMSG_ARG(LOG_TRACE, "Spawning tracker thread with id: %d",
+				(it.first));
 	}
 	return ret;
 }
 
-TrcEnRc VisionEngine::stopAllTrackers(){
+TrcEnRc VisionEngine::stopAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
+
 	std::vector<std::thread>::iterator iter = m_th_trackers.begin();
-	while(iter != m_th_trackers.end()){
-//		if ()
+	while (iter != m_th_trackers.end()) {
+		//Wait for thread to join and erase it from thread vector.
+		auto thrId = iter->get_id();
 		iter->join();
 		iter = m_th_trackers.erase(iter);
+
+		//Find thread with such id and remove from tracker map.
+		auto trckIter = std::find_if(m_mapIdtrckTothr.begin(),
+				m_mapIdtrckTothr.end(), [id](std::pair<int, thread::id> pair) {
+					return ((pair.second == thrId) ? true : false);
+				});
+		m_trackers.erase(trckIter->first);
+
+		//also update trackerId to threadId map
+		m_mapIdtrckTothr.erase(trckIter);
 	}
 	return ret;
 }
