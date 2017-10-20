@@ -65,6 +65,28 @@ TrcEnRc VisionEngine::addTracker(string trackerType, int id) {
 	return ret;
 }
 
+TrcEnRc VisionEngine::startAllTrackers(){
+	TrcEnRc ret = TRCK_ENG_ERROR;
+	for (auto it : m_trackers) {
+		m_th_trackers.push_back(std::thread(&Tracker::startTracking, it.second));
+		auto id = m_th_trackers.back().get_id();
+		m_mapIdtrckTothr.insert(make_pair(it.first, id));
+		LOGMSG_ARG(LOG_TRACE, "Spawning tracker thread with id: %d", (it.first));
+	}
+	return ret;
+}
+
+TrcEnRc VisionEngine::stopAllTrackers(){
+	TrcEnRc ret = TRCK_ENG_ERROR;
+	std::vector<std::thread>::iterator iter = m_th_trackers.begin();
+	while(iter != m_th_trackers.end()){
+//		if ()
+		iter->join();
+		iter = m_th_trackers.erase(iter);
+	}
+	return ret;
+}
+
 TrcEnRc VisionEngine::displayDebugWindow() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 	LOGMSG(LOG4C_PRIORITY_CRIT, "Opening debug window...");
@@ -78,6 +100,7 @@ TrcEnRc VisionEngine::displayDebugWindow() {
 			// Exit if ESC pressed. This needs to be replaced for some signalling.
 			int k = cv::waitKey(1);
 			if (k == 27) {
+				stopAllTrackers();
 				ret = TRCK_ENG_SUCCESS;
 				break;
 			}

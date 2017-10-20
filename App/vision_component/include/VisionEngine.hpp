@@ -14,6 +14,9 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/core/ocl.hpp>
 
+#include <thread>
+
+
 //#include "Tracker.hpp"
 #include "logger.h"
 #include "Config.hpp"
@@ -30,7 +33,12 @@ class Tracker;
 class VisionEngine {
 private:
 	static VisionEngine* m_instance;
-	map<int, Tracker *> m_trackers;
+	map<int, shared_ptr<Tracker>> m_trackers;
+	std::vector<std::thread> m_th_trackers;
+
+	/*mapping of tracker id into thread id
+	essential to manage properly both objects*/
+	map<int,thread::id> m_mapIdtrckTothr;
 
 	cv::VideoCapture video;
 	Config* config;
