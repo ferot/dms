@@ -56,41 +56,55 @@ TrcEnRc VisionEngine::isVidOpened() {
  */
 TrcEnRc VisionEngine::addTracker(string trackerType, int id) {
 	TrcEnRc ret = TRCK_ENG_SUCCESS;
-	static int dupa;
+	static int trackerCount;
 	if (!id) {
 		//not user-friendly format
-		id = dupa++;
+		id = trackerCount++;
 	}
 
 	m_trackers.insert(make_pair(id, new Tracker(trackerType, id)));
 //	config->setValue("nodes", "client-" + id, ip + ":" + numToString(port));
+	LOGMSG_ARG(LOG_DEBUG, "Added tracker with id : %d", id);
 
 	return ret;
 }
 
+/*
+ * Method responsible for spawning tracking worker threads,
+ * mapped by tracker id's from m_trackers.
+ * TODO: check if this shouldn't be tried for exception.
+ */
 TrcEnRc VisionEngine::startAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 
 	for (auto it : m_trackers) {
-		m_th_trackers.push_back(
-				std::thread(&Tracker::startTracking, it.second));
+		m_th_trackers.push_back(std::thread(&Tracker::startTracking, it.second));
+
 		auto id = m_th_trackers.back().get_id();
 		m_mapIdtrckTothr.insert(make_pair(it.first, id));
-		LOGMSG_ARG(LOG_TRACE, "Spawning tracker thread with id: %d",
-				(it.first));
+
+		LOGMSG_ARG(LOG_TRACE, "Spawning tracker[%d]", (it.first));
+		LOGMSG_ARG(LOG_TRACE, "...with threads id[%d]", id);
+
 	}
 	return ret;
 }
 
+/*
+ * Method responsible for stopping all threads mapped by m_trackers member.
+ * Erases both tracker and associated thread.
+ */
 TrcEnRc VisionEngine::stopAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 
 	std::vector<std::thread>::iterator iter = m_th_trackers.begin();
 	while (iter != m_th_trackers.end()) {
-		//Wait for thread to join and erase it from thread vector.
 		auto thrId = iter->get_id();
+
+		//Wait for thread to join and erase it from thread vector.
 		iter->join();
 		iter = m_th_trackers.erase(iter);
+		LOGMSG_ARG(LOG_TRACE, "Erasing tracker thread [%d]", (thrId));
 
 		//Find thread with such id and remove from tracker map.
 		auto trckIter = std::find_if(m_mapIdtrckTothr.begin(),
@@ -98,13 +112,20 @@ TrcEnRc VisionEngine::stopAllTrackers() {
 					return ((pair.second == thrId) ? true : false);
 				});
 		m_trackers.erase(trckIter->first);
+		LOGMSG_ARG(LOG_TRACE, "Erasing tracker [%d]", (thrId));
 
 		//also update trackerId to threadId map
 		m_mapIdtrckTothr.erase(trckIter);
+		LOGMSG_ARG(LOG_TRACE, "Erasing m_mapIdtrckTothr entry with key-Id [%d]", trckIter);
+
 	}
 	return ret;
 }
 
+/*
+ * Method responsible for displaying debug window with stream.
+ * On 'ESC' key window is terminated.
+ */
 TrcEnRc VisionEngine::displayDebugWindow() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 	LOGMSG(LOG4C_PRIORITY_CRIT, "Opening debug window...");
@@ -115,7 +136,7 @@ TrcEnRc VisionEngine::displayDebugWindow() {
 			// Display frame.
 			cv::imshow("Tracking", frame);
 
-			// Exit if ESC pressed. This needs to be replaced for some signalling.
+			// Exit if ESC pressed. This needs to be replaced for some signalling probably from UI.
 			int k = cv::waitKey(1);
 			if (k == 27) {
 				stopAllTrackers();

@@ -58,6 +58,8 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
 		}
 	}
 #endif
+	LOGMSG_ARG(LOG_DEBUG, "Creating %s tracker.", trackerType.c_str());
+
 	return tracker;
 }
 
@@ -86,6 +88,9 @@ TrcEnRc Tracker::startTracking() {
 	} else {
 		return TRCK_ENG_VIDDEV_ERROR;
 	}
+
+	LOGMSG_ARG(LOG_DEBUG, "Starting tracker with id : %d", id);
+
 	// Read first frame
 	cv::Mat frame;
 	cv::VideoCapture video = VisionEngine::getInstance()->getVidCapture();
@@ -132,6 +137,13 @@ TrcEnRc Tracker::startTracking() {
 		putText(frame, "FPS : " + SSTR(int(fps)), cv::Point(100, 50),
 				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
 
+	}
+
+	if (!m_trackingEnabled) {
+		LOGMSG_ARG(LOG_DEBUG, "Stopping tracker with id : %d. (sent signal)", id);
+	} else {
+		LOGMSG_ARG(LOG_ERROR,
+				"Stopping tracker with id : %d. (videoframe read error)", id);
 	}
 }
 
