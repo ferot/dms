@@ -30,7 +30,10 @@ VisionEngine::VisionEngine(string streamSource) {
 		streamSource = "/dev/video0";
 	}
 	config = Config::getInstance();
-	video.open(streamSource);
+	if(!video.open(streamSource))
+	{
+		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Couldn't open video source %s", streamSource.c_str());
+	}
 }
 
 /*
@@ -91,7 +94,7 @@ TrcEnRc VisionEngine::stopAllTrackers() {
 
 		//Find thread with such id and remove from tracker map.
 		auto trckIter = std::find_if(m_mapIdtrckTothr.begin(),
-				m_mapIdtrckTothr.end(), [id](std::pair<int, thread::id> pair) {
+				m_mapIdtrckTothr.end(), [thrId](std::pair<int, thread::id> pair) {
 					return ((pair.second == thrId) ? true : false);
 				});
 		m_trackers.erase(trckIter->first);
