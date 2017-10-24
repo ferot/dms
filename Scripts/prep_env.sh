@@ -61,7 +61,7 @@ sudo apt install libsqlite3-dev
 git clone https://github.com/aminroosta/sqlite_modern_cpp
 cd sqlite_modern_cpp
 ./configure
-make
+make install
 
 else 
 	echo "There is neither opencv nor opencv_contrib repo!"
