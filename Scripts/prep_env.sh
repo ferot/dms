@@ -55,6 +55,14 @@ cd log4c-1.2.3/
 make
 make install
 
+echo "##########   Preparing sqlite3 ###########"
+sudo apt install libsqlite3-dev
+
+git clone https://github.com/aminroosta/sqlite_modern_cpp
+cd sqlite_modern_cpp
+./configure
+make
+
 else 
 	echo "There is neither opencv nor opencv_contrib repo!"
 fi
