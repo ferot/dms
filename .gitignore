@@ -1,8 +1,8 @@
 DMS.*
 .cproject
 .project
-*make*
-*Make*
+make*
+Make*
 *.so*
 build/
 /Debug
