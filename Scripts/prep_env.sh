@@ -19,32 +19,13 @@ sudo apt-get -y install libboost-all-dev
 
 echo "##########   Preparing mosquitto ###########"
 
-sudo apt-get -y install libssl1.0-dev
+sudo apt-get -y install libssl-dev
 sudo apt-get -y install mosquitto
 
 git clone https://github.com/eclipse/paho.mqtt.c
-cd paho.mqtt.c && mkdir build
-cmake ..
+cd paho.mqtt.c && mkdir -p build
+cd build && cmake ..
 make -j4 && make install
-
-
-echo "##########   Preparing opencv ###########"
-
-
-sudo apt-get -y install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt-get -y install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
-
-git clone https://github.com/opencv/opencv.git
-git clone https://github.com/opencv/opencv_contrib.git
-fi
-
-if [ -d "opencv" && -d "opencv_contrib" ]; then
-cd opencv
-mkdir release
-cd release
-cmake -D OPENCV_EXTRA_MODULES_PATH=/home/tf/test/opencv_contrib/modules -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
-make -j5
-sudo make install
 
 echo "##########   Preparing libjson-rpc-cpp ###########"
 
@@ -73,6 +54,25 @@ git clone https://github.com/aminroosta/sqlite_modern_cpp
 cd sqlite_modern_cpp
 ./configure
 make install
+
+
+echo "##########   Preparing opencv ###########"
+
+
+sudo apt-get -y install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get -y install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
+git clone https://github.com/opencv/opencv.git
+git clone https://github.com/opencv/opencv_contrib.git
+fi
+
+if [ -d "opencv" && -d "opencv_contrib" ]; then
+cd opencv
+mkdir release
+cd release
+cmake -D OPENCV_EXTRA_MODULES_PATH=/home/tf/test/opencv_contrib/modules -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+make -j5
+sudo make install
 
 else 
 	echo "There is neither opencv nor opencv_contrib repo!"
