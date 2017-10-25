@@ -8,17 +8,13 @@
 #ifndef COMMUNICATIONENGINE_HPP_
 #define COMMUNICATIONENGINE_HPP_
 #include <string>
-#include <jsonrpccpp/server/connectors/httpserver.h>
 #include <log4c.h>
 #include <memory>
 #include <map>
 
 #include "logger.h"
-#include "ServerStub.hpp"
-#include "Connection.hpp"
 #include "Config.hpp"
 
-using namespace jsonrpc;
 using namespace std;
 
 /*
@@ -42,9 +38,6 @@ private:
 
 	string m_server_ip;
 	int m_server_port;
-	shared_ptr<ServerStub> m_stubserver_handle;
-	shared_ptr<HttpServer> m_server;
-	map<string, Connection *> m_connections;
 
 	int initLogger();
 	ComEnRc obtainServerIP();

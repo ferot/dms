@@ -39,27 +39,13 @@ CommunicationEngine::CommunicationEngine(string ip, int port) :
 		printf("Logger init failed");
 	}
 
-	LOGMSG_ARG(LOG_TRACE, "Server starting with port_num %d", m_server_port);
-
-	m_server = make_shared<HttpServer>(HttpServer(m_server_port));
-	m_stubserver_handle = shared_ptr<ServerStub>(
-			new ServerStub(*(m_server.get())));
-
-	if (m_stubserver_handle) {
-		config->setValue(string("nodes"), string("host"), ip);
-		LOGMSG(LOG_DEBUG, "Communication Engine initialized...");
-	} else {
-		LOGMSG(LOG_ERROR, "Communication Engine initialization failed!");
-	}
 }
 
 /*
  * Cleans up connections handlers as they're allocated manually
  */
 CommunicationEngine::~CommunicationEngine() {
-	for (auto connect_handler : m_connections) {
-		delete connect_handler.second;
-	}
+
 }
 
 /*
@@ -99,62 +85,11 @@ int CommunicationEngine::getServerPort() {
 
 
 /*
- * Add connection.
- * Inserts entry to connections map.
- * If id is not provided, generates unique
- */
-ComEnRc CommunicationEngine::addConnection(string ip, int port,
-		string id) {
-	ComEnRc ret = COMM_ENG_SUCCESS;
-	if (id.empty()){
-		//not user-friendly format
-		id = boost::lexical_cast<string>(boost::uuids::random_generator()());
-	}
-
-	m_connections.insert(make_pair(id, new Connection(ip, port)));
-	config->setValue("nodes","client-" + id, ip + ":" + numToString(port));
-
-	return ret;
-}
-
-/*
- * Prints all connections to logfile.
- */
-void CommunicationEngine::printConnections() {
-	for (auto it : m_connections) {
-		LOGMSG_ARG(LOG_DEBUG, "Connection id: %s", (it.first).c_str());
-		LOGMSG_ARG(LOG_DEBUG, "ip: %s \n", (it.second->m_ip_address).c_str());
-
-	}
-}
-
-/*
- * Send event to host via specific connection
- */
-string CommunicationEngine::send(string connectionId) {
-//	ComEnRc ret = COMM_ENG_SUCCESS;
-	string ret;
-	auto search = m_connections.find(connectionId);
-	if (search != m_connections.end()) {
-		ret = search->second->m_clientStub->sayHello(
-				string("hi ") + connectionId);
-		search->second->m_clientStub->notifyServer();
-	} else {
-		LOGMSG_ARG(LOG_WARN, "Couldn't find connection with %s id!", connectionId.c_str());
-	}
-	return ret;
-}
-
-/*
  * Start listening server for RPC commands
  */
 ComEnRc CommunicationEngine::startServer() {
 	ComEnRc ret = COMM_ENG_SUCCESS;
 	LOGMSG(LOG_DEBUG, "Starting http server...");
-
-	if (!m_stubserver_handle->StartListening()) {
-		ret = COMM_ENG_ERROR;
-	}
 	return ret;
 }
 
@@ -163,10 +98,6 @@ ComEnRc CommunicationEngine::startServer() {
  */
 ComEnRc CommunicationEngine::stopServer() {
 	ComEnRc ret = COMM_ENG_SUCCESS;
-	if (!m_stubserver_handle->StopListening()) {
-		ret = COMM_ENG_ERROR;
-		LOGMSG(LOG_ERROR, "Error while stopping http server...");
-	}
 	LOGMSG(LOG_DEBUG, "Stopping http server...");
 	return ret;
 }
