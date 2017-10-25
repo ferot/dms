@@ -17,6 +17,17 @@ echo "##########   Preparing boost ###########"
 
 sudo apt-get -y install libboost-all-dev
 
+echo "##########   Preparing mosquitto ###########"
+
+sudo apt-get -y install libssl1.0-dev
+sudo apt-get -y install mosquitto
+
+git clone https://github.com/eclipse/paho.mqtt.c
+cd paho.mqtt.c && mkdir build
+cmake ..
+make -j4 && make install
+
+
 echo "##########   Preparing opencv ###########"
 
 
@@ -56,7 +67,7 @@ make
 make install
 
 echo "##########   Preparing sqlite3 ###########"
-sudo apt install libsqlite3-dev
+sudo apt-get -y install libsqlite3-dev
 
 git clone https://github.com/aminroosta/sqlite_modern_cpp
 cd sqlite_modern_cpp
