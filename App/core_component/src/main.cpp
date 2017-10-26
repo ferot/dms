@@ -21,7 +21,13 @@
 using namespace std;
 
 int main() {
-	mylog_init();
+
+	if (!initLogger()) {
+		LOGMSG(LOG_DEBUG, "Logger initialized!");
+	} else {
+		printf("Logger init failed");
+	}
+
 	NodeEngine *ne = NodeEngine::getInstance();
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 	VisionEngine *ve = VisionEngine::getInstance();
@@ -29,7 +35,6 @@ int main() {
 	ve->displayDebugWindow();
 	ve->startAllTrackers();
 
-	
 	StorageEngine* se = StorageEngine::getInstance();
 	se->create_table();
 

@@ -14,6 +14,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include "logger.h"
+
 
 template <typename T>
 static inline std::string numToString(T num){
@@ -22,6 +24,12 @@ static inline std::string numToString(T num){
 	return ss.str();
 }
 
+/*
+ * Initializes logger instance
+ */
+static int initLogger() {
+	return mylog_init();
+}
 /*
  * Vision Engine Return Code.
  * Represents status of operation
