@@ -30,6 +30,9 @@ int main() {
 
 	NodeEngine *ne = NodeEngine::getInstance();
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
+
+	CommunicationEngine *ce = CommunicationEngine::getInstance();
+
 	VisionEngine *ve = VisionEngine::getInstance();
 	ve->addTracker("KCF", 0);
 	ve->displayDebugWindow();
