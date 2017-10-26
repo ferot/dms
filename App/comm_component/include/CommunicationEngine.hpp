@@ -12,15 +12,17 @@
 #include <memory>
 #include <map>
 
+extern "C" {
 #include "MQTTClient.h"
 #include "MQTTAsync.h"
+}
 
 #include "logger.h"
 #include "Config.hpp"
 
 using namespace std;
 
-/*
+/**
  * Node Engine Return Code.
  * Represents status of operation
  */
@@ -28,11 +30,12 @@ enum ComEnRc {
 	COMM_ENG_SUCCESS, COMM_ENG_ERROR
 };
 
-/*
+/**
  * Class responsible for Communicating with MQTT broker.
  */
 class CommunicationEngine {
 private:
+
 	MQTTClient m_client;
 	MQTTClient_connectOptions m_conn_opts;
 
@@ -45,16 +48,30 @@ private:
 
 	static CommunicationEngine* m_instance;
 
-	CommunicationEngine(string address = "tcp://localhost", string client = "",
-			int port = 1883, int timeout = 10000L, int qos = 1);
+	CommunicationEngine(string, string, int, int, int);
 	~CommunicationEngine();
 
-
-	ComEnRc obtainServerIP();
+	ComEnRc obtainBrokerAddr();
 	Config* config;
+
+	/*
+	 * MQTT callbacks for Async communication.
+	 */
+	static void deliveredCallback(void *context, MQTTClient_deliveryToken dt);
+	static void connlostCallback(void *context, char *cause);
+	static int msgarrvdCallback(void *context,
+			char *topicName,
+			int topicLen,
+			MQTTClient_message *message);
+
 public:
 
-	static CommunicationEngine* getInstance(string m_address = "", int port = 1883);
+	static CommunicationEngine* getInstance(
+			string address = "tcp://localhost",
+			string client = "examplecl",
+			int port = 1883,
+			int timeout = 10000L,
+			int qos = 1);
 
 	string getBrokerAddr();
 	int getPort();
@@ -67,7 +84,7 @@ public:
 	ComEnRc disconnect();
 	ComEnRc subscribe(string);
 	ComEnRc unsubscribe(string);
-	ComEnRc publish(string, string);
+	ComEnRc publish(string msg, string topic = "");
 };
 
 #endif /* COMMUNICATIONENGINE_HPP_ */

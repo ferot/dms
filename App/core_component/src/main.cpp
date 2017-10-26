@@ -32,8 +32,17 @@ int main() {
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
 	CommunicationEngine *ce = CommunicationEngine::getInstance();
+	ce->connect();
+	ce->subscribe("hellotopic");
 
-	VisionEngine *ve = VisionEngine::getInstance();
+	int ch;
+    do
+    {
+    	ce->publish("WIADOMOSC", "hellotopic");
+        ch = getchar();
+    } while(ch!='Q' && ch != 'q');
+
+    VisionEngine *ve = VisionEngine::getInstance();
 	ve->addTracker("KCF", 0);
 	ve->displayDebugWindow();
 	ve->startAllTrackers();
