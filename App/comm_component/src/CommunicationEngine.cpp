@@ -17,50 +17,6 @@ CommunicationEngine* CommunicationEngine::m_instance = nullptr;
 volatile MQTTClient_deliveryToken deliveredtoken;
 
 /**
- * Delivery callback.
- * Assigns delivery token specific for exchange message session.
- * @param context
- * @param dt
- */
-void CommunicationEngine::deliveredCallback(void *context, MQTTClient_deliveryToken dt)
-{
-    LOGMSG_ARG(LOG_TRACE, "Message delivery with token value %d confirmed", dt);
-    deliveredtoken = dt;
-}
-/**
- * Message Arrived callback.
- * Retrieves
- * @param context - application specific context.
- * @param topicName
- * @param topicLen
- * @param message - payload message
- * @return - true for success
- */
-int CommunicationEngine::msgarrvdCallback(void *context, char *topicName, int topicLen, MQTTClient_message *message)
-{
-    LOGMSG_ARG(LOG_TRACE, "Message with topic : %s arrived", topicName);
-
-	string payload = string((char*)message->payload);
-
-	//TODO: enqueue message payload for further processing.
-
-	MQTTClient_freeMessage(&message);
-	MQTTClient_free(topicName);
-	return 1;
-}
-
-/**
- * Connection lost callback.
- * @param context
- * @param cause
- */
-void CommunicationEngine::connlostCallback(void *context, char *cause)
-{
-    LOGMSG_ARG(LOG_ERROR, "Connection lost. Cause", cause);
-    //TODO: handle such situation (Notify)
-}
-
-/**
  * Returns instance of engine if it already exists.
  * In other case creates new one, with provided (or default) params.
  *
@@ -98,7 +54,7 @@ CommunicationEngine::CommunicationEngine(string address, string client,
 		m_timeout(timeout),
 		m_qos(qos)
 {
-	m_address+=(":" + to_string(port));
+	mergeAddrPort(m_port);
 	LOGMSG_ARG(LOG_TRACE, "MQTT full client's address %s", m_address.c_str());
 
 	config = Config::getInstance();
@@ -115,7 +71,9 @@ CommunicationEngine::CommunicationEngine(string address, string client,
 	}
 
 	MQTTClient_setCallbacks(m_client, NULL,
-			&CommunicationEngine::connlostCallback, &CommunicationEngine::msgarrvdCallback, &CommunicationEngine::deliveredCallback);
+			&CommunicationEngine::connlostCallback,
+			&CommunicationEngine::msgarrvdCallback,
+			&CommunicationEngine::deliveredCallback);
 
 }
 
@@ -131,6 +89,51 @@ CommunicationEngine::~CommunicationEngine() {
 }
 
 /**
+ * Delivery callback.
+ * Assigns delivery token specific for exchange message session.
+ * @param context
+ * @param dt
+ */
+void CommunicationEngine::deliveredCallback(void *context, MQTTClient_deliveryToken dt)
+{
+    LOGMSG_ARG(LOG_TRACE, "[deliveredCallback] Message delivery with token value %d confirmed", dt);
+    deliveredtoken = dt;
+}
+
+/**
+ * Message Arrived callback.
+ * Retrieves
+ * @param context - application specific context.
+ * @param topicName
+ * @param topicLen
+ * @param message - payload message
+ * @return - true for success
+ */
+int CommunicationEngine::msgarrvdCallback(void *context, char *topicName,
+		int topicLen, MQTTClient_message *message) {
+	LOGMSG_ARG(LOG_TRACE, "[msgarrvdCallback] Message with topic : %s arrived", topicName);
+
+	string payload = string((char*) message->payload);
+
+	//TODO: enqueue message payload for further processing.
+
+	MQTTClient_freeMessage(&message);
+	MQTTClient_free(topicName);
+	return 1;
+}
+
+/**
+ * Connection lost callback.
+ * @param context
+ * @param cause
+ */
+void CommunicationEngine::connlostCallback(void *context, char *cause)
+{
+    LOGMSG_ARG(LOG_ERROR, "[connlostCallback] Connection lost. Cause : ", cause);
+    //TODO: handle such situation (Notify)
+}
+
+/**
  * Gets broker's address from config file.
  *
  * @return COMM_ENG_SUCCESS on success. COMM_ENG_ERROR on error.
@@ -140,6 +143,7 @@ ComEnRc CommunicationEngine::obtainBrokerAddr() {
 	m_address = config->getValue("nodes", "broker_address");
 	m_port = stoi(config->getValue("nodes", "port"));
 
+	mergeAddrPort(m_port);
 
 	if (m_address.empty() || m_port == 0) {
 		LOGMSG(LOG_ERROR, "Cannot get broker address from config file!");
@@ -216,6 +220,7 @@ ComEnRc CommunicationEngine::connect() {
 	}
 	return ret;
 }
+
 /**
  * Disconnects client.
  *
@@ -262,4 +267,11 @@ ComEnRc CommunicationEngine::publish(string message, string topic) {
 	return ret;
 }
 
+/**
+ * Merges member address string value with port
+ * @param port
+ */
+void CommunicationEngine::mergeAddrPort(int port){
+	m_address+=(":" + to_string(port));
+}
 

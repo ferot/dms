@@ -36,6 +36,9 @@ enum ComEnRc {
 class CommunicationEngine {
 private:
 
+	static CommunicationEngine* m_instance;
+	Config* config;
+
 	MQTTClient m_client;
 	MQTTClient_connectOptions m_conn_opts;
 
@@ -46,13 +49,11 @@ private:
 	int m_timeout;
 	int m_port;
 
-	static CommunicationEngine* m_instance;
-
 	CommunicationEngine(string, string, int, int, int);
 	~CommunicationEngine();
 
 	ComEnRc obtainBrokerAddr();
-	Config* config;
+	void mergeAddrPort(int port);
 
 	/*
 	 * MQTT callbacks for Async communication.
