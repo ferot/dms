@@ -11,6 +11,11 @@
 
 using std::string;
 
+enum eventType {
+	COMMUNICATION_EVENT, TRACKING_EVENT,
+
+};
+
 /*
  * Class defining common interface for wide range representation of events in application
  */
@@ -19,13 +24,18 @@ private:
 	/* Message unique ID */
 	boost::uuids::uuid m_uuid;
 	Json::Value m_params;
+	eventType type;
 
 	void setParamUUID();
 
 public:
 	Event();
-	std::string getEventId();
-	std::string getEventString();
+
+	int getEventType() const;
+	std::string getEventId() const;
+	std::string getEventString() const;
+
+	bool operator <(const Event& src) const;
 };
 
 #endif /* EVENT_HPP_ */

@@ -11,11 +11,11 @@ Event::Event() {
 	setParamUUID();
 }
 
-std::string Event::getEventId() {
+std::string Event::getEventId() const {
 	return boost::lexical_cast<std::string>(m_uuid);
 }
 
-std::string Event::getEventString() {
+std::string Event::getEventString() const {
 	Json::StyledWriter writer;
 
 	return writer.write(m_params);
@@ -23,4 +23,8 @@ std::string Event::getEventString() {
 
 void Event::setParamUUID() {
 	m_params["uuid"] = getEventId();
+}
+
+bool Event::operator <(const Event& src) const {
+	return (this->m_uuid < src.m_uuid);
 }

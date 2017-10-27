@@ -30,6 +30,16 @@ static inline std::string numToString(T num){
 static int initLogger() {
 	return mylog_init();
 }
+
+/*
+ * Common Return Code.
+ * Represents status of operation
+ */
+enum CommonRC{
+	CMN_RC_SUCCESS,
+	CMN_RC_ERROR,
+};
+
 /*
  * Vision Engine Return Code.
  * Represents status of operation
