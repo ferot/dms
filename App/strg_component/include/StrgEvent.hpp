@@ -15,11 +15,11 @@
 /*
  * Class for STRG Event representation.
  */
-class StrgEvent : Event{
+class StrgEvent : public Event{
 private:
 
 public:
-	StrgEvent();
+	StrgEvent(eventType type);
 
 };
 

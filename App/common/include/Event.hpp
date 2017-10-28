@@ -12,7 +12,7 @@
 using std::string;
 
 enum eventType {
-	COMMUNICATION_EVENT, TRACKING_EVENT,
+	DEFAULT_EVENT, COMMUNICATION_EVENT, TRACKING_EVENT
 
 };
 
@@ -24,17 +24,22 @@ private:
 	/* Message unique ID */
 	boost::uuids::uuid m_uuid;
 	Json::Value m_params;
-	eventType type;
+	eventType m_type;
 
 	void setParamUUID();
 
 public:
-	Event();
+//	Event(){
+//		m_type = DEFAULT_EVENT;
+//	}
+	Event(eventType type);
 
-	int getEventType() const;
+	eventType getEventType() const;
 	std::string getEventId() const;
 	std::string getEventString() const;
 
+	void setType(eventType type);
+	void setParam(string param);
 	bool operator <(const Event& src) const;
 };
 

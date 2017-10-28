@@ -6,7 +6,7 @@
  */
 #include "Event.hpp"
 
-Event::Event() {
+Event::Event(eventType type) : m_type(type) {
 	m_uuid = boost::uuids::random_generator()();
 	setParamUUID();
 }
@@ -21,8 +21,20 @@ std::string Event::getEventString() const {
 	return writer.write(m_params);
 }
 
+eventType Event::getEventType() const {
+	return m_type;
+}
+
 void Event::setParamUUID() {
 	m_params["uuid"] = getEventId();
+}
+
+void Event::setType(eventType type) {
+	m_type = type;
+}
+
+void Event::setParam(string param) {
+	m_params = param;
 }
 
 bool Event::operator <(const Event& src) const {

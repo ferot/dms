@@ -7,6 +7,6 @@
 
 #include "CommEvent.hpp"
 
-CommEvent::CommEvent(){
-
+CommEvent::CommEvent(eventType type) : Event(type) {
 }
+

@@ -15,11 +15,12 @@
 /*
  * Class for Communication Event representation.
  */
-class CommEvent : Event{
+class CommEvent : public Event{
 private:
 
 public:
-	CommEvent();
+	CommEvent(eventType type);
+	void setParam(string param);
 
 };
 

@@ -7,6 +7,6 @@
 
 #include "StrgEvent.hpp"
 
-StrgEvent::StrgEvent(){
+StrgEvent::StrgEvent(eventType type) : Event(type){
 
 }
