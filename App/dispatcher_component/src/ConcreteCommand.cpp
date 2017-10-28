@@ -8,14 +8,14 @@
 #include "ConcreteCommand.hpp"
 
 
-CommonRc PublishMsgCMD::execute(){
+CommonRC PublishMsgCMD::execute(){
 	return CMN_RC_SUCCESS;
 }
 
-CommonRc ObjectTrackMoveCMD::execute(){
+CommonRC ObjectTrackMoveCMD::execute(){
 	return CMN_RC_SUCCESS;
 }
 
-CommonRc ObjectTrackLossCMD::execute(){
+CommonRC ObjectTrackLossCMD::execute(){
 	return CMN_RC_SUCCESS;
 }
