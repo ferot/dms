@@ -17,7 +17,7 @@ class Command
 {
 public:
 	virtual CommonRC execute(/*TODO:params (json?)*/) = 0;
-	virtual ~Command() = 0;
+	virtual ~Command(){};
 };
 
 #endif /* COMMAND_HPP_ */

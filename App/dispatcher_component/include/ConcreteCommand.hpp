@@ -18,7 +18,7 @@
 class PublishMsgCMD: public Command {
 public:
 	CommonRC execute(/*TODO:params (json?)*/);
-	~PublishMsgCMD();
+	~PublishMsgCMD(){};
 };
 
 /**
@@ -28,7 +28,7 @@ public:
 class ObjectTrackLossCMD: public Command {
 public:
 	CommonRC execute(/*TODO:params (json?)*/);
-	~ObjectTrackLossCMD();
+	~ObjectTrackLossCMD(){};
 };
 
 /**
@@ -38,7 +38,7 @@ public:
 class ObjectTrackMoveCMD: public Command {
 public:
 	CommonRC execute(/*TODO:params (json?)*/);
-	~ObjectTrackMoveCMD();
+	~ObjectTrackMoveCMD(){};
 };
 
 #endif /* CONCRETECOMMAND_HPP_ */
