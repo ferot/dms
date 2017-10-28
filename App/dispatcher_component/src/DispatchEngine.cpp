@@ -11,6 +11,8 @@
 
 #include "DispatchEngine.hpp"
 #include "Common.hpp"
+#include "ConcreteCommand.hpp"
+
 
 DispatchEngine* DispatchEngine::m_instance = nullptr;
 
@@ -85,7 +87,10 @@ CommonRC DispatchEngine::registerEvent(t_eventPtr event) {
 	CommonRC ret = CMN_RC_SUCCESS;
 
 	t_commandPtr cmdPtr;
+
 	int eventType = event->getEventType();
+	LOGMSG_ARG(LOG_DEBUG, "[registerEvent] Attempt to create event %d",
+				(int)eventType);
 	switch (eventType) {
 	case COMMUNICATION_EVENT:
 		cmdPtr = std::make_shared<PublishMsgCMD>();
@@ -95,14 +100,21 @@ CommonRC DispatchEngine::registerEvent(t_eventPtr event) {
 		break;
 	default:
 		LOGMSG_ARG(LOG_ERROR, "[registerEvent] Event type %d not registered!",
-				eventType);
+				(int)eventType);
 		ret = CMN_RC_ERROR;
 	}
 	LOGMSG_ARG(LOG_DEBUG,
-			"[registerEvent] Registering command for event type %s", eventType);
+			"[registerEvent] Registering command for event type %d", (int)eventType);
 	m_registeredCommands.insert(
 			std::pair<t_eventPtr, t_commandPtr>(event,
 					cmdPtr));
+	return ret;
+}
+
+CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
+	CommonRC ret = CMN_RC_SUCCESS;
+	m_eventQueue.push_back(move(event));
+
 	return ret;
 }
 

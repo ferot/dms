@@ -9,9 +9,13 @@
 #define DispatchEngine_HPP_
 #include <string>
 #include <log4c.h>
+#include <queue>
 
 #include "logger.h"
 #include "Config.hpp"
+
+//#include "QueueWrapper.hpp"
+#include "MwsrQueue.hpp"
 
 #include "Event.hpp"
 #include "ConcreteCommand.hpp"
@@ -34,6 +38,8 @@ private:
 
 	map<t_eventPtr, t_commandPtr> m_registeredCommands;
 
+	MWSRQueue<std::queue<t_eventPtr>> m_eventQueue;
+
 	DispatchEngine();
 	~DispatchEngine();
 
@@ -41,7 +47,10 @@ private:
 public:
 
 	static DispatchEngine* getInstance();
+
+	t_eventPtr createEvent();
 	CommonRC registerEvent(t_eventPtr event);
+	CommonRC enqueueEvent(t_eventPtr event);
 
 };
 
