@@ -8,6 +8,7 @@
 #include <utility>
 #include <map>
 
+#include "DispatchEngine.hpp"
 #include "CommunicationEngine.hpp"
 #include "Common.hpp"
 

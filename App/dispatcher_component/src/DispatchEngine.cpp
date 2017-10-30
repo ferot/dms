@@ -105,8 +105,13 @@ CommonRC DispatchEngine::registerEvent(eventType type) {
 	LOGMSG_ARG(LOG_DEBUG,
 			"[registerEvent] Registering command for event type %d", (int)type);
 
-	m_registeredCommands.insert(
+	auto result = m_registeredCommands.insert(
 			std::pair<eventType, t_commandPtr>(type, cmdPtr));
+	if (!result.second) {
+		LOGMSG_ARG(LOG_ERROR, "[registerEvent] Couldn't insert event %d!",
+				(int )type);
+		ret = CMN_RC_ERROR;
+	}
 	return ret;
 }
 
