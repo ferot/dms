@@ -35,20 +35,6 @@ int main() {
 		printf("Logger init failed");
 	}
 
-	DispatchEngine *de = DispatchEngine::getInstance();
-
-	shared_ptr<Event> ev(make_shared<CommEvent>(eventType::COMMUNICATION_EVENT));
-	LOGMSG(LOG_DEBUG, "created event!");
-
-	de->registerEvent(ev);
-	LOGMSG(LOG_DEBUG, "registered event!");
-
-	for(int i =0; i<10; i++){
-	de->enqueueEvent(ev);
-	LOGMSG(LOG_DEBUG, "enqueued event!");
-	}
-
-
 	NodeEngine *ne = NodeEngine::getInstance();
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
@@ -56,14 +42,39 @@ int main() {
 	ce->connect();
 	ce->subscribe("hellotopic");
 
-	int ch;
-    do
-    {
-    	ce->publish("WIADOMOSC", "hellotopic");
-        ch = getchar();
-    } while(ch!='Q' && ch != 'q');
+	///////////////////DISPATCHER TESTS\\\\\\\\\\\\\\\\\\\\\
 
-    VisionEngine *ve = VisionEngine::getInstance();
+	DispatchEngine *de = DispatchEngine::getInstance();
+
+	vector<shared_ptr<Event>> ev_vector;
+	for (int i = 0; i < 10; i++) {
+		ev_vector.push_back(
+				(make_shared<CommEvent>(eventType::COMMUNICATION_EVENT)));
+		LOGMSG_ARG(LOG_DEBUG, "created %d event!", i);
+	}
+
+	de->registerEvent(eventType::COMMUNICATION_EVENT);
+	LOGMSG(LOG_DEBUG, "registered event!");
+
+	for (int i = 0; i < 10; i++) {
+		de->enqueueEvent(ev_vector.front());
+		LOGMSG_ARG(LOG_DEBUG, "enqueued %d event!", i);
+	}
+
+	CommonRC ret = de->startEventReader();
+	if (ret == CMN_RC_SUCCESS) {
+		LOGMSG(LOG_DEBUG, "started reader thread");
+	}
+
+	////////////////////////DISPATCHER TESTS \\\\\\\\\\\\\\\\\\\\
+
+	int ch;
+	do {
+		ce->publish("WIADOMOSC", "hellotopic");
+		ch = getchar();
+	} while (ch != 'Q' && ch != 'q');
+
+	VisionEngine *ve = VisionEngine::getInstance();
 	ve->addTracker("KCF", 0);
 	ve->displayDebugWindow();
 	ve->startAllTrackers();
