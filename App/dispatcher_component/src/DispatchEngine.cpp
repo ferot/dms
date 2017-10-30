@@ -106,18 +106,27 @@ CommonRC DispatchEngine::registerEvent(eventType type) {
 			"[registerEvent] Registering command for event type %d", (int)type);
 
 	m_registeredCommands.insert(
-			std::pair<eventType, t_commandPtr>(type,
-					cmdPtr));
+			std::pair<eventType, t_commandPtr>(type, cmdPtr));
 	return ret;
 }
 
+/**
+ * Pushes event on back of the event-process queue.
+ *
+ * @param event - event to be enqueued
+ */
 CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 	CommonRC ret = CMN_RC_SUCCESS;
 	m_eventQueue.push_back(move(event));
+	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d", event->getEventType());
 
 	return ret;
 }
 
+/**
+ * Spawns thread responsible for reading events from queue and dispatching
+ * proper actions.
+ */
 CommonRC DispatchEngine::startEventReader() {
 	CommonRC ret = CMN_RC_SUCCESS;
 
@@ -129,6 +138,9 @@ CommonRC DispatchEngine::startEventReader() {
 	return ret;
 }
 
+/**
+ * Stops event reader thread by setting flag.
+ */
 CommonRC DispatchEngine::stopEventReader(){
 	CommonRC ret = CMN_RC_SUCCESS;
 
@@ -140,13 +152,18 @@ CommonRC DispatchEngine::stopEventReader(){
 	return ret;
 }
 
+/**
+ * Thread's worker responsible for getting events from queue
+ * and applying them into handleEvent() to map specific actions.
+ */
 CommonRC DispatchEngine::eventReader() {
 	CommonRC ret = CMN_RC_SUCCESS;
 	do {
 		auto event = m_eventQueue.pop_back();
 		handleEvent(event.second);
 		LOGMSG_ARG(LOG_DEBUG,
-				"[PublishMsgCMD::execute()] Handled event type : %d", event.second->getEventType());
+				"[PublishMsgCMD::execute()] Handled event type : %d",
+				event.second->getEventType());
 	} while (!m_evReaderKill);
 
 	return ret;

@@ -75,6 +75,8 @@ CommunicationEngine::CommunicationEngine(string address, string client,
 			&CommunicationEngine::msgarrvdCallback,
 			&CommunicationEngine::deliveredCallback);
 
+	DispatchEngine::getInstance()->registerEvent(eventType::COMMUNICATION_EVENT);
+
 }
 
 /**
