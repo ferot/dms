@@ -41,12 +41,16 @@ private:
 	map<int,thread::id> m_mapIdtrckTothr;
 
 	cv::VideoCapture video;
+	double m_vidStrWid;
+	double m_vidStrHei;
 	Config* config;
 
 public:
-	VisionEngine(string streamSource = "");
+	VisionEngine(string streamSource = "", int w = 0, int h = 0);
 	~VisionEngine();
-	static VisionEngine* getInstance(string streamSource = "");
+	static VisionEngine* getInstance(string streamSource = "",
+			int w = 0,
+			int h = 0);
 
 	TrcEnRc addTracker(string trackerType, int id);
 	TrcEnRc startAllTrackers();

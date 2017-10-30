@@ -14,25 +14,49 @@ VisionEngine* VisionEngine::m_instance = nullptr;
  * In other case creates new one, with provided (or default) params.
  * This could be improve to get system's information about attached video source.
  */
-VisionEngine* VisionEngine::getInstance(string streamSource) {
+VisionEngine* VisionEngine::getInstance(string streamSource, int streamWidth,
+		int streamHeight) {
 	if (!m_instance) {
-		m_instance = new VisionEngine(streamSource);
+		m_instance = new VisionEngine(streamSource, streamWidth, streamHeight);
 	}
 	return m_instance;
 }
 
-/*
+/**
  * Constructor of Vision Engine.
  * Opens stream (by default - video dev with index 0 : /dev/video0).
+ * And sets resolution. If specified uses settings from user.
+ * If not fetches values from config file.
+ *
+ * @param streamSource
+ * @param streamWidth
+ * @param streamHeight
  */
-VisionEngine::VisionEngine(string streamSource) {
+VisionEngine::VisionEngine(string streamSource, int streamWidth, int streamHeight) {
 	if (streamSource.empty()) {
 		streamSource = "/dev/video0";
 	}
 	config = Config::getInstance();
-	if(!video.open(streamSource))
-	{
-		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Couldn't open video source %s", streamSource.c_str());
+
+	if (m_vidStrHei && m_vidStrWid) {
+		m_vidStrWid = streamWidth;
+		m_vidStrHei = streamHeight;
+	} else {
+		m_vidStrWid = stod(config->getValue("Video", "width"));
+		m_vidStrHei = stod(config->getValue("Video", "height"));
+	}
+
+	if (!video.open(streamSource)) {
+		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Couldn't open video source %s",
+				streamSource.c_str());
+	} else {
+		bool wflag, hflag;
+		wflag = video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
+		hflag = video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
+		if (wflag && hflag) {
+			LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
+					(to_string(m_vidStrWid) + "x" + to_string(m_vidStrHei)).c_str());
+		}
 	}
 }
 
@@ -129,6 +153,9 @@ TrcEnRc VisionEngine::stopAllTrackers() {
 TrcEnRc VisionEngine::displayDebugWindow() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 	LOGMSG(LOG4C_PRIORITY_CRIT, "Opening debug window...");
+
+	cv::namedWindow( "Tracking", cv::WINDOW_AUTOSIZE );// Create a window for display.
+
 	if (isVidOpened() == TRCK_ENG_SUCCESS) {
 		cv::VideoCapture video = getVidCapture();
 		cv::Mat frame;
