@@ -122,8 +122,9 @@ CommonRC DispatchEngine::registerEvent(eventType type) {
  */
 CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 	CommonRC ret = CMN_RC_SUCCESS;
+	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d", (int)event->getEventType());
+
 	m_eventQueue.push_back(move(event));
-	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d", event->getEventType());
 
 	return ret;
 }
