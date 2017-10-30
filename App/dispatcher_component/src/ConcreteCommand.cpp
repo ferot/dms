@@ -6,9 +6,11 @@
  */
 
 #include "ConcreteCommand.hpp"
-
+#include "CommunicationEngine.hpp"
 
 CommonRC PublishMsgCMD::execute(){
+	LOGMSG(LOG_DEBUG, "PublishMsgCMD::execute()");
+	CommunicationEngine::getInstance()->publish("EXECUTE CALLBACK", "hellotopic");
 	return CMN_RC_SUCCESS;
 }
 

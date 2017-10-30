@@ -10,6 +10,7 @@
 #include <string>
 #include <log4c.h>
 #include <queue>
+#include <thread>
 
 #include "logger.h"
 #include "Config.hpp"
@@ -36,9 +37,14 @@ private:
 	static DispatchEngine* m_instance;
 	Config* config;
 
-	map<t_eventPtr, t_commandPtr> m_registeredCommands;
+	map<eventType, t_commandPtr> m_registeredCommands;
 
-	MWSRQueue<std::queue<t_eventPtr>> m_eventQueue;
+	MWSRQueue<std::deque<t_eventPtr>> m_eventQueue;
+
+	bool m_evReaderKill;
+	std::thread m_th_readerThread;
+
+	CommonRC eventReader();
 
 	DispatchEngine();
 	~DispatchEngine();
@@ -49,9 +55,11 @@ public:
 	static DispatchEngine* getInstance();
 
 	t_eventPtr createEvent();
-	CommonRC registerEvent(t_eventPtr event);
+	CommonRC registerEvent(eventType type);
 	CommonRC enqueueEvent(t_eventPtr event);
 
+	CommonRC startEventReader();
+	CommonRC stopEventReader();
 };
 
 #endif /* DispatchEngine_HPP_ */

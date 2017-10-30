@@ -54,7 +54,7 @@ public:
 				return;
 			}
 //			std::assert(!isFull());
-			coll.push(std::move(it));
+			coll.push_back(std::move(it));
 			size_t sz = coll.size();
 			hwmsize = std::max(hwmsize, sz);
 		}      //unlocking mx
@@ -62,7 +62,7 @@ public:
 		waitrd.notify_one();
 	}
 
-	std::pair<bool, typename FSC::value_type> pop_front() {
+	std::pair<bool, typename FSC::value_type> pop_back() {
 		std::unique_lock<std::mutex> lock(mx);
 		while (coll.size() == 0 && !killflag) {
 			waitrd.wait(lock);
@@ -72,8 +72,8 @@ public:
 					typename FSC::value_type());
 
 		assert(coll.size() > 0);
-		typename FSC::value_type ret = std::move(coll.front());
-		coll.pop_front();
+		typename FSC::value_type ret = std::move(coll.back());
+		coll.pop_back();
 		lock.unlock();
 		waitwr.notify_one();
 

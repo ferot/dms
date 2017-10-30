@@ -35,7 +35,7 @@ DispatchEngine* DispatchEngine::getInstance() {
  * Params description as in getInstance
  */
 DispatchEngine::DispatchEngine() {
-
+	m_evReaderKill = true;
 	config = Config::getInstance();
 
 }
@@ -58,8 +58,8 @@ CommonRC DispatchEngine::handleEvent(t_eventPtr event) {
 	 */
 	CommonRC ret = CMN_RC_ERROR;
 	auto it = find_if(m_registeredCommands.begin(), m_registeredCommands.end(),
-			[event](std::pair<t_eventPtr, t_commandPtr> pair) {
-				if(pair.first->getEventType() == event->getEventType()) {
+			[event](std::pair<eventType, t_commandPtr> pair) {
+				if(pair.first == event->getEventType()) {
 					return true;
 				} else {
 					return false;
@@ -83,15 +83,13 @@ CommonRC DispatchEngine::handleEvent(t_eventPtr event) {
  * @param event
  * @return
  */
-CommonRC DispatchEngine::registerEvent(t_eventPtr event) {
+CommonRC DispatchEngine::registerEvent(eventType type) {
 	CommonRC ret = CMN_RC_SUCCESS;
 
 	t_commandPtr cmdPtr;
 
-	int eventType = event->getEventType();
-	LOGMSG_ARG(LOG_DEBUG, "[registerEvent] Attempt to create event %d",
-				(int)eventType);
-	switch (eventType) {
+	LOGMSG_ARG(LOG_DEBUG, "[registerEvent] Attempt to create event %d", type);
+	switch ((int)type) {
 	case COMMUNICATION_EVENT:
 		cmdPtr = std::make_shared<PublishMsgCMD>();
 		break;
@@ -100,13 +98,15 @@ CommonRC DispatchEngine::registerEvent(t_eventPtr event) {
 		break;
 	default:
 		LOGMSG_ARG(LOG_ERROR, "[registerEvent] Event type %d not registered!",
-				(int)eventType);
+				(int)type);
 		ret = CMN_RC_ERROR;
 	}
+
 	LOGMSG_ARG(LOG_DEBUG,
-			"[registerEvent] Registering command for event type %d", (int)eventType);
+			"[registerEvent] Registering command for event type %d", (int)type);
+
 	m_registeredCommands.insert(
-			std::pair<t_eventPtr, t_commandPtr>(event,
+			std::pair<eventType, t_commandPtr>(type,
 					cmdPtr));
 	return ret;
 }
@@ -114,6 +114,40 @@ CommonRC DispatchEngine::registerEvent(t_eventPtr event) {
 CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 	CommonRC ret = CMN_RC_SUCCESS;
 	m_eventQueue.push_back(move(event));
+
+	return ret;
+}
+
+CommonRC DispatchEngine::startEventReader() {
+	CommonRC ret = CMN_RC_SUCCESS;
+
+	LOGMSG(LOG_DEBUG, "[startEventReader] Starting event-reader thread...");
+
+	m_evReaderKill = false;
+	m_th_readerThread = std::thread(&DispatchEngine::eventReader, this);
+
+	return ret;
+}
+
+CommonRC DispatchEngine::stopEventReader(){
+	CommonRC ret = CMN_RC_SUCCESS;
+
+	m_evReaderKill = true;
+	m_th_readerThread.join();
+
+	LOGMSG(LOG_DEBUG, "[stopEventReader] Joined event-reader thread...");
+
+	return ret;
+}
+
+CommonRC DispatchEngine::eventReader() {
+	CommonRC ret = CMN_RC_SUCCESS;
+	do {
+		auto event = m_eventQueue.pop_back();
+		handleEvent(event.second);
+		LOGMSG_ARG(LOG_DEBUG,
+				"[PublishMsgCMD::execute()] Handled event type : %d", event.second->getEventType());
+	} while (!m_evReaderKill);
 
 	return ret;
 }
