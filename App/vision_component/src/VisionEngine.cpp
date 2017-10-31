@@ -53,10 +53,8 @@ VisionEngine::VisionEngine(string streamSource, int streamWidth, int streamHeigh
 		bool wflag, hflag;
 		wflag = video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
 		hflag = video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
-		if (wflag && hflag) {
-			LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
-					(to_string(m_vidStrWid) + "x" + to_string(m_vidStrHei)).c_str());
-		}
+		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
+				(to_string(m_vidStrWid) + "x" + to_string(m_vidStrHei)).c_str());
 	}
 }
 

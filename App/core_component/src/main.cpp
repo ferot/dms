@@ -53,13 +53,10 @@ int main() {
 		LOGMSG_ARG(LOG_DEBUG, "created %d event!", i);
 	}
 
-	de->registerEvent(eventType::COMMUNICATION_EVENT);
-	LOGMSG(LOG_DEBUG, "registered event!");
-
-	for (int i = 0; i < 10; i++) {
-		de->enqueueEvent(ev_vector.front());
-		LOGMSG_ARG(LOG_DEBUG, "enqueued %d event!", i);
-	}
+//	for (int i = 0; i < 10; i++) {
+//		de->enqueueEvent(ev_vector.front());
+//		LOGMSG_ARG(LOG_DEBUG, "enqueued %d event!", i);
+//	}
 
 	CommonRC ret = de->startEventReader();
 	if (ret == CMN_RC_SUCCESS) {
@@ -69,18 +66,19 @@ int main() {
 	////////////////////////DISPATCHER TESTS \\\\\\\\\\\\\\\\\\\\
 
 	int ch;
-	do {
-		ce->publish("WIADOMOSC", "hellotopic");
-		ch = getchar();
-	} while (ch != 'Q' && ch != 'q');
+//	do {
+//		ce->publish("WIADOMOSC", "hellotopic");
+//		ch = getchar();
+//	} while (ch != 'Q' && ch != 'q');
 
 	VisionEngine *ve = VisionEngine::getInstance();
 	ve->addTracker("KCF", 0);
-	ve->displayDebugWindow();
 	ve->startAllTrackers();
+
+//	ve->displayDebugWindow();
 
 	StorageEngine* se = StorageEngine::getInstance();
 	se->create_table();
-
+	ve->stopAllTrackers();
 	return 0;
 }

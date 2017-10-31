@@ -14,6 +14,8 @@ Tracker::Tracker(string trackerType, int id) {
 	this->id = id;
 	this->m_tracker = createTracker(trackerType);
 	m_trackingEnabled = false;
+
+	dispatchEngine = DispatchEngine::getInstance();
 }
 
 /*
@@ -94,8 +96,14 @@ TrcEnRc Tracker::startTracking() {
 	// Read first frame
 	cv::Mat frame;
 	cv::VideoCapture video = VisionEngine::getInstance()->getVidCapture();
+	LOGMSG(LOG_DEBUG, "after getvidcapture");
 
 	bool ok = video.read(frame);
+	if (!ok){
+		LOGMSG(LOG_DEBUG, "video not ok");
+
+	}
+	LOGMSG(LOG_DEBUG, "after read video frame");
 
 	// Define initial boundibg box
 	cv::Rect2d bbox(287, 23, 86, 320);
@@ -108,10 +116,12 @@ TrcEnRc Tracker::startTracking() {
 	imshow("Tracking", frame);
 
 	m_tracker->init(frame, bbox);
+	LOGMSG(LOG_DEBUG, "after tracker init");
 
 	while (video.read(frame) && m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
 		// Start timer
 		double timer = (double) cv::getTickCount();
+		LOGMSG(LOG_DEBUG, "in loop");
 
 		// Update the tracking result
 		bool ok = m_tracker->update(frame, bbox);
@@ -122,20 +132,33 @@ TrcEnRc Tracker::startTracking() {
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
+			t_eventPtr trackEvent;
+
+//			Json::Value eventParam;
+//			eventParam["width"] = to_string(bbox.width);
+//			eventParam["height"] = to_string(bbox.height);
+//			eventParam["x"] = to_string(bbox.x);
+//			eventParam["y"] = to_string(bbox.y);
+//			Json::FastWriter fastWriter;
+//			trackEvent->setParam(fastWriter.write(eventParam));
 			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 		} else {
 			// Tracking failure detected.
 			putText(frame, "Tracking failure detected", cv::Point(100, 80),
 					cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 0, 255), 2);
 		}
-
-		// Display tracker type on frame
-		putText(frame, m_trackerType + " Tracker", cv::Point(100, 20),
-				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
-
-		// Display FPS on frame
-		putText(frame, "FPS : " + SSTR(int(fps)), cv::Point(100, 50),
-				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
+		cv::imshow("Tracking", frame);
+		int k = cv::waitKey(1);
+		if (k == 27) {
+			break;
+		}
+//		// Display tracker type on frame
+//		putText(frame, m_trackerType + " Tracker", cv::Point(100, 20),
+//				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
+//
+//		// Display FPS on frame
+//		putText(frame, "FPS : " + SSTR(int(fps)), cv::Point(100, 50),
+//				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
 
 	}
 
