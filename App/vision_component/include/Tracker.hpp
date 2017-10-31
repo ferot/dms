@@ -13,6 +13,7 @@
 #include <opencv2/core/ocl.hpp>
 
 #include "VisionEngine.hpp"
+#include "DispatchEngine.hpp"
 
 using namespace std;
 
@@ -27,6 +28,8 @@ private:
 	string m_trackerType;
 	cv::Ptr<cv::Tracker> m_tracker;
 	bool m_trackingEnabled;
+
+	DispatchEngine* dispatchEngine;
 
 	cv::Ptr<cv::Tracker> createTracker(string trackerType);
 	TrcEnRc initTracker();
