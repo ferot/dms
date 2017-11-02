@@ -34,17 +34,20 @@ int main() {
 	} else {
 		printf("Logger init failed");
 	}
-
-	NodeEngine *ne = NodeEngine::getInstance();
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
+	StorageEngine* se = StorageEngine::getInstance();
 	CommunicationEngine *ce = CommunicationEngine::getInstance();
+	DispatchEngine *de = DispatchEngine::getInstance();
+	VisionEngine *ve = VisionEngine::getInstance();
+
+
+
 	ce->connect();
 	ce->subscribe("hellotopic");
 
 	///////////////////DISPATCHER TESTS\\\\\\\\\\\\\\\\\\\\\
 
-	DispatchEngine *de = DispatchEngine::getInstance();
 
 	vector<shared_ptr<Event>> ev_vector;
 	for (int i = 0; i < 10; i++) {
@@ -71,13 +74,11 @@ int main() {
 //		ch = getchar();
 //	} while (ch != 'Q' && ch != 'q');
 
-	VisionEngine *ve = VisionEngine::getInstance();
 	ve->addTracker("KCF", 0);
 	ve->startAllTrackers();
 
 //	ve->displayDebugWindow();
 
-	StorageEngine* se = StorageEngine::getInstance();
 	se->create_table();
 	ve->stopAllTrackers();
 	return 0;

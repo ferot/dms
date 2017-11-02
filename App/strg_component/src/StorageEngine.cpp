@@ -69,6 +69,7 @@ const char * generateDateTime() {
  */
 void StorageEngine::create_table() {
 	database db(m_db_filename);
+	LOGMSG_ARG(LOG_TRACE, "Creating table with filename : %s", m_db_filename.c_str());
 	try {
 		db << "create table if not exists events ("
 				"   _id integer primary key autoincrement not null,"
