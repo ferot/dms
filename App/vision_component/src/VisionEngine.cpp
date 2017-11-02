@@ -50,9 +50,8 @@ VisionEngine::VisionEngine(string streamSource, int streamWidth, int streamHeigh
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Couldn't open video source %s",
 				streamSource.c_str());
 	} else {
-		bool wflag, hflag;
-		wflag = video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
-		hflag = video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
+		video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
+		video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
 				(to_string(m_vidStrWid) + "x" + to_string(m_vidStrHei)).c_str());
 	}

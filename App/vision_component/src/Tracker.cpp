@@ -70,7 +70,7 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
  * Special care for synchronization should be taken here.
  */
 TrcEnRc Tracker::enqueueEvent() {
-
+return TRCK_ENG_SUCCESS;
 }
 
 // Convert to string
@@ -120,15 +120,15 @@ TrcEnRc Tracker::startTracking() {
 
 	while (video.read(frame) && m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
 		// Start timer
-		double timer = (double) cv::getTickCount();
+//		double timer = (double) cv::getTickCount();
 		LOGMSG(LOG_DEBUG, "in loop");
 
 		// Update the tracking result
 		bool ok = m_tracker->update(frame, bbox);
 
 		// Calculate Frames per second (FPS)
-		float fps = cv::getTickFrequency()
-				/ ((double) cv::getTickCount() - timer);
+//		float fps = cv::getTickFrequency()
+//				/ ((double) cv::getTickCount() - timer);
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
@@ -159,7 +159,6 @@ TrcEnRc Tracker::startTracking() {
 //		// Display FPS on frame
 //		putText(frame, "FPS : " + SSTR(int(fps)), cv::Point(100, 50),
 //				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
-
 	}
 
 	if (!m_trackingEnabled) {
@@ -168,6 +167,8 @@ TrcEnRc Tracker::startTracking() {
 		LOGMSG_ARG(LOG_ERROR,
 				"Stopping tracker with id : %d. (videoframe read error)", id);
 	}
+	return TRCK_ENG_SUCCESS;
+
 }
 
 /*

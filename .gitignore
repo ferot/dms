@@ -7,3 +7,8 @@ Make*
 build/
 /Debug
 *.jpg
+CMakeFiles*
+CMakeCache*
+cmake_*
+language.settings*
+bin

@@ -12,6 +12,7 @@
 #include <string>
 
 #include "Config.hpp"
+#include "Common.hpp"
 
 /*
  * Node Engine Return Code.

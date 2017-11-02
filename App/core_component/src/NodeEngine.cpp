@@ -33,13 +33,14 @@ NodeEngine::NodeEngine() {
  * in case of problems contacting with main node.
  */
 NodEnRc NodeEngine::getNodeList() {
+	return NODE_ENG_SUCCESS;
 }
 
 /*
  * Sets entry in node list
  */
 NodEnRc NodeEngine::setEntry(NodeEntry) {
-
+	return NODE_ENG_SUCCESS;
 }
 
 /*
@@ -47,5 +48,6 @@ NodEnRc NodeEngine::setEntry(NodeEntry) {
  * in case of problems contacting with main node.
  */
 NodEnRc NodeEngine::refreshNodeList() {
+	return NODE_ENG_SUCCESS;
 
 }

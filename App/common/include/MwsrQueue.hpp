@@ -28,7 +28,7 @@ private:
 	std::condition_variable waitwr;
 	FSC coll;
 	bool killflag = false;
-	int m_maxsize;
+	unsigned int m_maxsize;
 
 	//stats:
 	int nfulls = 0;

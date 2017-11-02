@@ -46,7 +46,7 @@ int main() {
 	ce->connect();
 	ce->subscribe("hellotopic");
 
-	///////////////////DISPATCHER TESTS\\\\\\\\\\\\\\\\\\\\\
+	//DISPATCHER TESTS
 
 
 	vector<shared_ptr<Event>> ev_vector;
@@ -66,10 +66,10 @@ int main() {
 		LOGMSG(LOG_DEBUG, "started reader thread");
 	}
 
-	////////////////////////DISPATCHER TESTS \\\\\\\\\\\\\\\\\\\\
+	//DISPATCHER TESTS
 
-	int ch;
 //	do {
+//	int ch;
 //		ce->publish("WIADOMOSC", "hellotopic");
 //		ch = getchar();
 //	} while (ch != 'Q' && ch != 'q');

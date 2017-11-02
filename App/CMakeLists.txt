@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (core_app)
 
-add_definitions(-std=c++14 -Werror)
+add_definitions(-std=c++14 -Werror -Wall -Wpedantic)
 set(CMAKE_BUILD_TYPE Debug)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

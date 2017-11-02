@@ -51,9 +51,9 @@ CommunicationEngine::CommunicationEngine(string address, string client,
 		int port, int timeout, int qos) :
 		m_address(address),
 		m_clientId(client),
-		m_port(port),
+		m_qos(qos),
 		m_timeout(timeout),
-		m_qos(qos)
+		m_port(port)
 {
 	mergeAddrPort(m_port);
 	LOGMSG_ARG(LOG_TRACE, "MQTT full client's address %s", m_address.c_str());

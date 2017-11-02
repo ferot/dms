@@ -27,7 +27,7 @@ static inline std::string numToString(T num){
 /*
  * Initializes logger instance
  */
-static int initLogger() {
+inline int initLogger() {
 	return mylog_init();
 }
 
