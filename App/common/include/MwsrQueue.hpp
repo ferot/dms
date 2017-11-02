@@ -53,7 +53,7 @@ public:
 			if (killflag) {
 				return;
 			}
-//			std::assert(!isFull());
+			assert(!isFull());
 			coll.push_back(std::move(it));
 			size_t sz = coll.size();
 			hwmsize = std::max(hwmsize, sz);
