@@ -9,3 +9,5 @@ target_link_libraries( ${PROJECT_NAME} LINK_PUBLIC comm_engine storage_engine vi
 #copy log4crc setting file to newly created dir
 exec_program("mkdir -p bin")
 exec_program("cp ../utils/log4crc bin")
+exec_program("cp ../utils/config.ini bin")
+
