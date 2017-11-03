@@ -75,9 +75,9 @@ int main() {
 //	} while (ch != 'Q' && ch != 'q');
 
 	ve->addTracker("KCF", 0);
-	ve->startAllTrackers();
+//	ve->startAllTrackers();
 
-//	ve->displayDebugWindow();
+	ve->displayDebugWindow();
 
 	se->create_table();
 	ve->stopAllTrackers();

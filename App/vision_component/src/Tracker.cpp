@@ -121,7 +121,6 @@ TrcEnRc Tracker::startTracking() {
 	while (video.read(frame) && m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
 		// Start timer
 //		double timer = (double) cv::getTickCount();
-		LOGMSG(LOG_DEBUG, "in loop");
 
 		// Update the tracking result
 		bool ok = m_tracker->update(frame, bbox);
@@ -134,13 +133,13 @@ TrcEnRc Tracker::startTracking() {
 			// Tracking success : Draw the tracked object
 			t_eventPtr trackEvent;
 
-//			Json::Value eventParam;
-//			eventParam["width"] = to_string(bbox.width);
-//			eventParam["height"] = to_string(bbox.height);
-//			eventParam["x"] = to_string(bbox.x);
-//			eventParam["y"] = to_string(bbox.y);
-//			Json::FastWriter fastWriter;
-//			trackEvent->setParam(fastWriter.write(eventParam));
+			Json::Value eventParam;
+			eventParam["width"] = to_string(bbox.width);
+			eventParam["height"] = to_string(bbox.height);
+			eventParam["x"] = to_string(bbox.x);
+			eventParam["y"] = to_string(bbox.y);
+			Json::FastWriter fastWriter;
+			trackEvent->setParam(fastWriter.write(eventParam));
 			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 		} else {
 			// Tracking failure detected.
