@@ -16,7 +16,7 @@
 class Command
 {
 public:
-	virtual CommonRC execute(/*TODO:params (json?)*/) = 0;
+	virtual CommonRC execute(std::string params) = 0;
 	virtual ~Command(){};
 };
 

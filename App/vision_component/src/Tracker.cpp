@@ -131,15 +131,18 @@ TrcEnRc Tracker::startTracking() {
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
-			t_eventPtr trackEvent;
-
+			t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
 			Json::Value eventParam;
+			Json::FastWriter fastWriter;
+
 			eventParam["width"] = to_string(bbox.width);
 			eventParam["height"] = to_string(bbox.height);
 			eventParam["x"] = to_string(bbox.x);
 			eventParam["y"] = to_string(bbox.y);
-			Json::FastWriter fastWriter;
+
 			trackEvent->setParam(fastWriter.write(eventParam));
+			DispatchEngine::getInstance()->enqueueEvent(trackEvent);
+
 			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 		} else {
 			// Tracking failure detected.

@@ -69,7 +69,7 @@ CommonRC DispatchEngine::handleEvent(t_eventPtr event) {
 	if (it != m_registeredCommands.end()) {
 		t_commandPtr cmdPtr = it->second;
 		if (cmdPtr) {
-			ret = cmdPtr->execute();
+			ret = cmdPtr->execute(event->getEventString());
 		} else {
 			LOGMSG(LOG_ERROR, "[handleEvent] Command is invalid!!");
 		}

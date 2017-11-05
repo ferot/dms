@@ -8,7 +8,6 @@
 #ifndef EVENT_HPP_
 #define EVENT_HPP_
 #include "Common.hpp"
-
 using std::string;
 
 enum eventType {
@@ -35,11 +34,12 @@ public:
 	Event(eventType type);
 
 	eventType getEventType() const;
+	std::string getParams() const;
 	std::string getEventId() const;
 	std::string getEventString() const;
 
 	void setType(eventType type);
-	void setParam(string param);
+	void setParam(std::string param);
 	bool operator <(const Event& src) const;
 };
 

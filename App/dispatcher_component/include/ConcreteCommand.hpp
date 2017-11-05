@@ -17,7 +17,7 @@
  */
 class PublishMsgCMD: public Command {
 public:
-	CommonRC execute(/*TODO:params (json?)*/);
+	CommonRC execute(std::string params);
 	~PublishMsgCMD(){};
 };
 
@@ -27,7 +27,7 @@ public:
  */
 class ObjectTrackLossCMD: public Command {
 public:
-	CommonRC execute(/*TODO:params (json?)*/);
+	CommonRC execute(std::string params);
 	~ObjectTrackLossCMD(){};
 };
 
@@ -37,7 +37,7 @@ public:
  */
 class ObjectTrackMoveCMD: public Command {
 public:
-	CommonRC execute(/*TODO:params (json?)*/);
+	CommonRC execute(std::string params);
 	~ObjectTrackMoveCMD(){};
 };
 

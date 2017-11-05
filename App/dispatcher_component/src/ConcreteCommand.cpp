@@ -8,16 +8,16 @@
 #include "ConcreteCommand.hpp"
 #include "CommunicationEngine.hpp"
 
-CommonRC PublishMsgCMD::execute(){
+CommonRC PublishMsgCMD::execute(string params){
 	LOGMSG(LOG_DEBUG, "PublishMsgCMD::execute()");
-	CommunicationEngine::getInstance()->publish("EXECUTE CALLBACK", "hellotopic");
+	CommunicationEngine::getInstance()->publish(params.c_str(), "hellotopic");
 	return CMN_RC_SUCCESS;
 }
 
-CommonRC ObjectTrackMoveCMD::execute(){
+CommonRC ObjectTrackMoveCMD::execute(string params){
 	return CMN_RC_SUCCESS;
 }
 
-CommonRC ObjectTrackLossCMD::execute(){
+CommonRC ObjectTrackLossCMD::execute(string params){
 	return CMN_RC_SUCCESS;
 }

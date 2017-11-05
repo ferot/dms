@@ -33,8 +33,8 @@ void Event::setType(eventType type) {
 	m_type = type;
 }
 
-void Event::setParam(string param) {
-	m_params = param;
+void Event::setParam(std::string param) {
+	m_params["payload"] = param;
 }
 
 bool Event::operator <(const Event& src) const {
