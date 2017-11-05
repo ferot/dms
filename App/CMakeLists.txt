@@ -13,7 +13,6 @@ add_subdirectory(core_component)
 add_subdirectory(vision_component)
 add_subdirectory(dispatcher_component)
 add_subdirectory(strg_component)
-add_subdirectory(test_tools)
 add_subdirectory(common)
 
 install (DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
