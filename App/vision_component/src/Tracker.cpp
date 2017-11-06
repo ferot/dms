@@ -67,13 +67,15 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
 
 /*
  * Method responsible for putting generated event on tracking manager event's queue.
- * Special care for synchronization should be taken here.
+ * To avoid blocking tracker worker enqeuing is being made with detached thread.
  */
 TrcEnRc Tracker::enqueueEvent(t_eventPtr trackEvent) {
-std::thread t([trackEvent](){DispatchEngine::getInstance()->enqueueEvent(trackEvent);});
-t.detach();
+	std::thread t([trackEvent]() {
+		DispatchEngine::getInstance()->enqueueEvent(trackEvent);
+	});
+	t.detach();
 
-return TRCK_ENG_SUCCESS;
+	return TRCK_ENG_SUCCESS;
 }
 
 // Convert to string
@@ -134,7 +136,7 @@ TrcEnRc Tracker::startTracking() {
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
-			
+
 			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 
 			if ((interval % 5) == 0) {
