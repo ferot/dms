@@ -114,7 +114,7 @@ TrcEnRc Tracker::startTracking() {
 	// Display bounding box.
 	cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 	imshow("Tracking", frame);
-
+	cv::destroyAllWindows();
 	m_tracker->init(frame, bbox);
 	LOGMSG(LOG_DEBUG, "after tracker init");
 
@@ -143,13 +143,13 @@ TrcEnRc Tracker::startTracking() {
 			trackEvent->setParam(fastWriter.write(eventParam));
 			DispatchEngine::getInstance()->enqueueEvent(trackEvent);
 
-			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
+//			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 		} else {
 			// Tracking failure detected.
 			putText(frame, "Tracking failure detected", cv::Point(100, 80),
 					cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 0, 255), 2);
 		}
-		cv::imshow("Tracking", frame);
+//		cv::imshow("Tracking", frame);
 		int k = cv::waitKey(1);
 		if (k == 27) {
 			break;
