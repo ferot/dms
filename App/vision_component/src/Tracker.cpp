@@ -136,9 +136,9 @@ TrcEnRc Tracker::startTracking() {
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
-
 			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 
+			// Prepare event with fixed interval and enqueue it
 			if ((interval % 5) == 0) {
 				t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
 				Json::Value eventParam;
