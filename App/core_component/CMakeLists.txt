@@ -10,6 +10,9 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt5Widgets)
 
 add_executable( ${PROJECT_NAME} ${core_comp_srcs} )
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+
 target_link_libraries( ${PROJECT_NAME} LINK_PUBLIC 
 comm_engine 
 storage_engine 
