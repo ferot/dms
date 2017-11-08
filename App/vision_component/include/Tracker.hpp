@@ -34,7 +34,7 @@ private:
 	cv::Ptr<cv::Tracker> createTracker(string trackerType);
 	TrcEnRc initTracker();
 
-	TrcEnRc enqueueEvent();
+	TrcEnRc enqueueEvent(t_eventPtr trackEvent);
 
 public:
 	Tracker(string trackerType, int id = 0);

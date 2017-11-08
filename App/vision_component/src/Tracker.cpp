@@ -69,7 +69,10 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
  * Method responsible for putting generated event on tracking manager event's queue.
  * Special care for synchronization should be taken here.
  */
-TrcEnRc Tracker::enqueueEvent() {
+TrcEnRc Tracker::enqueueEvent(t_eventPtr trackEvent) {
+std::thread t([trackEvent](){DispatchEngine::getInstance()->enqueueEvent(trackEvent);});
+t.detach();
+
 return TRCK_ENG_SUCCESS;
 }
 
@@ -82,7 +85,7 @@ return TRCK_ENG_SUCCESS;
  * Assures that video stream is avaialable.
  */
 TrcEnRc Tracker::startTracking() {
-
+	unsigned long interval = 0;
 	TrcEnRc vidOpened = VisionEngine::getInstance()->isVidOpened();
 
 	if (vidOpened == TRCK_ENG_SUCCESS) {
@@ -121,7 +124,7 @@ TrcEnRc Tracker::startTracking() {
 	while (video.read(frame) && m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
 		// Start timer
 //		double timer = (double) cv::getTickCount();
-
+		interval++;
 		// Update the tracking result
 		bool ok = m_tracker->update(frame, bbox);
 
@@ -131,19 +134,23 @@ TrcEnRc Tracker::startTracking() {
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
-			t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
-			Json::Value eventParam;
-			Json::FastWriter fastWriter;
+			
+			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 
-			eventParam["width"] = to_string(bbox.width);
-			eventParam["height"] = to_string(bbox.height);
-			eventParam["x"] = to_string(bbox.x);
-			eventParam["y"] = to_string(bbox.y);
+			if ((interval % 5) == 0) {
+				t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
+				Json::Value eventParam;
+				Json::FastWriter fastWriter;
 
-			trackEvent->setParam(fastWriter.write(eventParam));
-			DispatchEngine::getInstance()->enqueueEvent(trackEvent);
+				eventParam["width"] = to_string(bbox.width);
+				eventParam["height"] = to_string(bbox.height);
+				eventParam["x"] = to_string(bbox.x);
+				eventParam["y"] = to_string(bbox.y);
 
-//			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
+				trackEvent->setParam(fastWriter.write(eventParam));
+				enqueueEvent(trackEvent);
+			}
+
 		} else {
 			// Tracking failure detected.
 			putText(frame, "Tracking failure detected", cv::Point(100, 80),
