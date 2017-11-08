@@ -4,6 +4,7 @@
  *  Created on: Jul 9, 2017
  *      Author: tf
  */
+#include "window.h"
 
 #include <iostream>
 
@@ -22,12 +23,15 @@
 
 #include <iostream>
 #include <thread>
-
+#include <QApplication>
+#include <QPushButton>
+#include <QObject>
+#include "window.h"
 #include "Event.hpp"
 
 using namespace std;
 
-int main() {
+int main(int argc, char **argv) {
 
 	if (!initLogger()) {
 		LOGMSG(LOG_DEBUG, "Logger initialized!");
@@ -36,18 +40,15 @@ int main() {
 	}
 	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
-	StorageEngine* se = StorageEngine::getInstance();
+//	StorageEngine* se = StorageEngine::getInstance();
 	CommunicationEngine *ce = CommunicationEngine::getInstance();
 	DispatchEngine *de = DispatchEngine::getInstance();
 	VisionEngine *ve = VisionEngine::getInstance();
-
-
 
 	ce->connect();
 	ce->subscribe("hellotopic");
 
 	//DISPATCHER TESTS
-
 
 	vector<shared_ptr<Event>> ev_vector;
 	for (int i = 0; i < 10; i++) {
@@ -74,12 +75,24 @@ int main() {
 //		ch = getchar();
 //	} while (ch != 'Q' && ch != 'q');
 
+	QApplication app(argc, argv);
+
+	Window window;
+	window.show();
+	LOGMSG(LOG_DEBUG, "QT - Window show");
+
+    app.exec();
+//    app.quit();
 	ve->addTracker("KCF", 0);
 	ve->startAllTrackers();
 
 //	ve->displayDebugWindow();
 
-	se->create_table();
+//	se->create_table();
 	ve->stopAllTrackers();
-	return 0;
+
+	int retr = 0;
+
+	return retr;
 }
+
