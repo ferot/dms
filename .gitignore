@@ -12,3 +12,11 @@ CMakeCache*
 cmake_*
 language.settings*
 bin
+
+#qt-related ignores
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
+*.pro
