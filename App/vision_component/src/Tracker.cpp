@@ -72,6 +72,7 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
  * To avoid blocking tracker worker enqeuing is being made with detached thread.
  */
 TrcEnRc Tracker::enqueueEvent(t_eventPtr trackEvent) {
+
 	std::thread t([trackEvent]() {
 		DispatchEngine::getInstance()->enqueueEvent(trackEvent);
 	});
@@ -90,47 +91,22 @@ TrcEnRc Tracker::enqueueEvent(t_eventPtr trackEvent) {
  */
 TrcEnRc Tracker::startTracking() {
 
-	unsigned long interval = 0;
-	TrcEnRc vidOpened = VisionEngine::getInstance()->isVidOpened();
-
-//	if (vidOpened == TRCK_ENG_SUCCESS) {
-//		m_trackingEnabled = true;
-//	} else {
-//		return TRCK_ENG_VIDDEV_ERROR;
-//	}
 
 	LOGMSG_ARG(LOG_DEBUG, "Starting tracker with id : %d", id);
 
-	// Read first frame
-	cv::Mat frame;
-//	cv::VideoCapture video = VisionEngine::getInstance()->getVidCapture();
-	LOGMSG(LOG_DEBUG, "after getvidcapture");
-
-//	bool ok = video.read(frame);
-//	if (!ok){
-//		LOGMSG(LOG_DEBUG, "video not ok");
-
-//	}
-	LOGMSG(LOG_DEBUG, "after read video frame");
-
+	int interval = 0;
     // Define initial boundibg box
     cv::Rect2d bbox(287, 23, 86, 320);
+    cv::Mat frame;
 
-    // Uncomment the line below to select a different bounding box
-    bbox = selectROI(frame, false);
-
-    // Display bounding box.
-    cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
-    cv::imshow("Tracking", frame);
-    cv::destroyAllWindows();
     m_tracker->init(frame, bbox);
 	LOGMSG(LOG_DEBUG, "after tracker init");
 
     while (/*video.read(frame) &&*/ m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
 		// Start timer
 //		double timer = (double) cv::getTickCount();
-		interval++;
-		// Update the tracking result
+
+    	interval++;
 		bool ok = m_tracker->update(frame, bbox);
 
 		// Calculate Frames per second (FPS)
@@ -139,9 +115,9 @@ TrcEnRc Tracker::startTracking() {
 
 		if (ok) {
 			// Tracking success : Draw the tracked object
+			
 			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
 
-			// Prepare event with fixed interval and enqueue it
 			if ((interval % 5) == 0) {
 				t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
 				Json::Value eventParam;
