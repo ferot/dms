@@ -25,6 +25,7 @@ using namespace std;
 
 typedef shared_ptr<Event> t_eventPtr;
 typedef shared_ptr<Command> t_commandPtr;
+typedef MWSRQueue<std::deque<t_eventPtr>> t_eventDeque;
 
 /**
  * Class responsible for mapping events
@@ -39,7 +40,7 @@ private:
 
 	map<eventType, t_commandPtr> m_registeredCommands;
 
-	MWSRQueue<std::deque<t_eventPtr>> m_eventQueue;
+	shared_ptr<t_eventDeque> m_eventQueue;
 
 	bool m_evReaderKill;
 	std::thread m_th_readerThread;

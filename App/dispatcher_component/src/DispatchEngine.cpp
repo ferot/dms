@@ -16,6 +16,11 @@
 
 DispatchEngine* DispatchEngine::m_instance = nullptr;
 
+/** Arbitrary number of events stored for processing.
+ * May have strong impact on performance.
+ * Set only when config value not present in config.ini.
+ */
+const int fixedQueueSize = 20;
 /**
  * Returns instance of engine if it already exists.
  * In other case creates new one, with provided (or default) params.
@@ -38,6 +43,12 @@ DispatchEngine::DispatchEngine() {
 	m_evReaderKill = true;
 	config = Config::getInstance();
 
+	int queueSize = stoi(config->getValue("Other", "queue_size"), nullptr, 10);
+	queueSize = (queueSize != 0) ? queueSize : fixedQueueSize;
+
+	LOGMSG_ARG(LOG_DEBUG, "[DispatchEngine] setting queueSize : %d", queueSize);
+
+	m_eventQueue = make_shared<t_eventDeque>(queueSize);
 }
 
 /**
@@ -124,7 +135,7 @@ CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 	CommonRC ret = CMN_RC_SUCCESS;
 	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d", (int)event->getEventType());
 
-	m_eventQueue.push_back(move(event));
+	m_eventQueue->push_back(move(event));
 
 	return ret;
 }
@@ -165,7 +176,7 @@ CommonRC DispatchEngine::stopEventReader(){
 CommonRC DispatchEngine::eventReader() {
 	CommonRC ret = CMN_RC_SUCCESS;
 	do {
-		auto event = m_eventQueue.pop_back();
+		auto event = m_eventQueue->pop_back();
 		handleEvent(event.second);
 		LOGMSG_ARG(LOG_DEBUG,
 				"[PublishMsgCMD::execute()] Handled event type : %d",
