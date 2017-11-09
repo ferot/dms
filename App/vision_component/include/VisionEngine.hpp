@@ -55,6 +55,7 @@ public:
 	TrcEnRc addTracker(string trackerType, int id);
 	TrcEnRc startAllTrackers();
 	TrcEnRc stopAllTrackers();
+	shared_ptr<Tracker> getTracker(int id);
 
 	inline cv::VideoCapture getVidCapture() {
 		return this->video;

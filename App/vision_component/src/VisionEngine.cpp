@@ -171,3 +171,18 @@ TrcEnRc VisionEngine::displayDebugWindow() {
 	}
 	return ret;
 }
+
+shared_ptr<Tracker> VisionEngine::getTracker(int id) {
+	auto iter = find_if(m_trackers.begin(), m_trackers.end(),
+			[id](std::pair<int, shared_ptr<Tracker>> pair) {
+				if(pair.first == id) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+	if (iter != m_trackers.end()) {
+		return iter->second;
+	}
+    return nullptr;
+}

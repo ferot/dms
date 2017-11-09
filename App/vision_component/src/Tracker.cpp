@@ -118,9 +118,9 @@ TrcEnRc Tracker::startTracking() {
 
 	// Display bounding box.
 	cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
-	imshow("Tracking", frame);
-	cv::destroyAllWindows();
-	m_tracker->init(frame, bbox);
+    cv::imshow("Tracking", frame);
+    cv::destroyAllWindows();
+    m_tracker->init(frame, bbox);
 	LOGMSG(LOG_DEBUG, "after tracker init");
 
 	while (video.read(frame) && m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
@@ -158,11 +158,12 @@ TrcEnRc Tracker::startTracking() {
 			putText(frame, "Tracking failure detected", cv::Point(100, 80),
 					cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 0, 255), 2);
 		}
-//		cv::imshow("Tracking", frame);
-		int k = cv::waitKey(1);
-		if (k == 27) {
-			break;
-		}
+        if(m_debugWindowEnabled){
+            cv::imshow("Tracking", frame);
+        } else {
+            cv::destroyAllWindows();
+        }
+
 //		// Display tracker type on frame
 //		putText(frame, m_trackerType + " Tracker", cv::Point(100, 20),
 //				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
@@ -188,4 +189,8 @@ TrcEnRc Tracker::startTracking() {
 TrcEnRc Tracker::stopTracking() {
 	m_trackingEnabled = false;
 	return TRCK_ENG_SUCCESS;
+}
+
+void Tracker::switchDebugWindow(bool switched) {
+    m_debugWindowEnabled = switched;
 }

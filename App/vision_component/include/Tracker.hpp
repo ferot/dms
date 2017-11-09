@@ -28,6 +28,7 @@ private:
 	string m_trackerType;
 	cv::Ptr<cv::Tracker> m_tracker;
 	bool m_trackingEnabled;
+	bool m_debugWindowEnabled;
 
 	DispatchEngine* dispatchEngine;
 
@@ -40,6 +41,8 @@ public:
 	Tracker(string trackerType, int id = 0);
 	TrcEnRc startTracking();
 	TrcEnRc stopTracking();
+
+	void switchDebugWindow(bool switched);
 };
 
 #endif /* TRACKER_HPP_ */
