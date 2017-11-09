@@ -6,19 +6,7 @@
 #include <QApplication>
 #include <QMainWindow>
 
-//class testcl : public QObject {
-//    Q_OBJECT
-//public:
-//    static testcl* m_instance;
-//public:
-//    testcl();
-//    static testcl* getInstance();
-//  public slots:
-//    void slotfunc();
-//
-//};
-
-class Window : public QWidget
+class Window : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -27,10 +15,16 @@ public:
     ~Window(){};
 private:
     QPushButton * m_button;
+    QPushButton * m_buttonStartTrack;
 
 signals:
-
+    void notifyAppQuit();
+    void notifyDebugWindow(bool check);
+    void notifyStartTracking(bool check);
 public slots:
+    void slotDebugWindowClicked(bool checked);
+    void slotStartTracking(bool checked);
+//    void updateTrackCoords(); //args to be sent ?
 };
 
 #endif // WINDOW_H
