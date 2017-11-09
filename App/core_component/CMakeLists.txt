@@ -11,6 +11,11 @@ set (GUI_SRC
     src/window.cpp
     src/window.h
 )
+
+set (VISION_SRC 
+	src/visionEngineWrapper.h
+	src/visionEngineWrapper.cpp
+	)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 
