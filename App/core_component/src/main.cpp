@@ -28,71 +28,49 @@
 #include <QObject>
 #include "window.h"
 #include "Event.hpp"
+#include "threader.h"
+
+#include "visionEngineWrapper.h"
 
 using namespace std;
 
 int main(int argc, char **argv) {
 
-	if (!initLogger()) {
-		LOGMSG(LOG_DEBUG, "Logger initialized!");
-	} else {
-		printf("Logger init failed");
-	}
-	LOGMSG(LOG_DEBUG, "Starting core_app main!");
+    if (!initLogger()) {
+        LOGMSG(LOG_DEBUG, "Logger initialized!");
+    } else {
+        printf("Logger init failed");
+    }
+    LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
-//	StorageEngine* se = StorageEngine::getInstance();
-	CommunicationEngine *ce = CommunicationEngine::getInstance();
-	DispatchEngine *de = DispatchEngine::getInstance();
-	VisionEngine *ve = VisionEngine::getInstance();
+    CommunicationEngine *ce = CommunicationEngine::getInstance();(void)ce;
+    DispatchEngine *de = DispatchEngine::getInstance();
 
-	ce->connect();
-	ce->subscribe("hellotopic");
+    ce->connect();
+    ce->subscribe("hellotopic");
 
-	//DISPATCHER TESTS
+    QApplication app(argc, argv);
+    Threader threader;
+    Window mainWindow;
+    VisionEngineWrapper visionEngine;
+    threader.runInThread(&visionEngine);
 
-	vector<shared_ptr<Event>> ev_vector;
-	for (int i = 0; i < 10; i++) {
-		ev_vector.push_back(
-				(make_shared<CommEvent>(eventType::COMMUNICATION_EVENT)));
-		LOGMSG_ARG(LOG_DEBUG, "created %d event!", i);
-	}
+    QObject::connect(&mainWindow, &Window::notifyDebugWindow,
+                     &visionEngine, &VisionEngineWrapper::debugWindowClicked);
+    QObject::connect(&mainWindow, &Window::notifyStartTracking,
+                     &visionEngine, &VisionEngineWrapper::startTracker);
 
-//	for (int i = 0; i < 10; i++) {
-//		de->enqueueEvent(ev_vector.front());
-//		LOGMSG_ARG(LOG_DEBUG, "enqueued %d event!", i);
-//	}
 
-	CommonRC ret = de->startEventReader();
-	if (ret == CMN_RC_SUCCESS) {
-		LOGMSG(LOG_DEBUG, "started reader thread");
-	}
+    CommonRC ret = de->startEventReader();
+    if (ret == CMN_RC_SUCCESS) {
+        LOGMSG(LOG_DEBUG, "started reader thread");
+    }
 
-	//DISPATCHER TESTS
+    LOGMSG(LOG_DEBUG, "QT - Window show");
 
-//	do {
-//	int ch;
-//		ce->publish("WIADOMOSC", "hellotopic");
-//		ch = getchar();
-//	} while (ch != 'Q' && ch != 'q');
+    threader.start();
+    mainWindow.show();
 
-	QApplication app(argc, argv);
-
-	Window window;
-	window.show();
-	LOGMSG(LOG_DEBUG, "QT - Window show");
-
-    app.exec();
-//    app.quit();
-	ve->addTracker("KCF", 0);
-	ve->startAllTrackers();
-
-//	ve->displayDebugWindow();
-
-//	se->create_table();
-	ve->stopAllTrackers();
-
-	int retr = 0;
-
-	return retr;
+    return app.exec();;
 }
 
