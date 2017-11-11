@@ -15,7 +15,6 @@
 #include "CommunicationEngine.hpp"
 #include "CommEvent.hpp"
 #include "StorageEngine.hpp"
-#include "VisionEngine.hpp"
 #include "Config.hpp"
 #include "NodeEngine.hpp"
 
@@ -36,41 +35,47 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    if (!initLogger()) {
-        LOGMSG(LOG_DEBUG, "Logger initialized!");
-    } else {
-        printf("Logger init failed");
-    }
-    LOGMSG(LOG_DEBUG, "Starting core_app main!");
+	if (!initLogger()) {
+		LOGMSG(LOG_DEBUG, "Logger initialized!");
+	} else {
+		printf("Logger init failed");
+	}
 
-    CommunicationEngine *ce = CommunicationEngine::getInstance();(void)ce;
-    DispatchEngine *de = DispatchEngine::getInstance();
+	LOGMSG(LOG_DEBUG, "Starting core_app main!");
 
-    ce->connect();
-    ce->subscribe("hellotopic");
+	CommunicationEngine *ce = CommunicationEngine::getInstance();
+	DispatchEngine *de = DispatchEngine::getInstance();
 
-    QApplication app(argc, argv);
-    Threader threader;
-    Window mainWindow;
-    VisionEngineWrapper visionEngine;
-    threader.runInThread(&visionEngine);
+	ce->connect();
+	ce->subscribe("hellotopic");
 
-    QObject::connect(&mainWindow, &Window::notifyDebugWindow,
-                     &visionEngine, &VisionEngineWrapper::debugWindowClicked);
-    QObject::connect(&mainWindow, &Window::notifyStartTracking,
-                     &visionEngine, &VisionEngineWrapper::startTracker);
+	QApplication app(argc, argv);
+	Threader threader;
+	Window mainWindow;
+	VisionEngineWrapper visionEngine;
 
+	threader.runInThread(&visionEngine);
 
-    CommonRC ret = de->startEventReader();
-    if (ret == CMN_RC_SUCCESS) {
-        LOGMSG(LOG_DEBUG, "started reader thread");
-    }
+	qRegisterMetaType<cv::Mat>("cv::Mat");
+	QObject::connect(&visionEngine, &VisionEngineWrapper::sig_notifyDebugWindow,
+			&mainWindow, &Window::slot_updateDebugWindow);
 
-    LOGMSG(LOG_DEBUG, "QT - Window show");
+	QObject::connect(&mainWindow, &Window::sig_notifyDebugWindow, &visionEngine,
+			&VisionEngineWrapper::slot_debugWindowClicked);
 
-    threader.start();
-    mainWindow.show();
+	QObject::connect(&mainWindow, &Window::sig_notifyKeyPressed, &visionEngine,
+			&VisionEngineWrapper::slot_keyHandler);
 
-    return app.exec();;
+	CommonRC ret = de->startEventReader();
+	if (ret == CMN_RC_SUCCESS) {
+		LOGMSG(LOG_DEBUG, "started reader thread");
+	}
+
+	threader.start();
+
+	LOGMSG(LOG_DEBUG, "QT - Window show");
+	mainWindow.show();
+
+	return app.exec();;
 }
 

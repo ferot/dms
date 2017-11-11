@@ -43,7 +43,6 @@ void Threader::start()
 {
     for (QThread* thread : threads){
         thread->start();
-        thread->setPriority(QThread::HighestPriority);
     }
 }
 
