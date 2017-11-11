@@ -21,6 +21,8 @@
 #include "Common.hpp"
 #include "Tracker.hpp"
 
+typedef std::pair<int, int> t_imgResPair;
+
 /*
  * Class responsible for Vision operations.
  * Handles video sources and tracking workers management.
@@ -47,6 +49,7 @@ public:
 	static VisionEngine* getInstance(string streamSource = "", int w = 0,
 			int h = 0);
 	bool getVidOpened();
+	t_imgResPair getActualImgRes();
 
 	TrcEnRc addTracker(std::string trackerType, int id);
 	TrcEnRc startAllTrackers();

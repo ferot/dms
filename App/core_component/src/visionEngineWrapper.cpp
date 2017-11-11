@@ -22,7 +22,8 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	QObject::connect(&rythm, &QTimer::timeout, this,
 			&VisionEngineWrapper::worker);
 
-	bbox = new cv::Rect2d(80, 23, 80, 150);
+	t_imgResPair resolution = m_visionEngine->getActualImgRes();
+	bbox = new cv::Rect2d(resolution.first/2, resolution.second/2, 80, 150);
 
 	rythm.start(0);
 }
@@ -52,14 +53,6 @@ void VisionEngineWrapper::worker() {
 		emit sig_notifyDebugWindow(g_frame);
 	}
 
-}
-
-
-void VisionEngineWrapper::calibrateROI(){
-	 QFuture<void> future = QtConcurrent::run(getROI);
-	    qDebug() << "hello from visionEngWraper thread " << QThread::currentThread();
-	    future.waitForFinished();
-//	getROI(g_frame);
 }
 
 /**

@@ -29,7 +29,6 @@ signals:
 public slots:
 	void slot_keyHandler(int);
     void slot_debugWindowClicked(bool);
-    void calibrateROI();
     void stopTracker();
 };
 

@@ -74,6 +74,17 @@ TrcEnRc VisionEngine::isVidOpened() {
 	}
 }
 
+/**
+ * Method returning pair of actual set video stream properties.
+ * @return integer pair with corresponding first:width, second:height
+ */
+t_imgResPair VisionEngine::getActualImgRes(){
+	t_imgResPair pair;
+	pair.first = video.get(CV_CAP_PROP_FRAME_WIDTH);
+	pair.second = video.get(CV_CAP_PROP_FRAME_HEIGHT);
+
+	return pair;
+}
 /*
  * Add tracker.
  * Inserts entry to trackers map.
