@@ -16,15 +16,10 @@
 
 #include <thread>
 
-
-//#include "Tracker.hpp"
 #include "logger.h"
 #include "Config.hpp"
 #include "Common.hpp"
 #include "Tracker.hpp"
-
-using namespace std;
-class Tracker;
 
 /*
  * Class responsible for Vision operations.
@@ -33,12 +28,13 @@ class Tracker;
 class VisionEngine {
 private:
 	static VisionEngine* m_instance;
-	map<int, shared_ptr<Tracker>> m_trackers;
+	std::map<int, std::shared_ptr<Track::Tracker>> m_trackers;
 	std::vector<std::thread> m_th_trackers;
+	bool m_vidOpened;
 
 	/*mapping of tracker id into thread id
-	essential to manage properly both objects*/
-	map<int,thread::id> m_mapIdtrckTothr;
+	 essential to manage properly both objects*/
+	std::map<int, std::thread::id> m_mapIdtrckTothr;
 
 	cv::VideoCapture video;
 	double m_vidStrWid;
@@ -48,14 +44,14 @@ private:
 public:
 	VisionEngine(string streamSource = "", int w = 0, int h = 0);
 	~VisionEngine();
-	static VisionEngine* getInstance(string streamSource = "",
-			int w = 0,
+	static VisionEngine* getInstance(string streamSource = "", int w = 0,
 			int h = 0);
+	bool getVidOpened();
 
-	TrcEnRc addTracker(string trackerType, int id);
+	TrcEnRc addTracker(std::string trackerType, int id);
 	TrcEnRc startAllTrackers();
 	TrcEnRc stopAllTrackers();
-	shared_ptr<Tracker> getTracker(int id);
+	std::shared_ptr<Track::Tracker> getTracker(int id);
 
 	inline cv::VideoCapture getVidCapture() {
 		return this->video;
@@ -63,7 +59,7 @@ public:
 	TrcEnRc isVidOpened();
 	TrcEnRc displayDebugWindow();
 	//SEND METHODS
-	string send(string);
+	std::string send(std::string);
 };
 
 #endif /* VisionENGINE_HPP_ */

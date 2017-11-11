@@ -12,10 +12,9 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/core/ocl.hpp>
 
-#include "VisionEngine.hpp"
 #include "DispatchEngine.hpp"
 
-using namespace std;
+namespace Track {
 
 /*
  * Class representing single tracker module.
@@ -25,24 +24,24 @@ class Tracker {
 
 private:
 	int id;
-	string m_trackerType;
+	std::string m_trackerType;
 	cv::Ptr<cv::Tracker> m_tracker;
 	bool m_trackingEnabled;
 	bool m_debugWindowEnabled;
 
 	DispatchEngine* dispatchEngine;
 
-	cv::Ptr<cv::Tracker> createTracker(string trackerType);
+	cv::Ptr<cv::Tracker> createTracker(std::string trackerType);
 	TrcEnRc initTracker();
 
 	TrcEnRc enqueueEvent(t_eventPtr trackEvent);
 
 public:
-	Tracker(string trackerType, int id = 0);
+	Tracker(std::string trackerType, int id = 0);
 	TrcEnRc startTracking();
 	TrcEnRc stopTracking();
 
 	void switchDebugWindow(bool switched);
 };
-
+}
 #endif /* TRACKER_HPP_ */

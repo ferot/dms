@@ -3,7 +3,9 @@
 #include <opencv2/core/ocl.hpp>
 
 #include "Tracker.hpp"
+#include "logger.h"
 
+using namespace Track;
 /*
  * Tracker constructor.
  * @param trackerType -type of tracking method we want to use.
@@ -87,43 +89,44 @@ TrcEnRc Tracker::enqueueEvent(t_eventPtr trackEvent) {
  * Assures that video stream is avaialable.
  */
 TrcEnRc Tracker::startTracking() {
+
 	unsigned long interval = 0;
 	TrcEnRc vidOpened = VisionEngine::getInstance()->isVidOpened();
 
-	if (vidOpened == TRCK_ENG_SUCCESS) {
-		m_trackingEnabled = true;
-	} else {
-		return TRCK_ENG_VIDDEV_ERROR;
-	}
+//	if (vidOpened == TRCK_ENG_SUCCESS) {
+//		m_trackingEnabled = true;
+//	} else {
+//		return TRCK_ENG_VIDDEV_ERROR;
+//	}
 
 	LOGMSG_ARG(LOG_DEBUG, "Starting tracker with id : %d", id);
 
 	// Read first frame
 	cv::Mat frame;
-	cv::VideoCapture video = VisionEngine::getInstance()->getVidCapture();
+//	cv::VideoCapture video = VisionEngine::getInstance()->getVidCapture();
 	LOGMSG(LOG_DEBUG, "after getvidcapture");
 
-	bool ok = video.read(frame);
-	if (!ok){
-		LOGMSG(LOG_DEBUG, "video not ok");
+//	bool ok = video.read(frame);
+//	if (!ok){
+//		LOGMSG(LOG_DEBUG, "video not ok");
 
-	}
+//	}
 	LOGMSG(LOG_DEBUG, "after read video frame");
 
-	// Define initial boundibg box
-	cv::Rect2d bbox(287, 23, 86, 320);
+    // Define initial boundibg box
+    cv::Rect2d bbox(287, 23, 86, 320);
 
-	// Uncomment the line below to select a different bounding box
-	bbox = selectROI(frame, false);
+    // Uncomment the line below to select a different bounding box
+    bbox = selectROI(frame, false);
 
-	// Display bounding box.
-	cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
+    // Display bounding box.
+    cv::rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
     cv::imshow("Tracking", frame);
     cv::destroyAllWindows();
     m_tracker->init(frame, bbox);
 	LOGMSG(LOG_DEBUG, "after tracker init");
 
-	while (video.read(frame) && m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
+    while (/*video.read(frame) &&*/ m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
 		// Start timer
 //		double timer = (double) cv::getTickCount();
 		interval++;

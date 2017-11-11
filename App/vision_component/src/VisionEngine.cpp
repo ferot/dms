@@ -6,6 +6,7 @@
  */
 
 #include "VisionEngine.hpp"
+#include "Tracker.hpp"
 
 VisionEngine* VisionEngine::m_instance = nullptr;
 
@@ -32,7 +33,9 @@ VisionEngine* VisionEngine::getInstance(string streamSource, int streamWidth,
  * @param streamWidth
  * @param streamHeight
  */
-VisionEngine::VisionEngine(string streamSource, int streamWidth, int streamHeight) {
+VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int streamHeight) {
+    m_vidOpened = false;
+
 	if (streamSource.empty()) {
 		streamSource = "/dev/video0";
 	}
@@ -54,6 +57,7 @@ VisionEngine::VisionEngine(string streamSource, int streamWidth, int streamHeigh
 		video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
 				(to_string(m_vidStrWid) + "x" + to_string(m_vidStrHei)).c_str());
+        m_vidOpened = true;
 	}
 }
 
@@ -83,7 +87,7 @@ TrcEnRc VisionEngine::addTracker(string trackerType, int id) {
 		id = trackerCount++;
 	}
 
-	m_trackers.insert(make_pair(id, new Tracker(trackerType, id)));
+	m_trackers.insert(std::make_pair(id, new Track::Tracker(trackerType, id)));
 //	config->setValue("nodes", "client-" + id, ip + ":" + numToString(port));
 	LOGMSG_ARG(LOG_DEBUG, "Added tracker with id : %d", id);
 
@@ -99,7 +103,7 @@ TrcEnRc VisionEngine::startAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 
 	for (auto it : m_trackers) {
-		m_th_trackers.push_back(std::thread(&Tracker::startTracking, it.second));
+		m_th_trackers.push_back(std::thread(&Track::Tracker::startTracking, it.second));
 
 		auto id = m_th_trackers.back().get_id();
 		m_mapIdtrckTothr.insert(make_pair(it.first, id));
@@ -172,9 +176,9 @@ TrcEnRc VisionEngine::displayDebugWindow() {
 	return ret;
 }
 
-shared_ptr<Tracker> VisionEngine::getTracker(int id) {
+shared_ptr<Track::Tracker> VisionEngine::getTracker(int id) {
 	auto iter = find_if(m_trackers.begin(), m_trackers.end(),
-			[id](std::pair<int, shared_ptr<Tracker>> pair) {
+			[id](std::pair<int, shared_ptr<Track::Tracker>> pair) {
 				if(pair.first == id) {
 					return true;
 				} else {
@@ -185,4 +189,8 @@ shared_ptr<Tracker> VisionEngine::getTracker(int id) {
 		return iter->second;
 	}
     return nullptr;
+}
+
+bool VisionEngine::getVidOpened(){
+    return m_vidOpened;
 }
