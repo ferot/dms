@@ -6,7 +6,7 @@
  */
 Window::Window(QWidget *parent) :
 		QMainWindow(parent) {
-	setFixedSize(640, 480);
+	setFixedSize(320, 320);
 
 	m_keyFilter = new keyReceiver();
 	this->installEventFilter(m_keyFilter);
@@ -53,7 +53,7 @@ void Window::slot_startTracking(bool checked) {
 void Window::slot_updateDebugWindow(cv::Mat frame) {
 	if (m_debWinEnabled) {
 		cv::imshow("DEBUG", frame);
-		cv::moveWindow("DEBUG", 1300, 20);
+		cv::moveWindow("DEBUG", 600, 20);
 
 	} else {
 		cv::destroyWindow("DEBUG");
