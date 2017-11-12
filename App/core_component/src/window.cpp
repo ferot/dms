@@ -53,7 +53,7 @@ void Window::slot_startTracking(bool checked) {
 void Window::slot_updateDebugWindow(cv::Mat frame) {
 	if (m_debWinEnabled) {
 		cv::imshow("DEBUG", frame);
-		cv::moveWindow("DEBUG", 2700, 20);
+		cv::moveWindow("DEBUG", 1300, 20);
 
 	} else {
 		cv::destroyWindow("DEBUG");
