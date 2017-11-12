@@ -114,7 +114,7 @@ TrcEnRc VisionEngine::startAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 
 	for (auto it : m_trackers) {
-		m_th_trackers.push_back(std::thread(&Track::Tracker::startTracking, it.second));
+		m_th_trackers.push_back(std::thread(&Track::Tracker::enableTracking, it.second));
 
 		auto id = m_th_trackers.back().get_id();
 		m_mapIdtrckTothr.insert(make_pair(it.first, id));

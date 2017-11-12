@@ -67,6 +67,22 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
 	return tracker;
 }
 
+t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
+
+	t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
+	Json::Value eventParam;
+	Json::FastWriter fastWriter;
+
+	eventParam["width"] = to_string(bbox.width);
+	eventParam["height"] = to_string(bbox.height);
+	eventParam["x"] = to_string(bbox.x);
+	eventParam["y"] = to_string(bbox.y);
+
+	trackEvent->setParam(fastWriter.write(eventParam));
+
+	return trackEvent;
+}
+
 /*
  * Method responsible for putting generated event on tracking manager event's queue.
  * To avoid blocking tracker worker enqeuing is being made with detached thread.
@@ -89,87 +105,34 @@ TrcEnRc Tracker::enqueueEvent(t_eventPtr trackEvent) {
  * Method responsible for spawning thread with tracking worker.
  * Assures that video stream is avaialable.
  */
-TrcEnRc Tracker::startTracking() {
-
-
-	LOGMSG_ARG(LOG_DEBUG, "Starting tracker with id : %d", id);
-
-	int interval = 0;
-    // Define initial boundibg box
-    cv::Rect2d bbox(287, 23, 86, 320);
-    cv::Mat frame;
-
-    m_tracker->init(frame, bbox);
-	LOGMSG(LOG_DEBUG, "after tracker init");
-
-    while (/*video.read(frame) &&*/ m_trackingEnabled) { //need to add some kind of flag to additionaly control loop
-		// Start timer
-//		double timer = (double) cv::getTickCount();
-
-    	interval++;
-		bool ok = m_tracker->update(frame, bbox);
-
-		// Calculate Frames per second (FPS)
-//		float fps = cv::getTickFrequency()
-//				/ ((double) cv::getTickCount() - timer);
-
-		if (ok) {
-			// Tracking success : Draw the tracked object
-			
-			rectangle(frame, bbox, cv::Scalar(255, 0, 0), 2, 1);
-
-			if ((interval % 5) == 0) {
-				t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
-				Json::Value eventParam;
-				Json::FastWriter fastWriter;
-
-				eventParam["width"] = to_string(bbox.width);
-				eventParam["height"] = to_string(bbox.height);
-				eventParam["x"] = to_string(bbox.x);
-				eventParam["y"] = to_string(bbox.y);
-
-				trackEvent->setParam(fastWriter.write(eventParam));
-				enqueueEvent(trackEvent);
-			}
-
-		} else {
-			// Tracking failure detected.
-			putText(frame, "Tracking failure detected", cv::Point(100, 80),
-					cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0, 0, 255), 2);
-		}
-        if(m_debugWindowEnabled){
-            cv::imshow("Tracking", frame);
-        } else {
-            cv::destroyAllWindows();
-        }
-
-//		// Display tracker type on frame
-//		putText(frame, m_trackerType + " Tracker", cv::Point(100, 20),
-//				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
-//
-//		// Display FPS on frame
-//		putText(frame, "FPS : " + SSTR(int(fps)), cv::Point(100, 50),
-//				cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(50, 170, 50), 2);
-	}
-
-	if (!m_trackingEnabled) {
-		LOGMSG_ARG(LOG_DEBUG, "Stopping tracker with id : %d. (sent signal)", id);
-	} else {
-		LOGMSG_ARG(LOG_ERROR,
-				"Stopping tracker with id : %d. (videoframe read error)", id);
-	}
-	return TRCK_ENG_SUCCESS;
-
+void Tracker::enableTracking(){
+	m_trackingEnabled = true;
 }
 
 /*
  * Method responsible for signalling thread to stop tracking.
  */
-TrcEnRc Tracker::stopTracking() {
+void Tracker::disableTracking() {
 	m_trackingEnabled = false;
-	return TRCK_ENG_SUCCESS;
 }
 
-void Tracker::switchDebugWindow(bool switched) {
-    m_debugWindowEnabled = switched;
+bool Tracker::processFrame(cv::Mat frame, t_bBox & bbox) {
+	bool ok = false;
+	if (m_trackingEnabled) {
+		ok = m_tracker->update(frame, bbox);
+	}
+	return ok;
 }
+
+TrcEnRc Tracker::initializeTracker(cv::Mat frame, t_bBox box) {
+	TrcEnRc ret = TRCK_ENG_ERROR;
+	bool inited = m_tracker->init(frame, box);
+
+	if (inited == true) {
+		enableTracking();
+		ret = TRCK_ENG_SUCCESS;
+	}
+
+	return ret;
+}
+

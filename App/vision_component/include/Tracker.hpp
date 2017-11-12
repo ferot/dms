@@ -16,6 +16,8 @@
 
 namespace Track {
 
+typedef cv::Rect2d t_bBox;
+
 /*
  * Class representing single tracker module.
  * It's responsible is to detect object class and return it's coords.
@@ -34,14 +36,18 @@ private:
 	cv::Ptr<cv::Tracker> createTracker(std::string trackerType);
 	TrcEnRc initTracker();
 
+public:
+
+	Tracker(std::string trackerType, int id = 0);
+
+	bool processFrame(cv::Mat frame, t_bBox&);
+	TrcEnRc initializeTracker(cv::Mat, t_bBox);
+	void enableTracking();
+	void disableTracking();
+
+	t_eventPtr prepareEvent(t_bBox bbox);
 	TrcEnRc enqueueEvent(t_eventPtr trackEvent);
 
-public:
-	Tracker(std::string trackerType, int id = 0);
-	TrcEnRc startTracking();
-	TrcEnRc stopTracking();
-
-	void switchDebugWindow(bool switched);
 };
 }
 #endif /* TRACKER_HPP_ */
