@@ -3,6 +3,7 @@
 #include <opencv2/core/ocl.hpp>
 
 #include "Tracker.hpp"
+#include "CommunicationEngine.hpp"
 #include "logger.h"
 
 using namespace Track;
@@ -77,6 +78,7 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 	eventParam["height"] = to_string(bbox.height);
 	eventParam["x"] = to_string(bbox.x);
 	eventParam["y"] = to_string(bbox.y);
+	eventParam["mqtt_topic"] = CommunicationEngine::getInstance()->getTopic();
 
 	trackEvent->setParam(fastWriter.write(eventParam));
 

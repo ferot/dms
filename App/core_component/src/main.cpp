@@ -47,7 +47,8 @@ int main(int argc, char **argv) {
 	DispatchEngine *de = DispatchEngine::getInstance();
 
 	ce->connect();
-	ce->subscribe("hellotopic");
+	std::string topicName = Config::getInstance()->getValue("MQTT", "topic_name");
+	ce->subscribe(topicName);
 
 	QApplication app(argc, argv);
 	Threader threader;

@@ -76,6 +76,7 @@ public:
 
 	string getBrokerAddr();
 	int getPort();
+	std::string getTopic();
 
 	inline void setTopic(std::string topic) {
 		m_topic = topic;

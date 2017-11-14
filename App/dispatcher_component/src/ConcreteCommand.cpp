@@ -10,7 +10,7 @@
 
 CommonRC PublishMsgCMD::execute(string params){
 	LOGMSG(LOG_DEBUG, "PublishMsgCMD::execute()");
-	CommunicationEngine::getInstance()->publish(params.c_str(), "hellotopic");
+	CommunicationEngine::getInstance()->publish(params.c_str());
 	return CMN_RC_SUCCESS;
 }
 

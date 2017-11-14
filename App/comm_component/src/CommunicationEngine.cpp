@@ -181,7 +181,8 @@ int CommunicationEngine::getPort() {
  */
 ComEnRc CommunicationEngine::subscribe(string topic) {
 	ComEnRc ret = COMM_ENG_SUCCESS;
-	if (MQTTClient_subscribe(m_client, topic.c_str(), m_qos) != MQTTCLIENT_SUCCESS) {
+	m_topic = topic;
+	if (MQTTClient_subscribe(m_client, m_topic.c_str(), m_qos) != MQTTCLIENT_SUCCESS) {
 		LOGMSG_ARG(LOG_ERROR, "Couldn't subscribe to topic %s !", topic.c_str());
 		ret = COMM_ENG_ERROR;
 	} else {
@@ -278,3 +279,7 @@ void CommunicationEngine::mergeAddrPort(int port){
 	m_address+=(":" + to_string(port));
 }
 
+
+std::string CommunicationEngine::getTopic(){
+	return m_topic;
+}
