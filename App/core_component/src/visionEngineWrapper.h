@@ -14,6 +14,8 @@ class VisionEngineWrapper : public QObject
 private:
     bool m_trackerInited;
     bool m_trackingEnabled;
+    bool m_modelDebugWinEnabled;
+
     void worker();
     VisionEngine * m_visionEngine;
     std::shared_ptr<Track::Tracker> m_tracker;
@@ -30,11 +32,13 @@ public:
     ~VisionEngineWrapper();
 signals:
     void sig_notifyDebugWindow(cv::Mat);
+    void sig_notifyModelDebugWindow(cv::Point);
+
     void sig_selectedROI(cv::Mat);
 public slots:
 	void slot_keyHandler(int);
     void slot_debugWindowClicked(bool);
-    void slot_trackWindowClicked(bool);
+    void slot_modelDebugWindowClicked(bool);
 
     void stopTracker();
 };

@@ -26,6 +26,7 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	m_video = m_visionEngine->getVidCapture();
 
 	m_debugWinEnabled = false;
+	m_modelDebugWinEnabled = false;
 	m_trackingEnabled = false;
 	m_trackerInited = false;
 
@@ -46,8 +47,8 @@ void VisionEngineWrapper::slot_debugWindowClicked(bool switched) {
 	m_debugWinEnabled = (m_debugWinEnabled == false) ? true : false;
 }
 
-void VisionEngineWrapper::slot_trackWindowClicked(bool){
-	m_trackingEnabled = (m_trackingEnabled == false) ? true : false;
+void VisionEngineWrapper::slot_modelDebugWindowClicked(bool){
+	m_modelDebugWinEnabled = (m_modelDebugWinEnabled == false) ? true : false;
 }
 
 
@@ -57,7 +58,6 @@ t_bBox VisionEngineWrapper::track() {
 
 		std::packaged_task<bool()> trackTask(
 				[&]() {
-			LOGMSG(LOG_DEBUG, "in labmda");
 					bool ret = this->m_visionEngine->getTracker(0)->processFrame(g_frame, bounding);
 					return ret;
 				});
@@ -82,8 +82,6 @@ void VisionEngineWrapper::worker() {
 	}
 
 	if (m_trackingEnabled) {
-		LOGMSG(LOG_DEBUG, "trackingenabled");
-
 		trackResult = track();
 		if (interval % 5 == 0) {
 			t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
@@ -106,6 +104,12 @@ void VisionEngineWrapper::worker() {
 				cv::Point(100, 50), cv::FONT_HERSHEY_SIMPLEX, 0.75,
 				cv::Scalar(50, 170, 50), 2);
 		emit sig_notifyDebugWindow(g_frame);
+	}
+
+	if (m_modelDebugWinEnabled) {
+		emit sig_notifyModelDebugWindow(
+				cv::Point(trackResult.x - 50, trackResult.y - 50));
+
 	}
 }
 

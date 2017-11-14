@@ -58,14 +58,19 @@ int main(int argc, char **argv) {
 	threader.runInThread(&visionEngine);
 
 	qRegisterMetaType<cv::Mat>("cv::Mat");
+	qRegisterMetaType<cv::Point>("cv::Point");
+
 	QObject::connect(&visionEngine, &VisionEngineWrapper::sig_notifyDebugWindow,
 			&mainWindow, &Window::slot_updateDebugWindow);
 
 	QObject::connect(&mainWindow, &Window::sig_notifyDebugWindow, &visionEngine,
 			&VisionEngineWrapper::slot_debugWindowClicked);
 
-	QObject::connect(&mainWindow, &Window::sig_notifyStartTracking, &visionEngine,
-			&VisionEngineWrapper::slot_debugWindowClicked);
+	QObject::connect(&visionEngine, &VisionEngineWrapper::sig_notifyModelDebugWindow,
+			&mainWindow, &Window::slot_updateModelDebugWindow);
+
+	QObject::connect(&mainWindow, &Window::sig_notifyModelDebugWindow, &visionEngine,
+			&VisionEngineWrapper::slot_modelDebugWindowClicked);
 
 	QObject::connect(&mainWindow, &Window::sig_notifyKeyPressed, &visionEngine,
 			&VisionEngineWrapper::slot_keyHandler);
