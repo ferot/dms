@@ -38,4 +38,5 @@ pthread)
 exec_program("mkdir -p bin")
 exec_program("cp ../utils/log4crc bin")
 exec_program("cp ../utils/config.ini bin")
+exec_program("cp ../utils/haar*.xml bin")
 
