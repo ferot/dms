@@ -6,7 +6,7 @@
 
 #include "VisionEngine.hpp"
 #include "Tracker.hpp"
-
+#include "HaarTracker.hpp"
 
 class VisionEngineWrapper : public QObject
 {
