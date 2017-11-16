@@ -23,12 +23,16 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	m_visionEngine->addTracker("KCF", 0);
 	m_tracker = m_visionEngine->getTracker(0);
 
+	m_htracker = HaarTracker::createTracker();
+
 	m_video = m_visionEngine->getVidCapture();
 
 	m_debugWinEnabled = false;
 	m_modelDebugWinEnabled = false;
 	m_trackingEnabled = false;
 	m_trackerInited = false;
+	m_switchTracker = false;
+
 
 	QObject::connect(&rythm, &QTimer::timeout, this,
 			&VisionEngineWrapper::worker);
@@ -51,22 +55,31 @@ void VisionEngineWrapper::slot_modelDebugWindowClicked(bool){
 	m_modelDebugWinEnabled = (m_modelDebugWinEnabled == false) ? true : false;
 }
 
+void VisionEngineWrapper::slot_switchTrackerClicked(bool)
+{
+	m_switchTracker = (m_switchTracker == false) ? true : false;
+}
 
 t_bBox VisionEngineWrapper::track() {
 	t_bBox bounding;
+
 	LOGMSG(LOG_DEBUG, "in track");
+	bool ret = false;
+	std::packaged_task<bool()> trackTask(
+			[&]() {
+				if(m_switchTracker == false) {
+					ret = this->m_visionEngine->getTracker(0)->processFrame(g_frame, bounding);
+				} else {
+					ret = this->m_htracker->update(g_frame, bounding);
+				}
+				return ret;
+			});
 
-		std::packaged_task<bool()> trackTask(
-				[&]() {
-					bool ret = this->m_visionEngine->getTracker(0)->processFrame(g_frame, bounding);
-					return ret;
-				});
+	std::future<bool> futureBoundings = trackTask.get_future();
 
-		std::future<bool> futureBoundings = trackTask.get_future();
+	std::thread th(std::move(trackTask));
 
-		std::thread th(std::move(trackTask));
-
-		th.join();
+	th.join();
 
 	return bounding;
 }

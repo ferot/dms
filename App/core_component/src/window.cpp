@@ -25,11 +25,20 @@ Window::Window(QWidget *parent) :
 	m_buttonStartTrack->setToolTip("Starts tracking");
 	m_buttonStartTrack->setCheckable(true);
 
+	m_buttonSwitchTrack = new QPushButton("switch_tracker", this);
+	m_buttonSwitchTrack->setGeometry(10, 90, 150, 30);
+	m_buttonSwitchTrack->setToolTip("Switches trackers");
+	m_buttonSwitchTrack->setCheckable(true);
+
 	connect(m_button, SIGNAL(clicked(bool)), this,
 			SLOT(slot_debugWindowClicked(bool)));
 
 	connect(m_buttonStartTrack, SIGNAL(clicked(bool)), this,
 			SLOT(slot_modelDebugWindowClicked(bool)));
+
+	connect(m_buttonSwitchTrack, SIGNAL(clicked(bool)), this,
+			SLOT(slot_switchTrackerClicked(bool)));
+
 
 }
 
@@ -53,6 +62,15 @@ void Window::slot_modelDebugWindowClicked(bool checked) {
 	emit sig_notifyModelDebugWindow(checked);
 }
 
+/**
+ * Slot emitting signal to switch tracking procedure.
+ * @param checked
+ */
+void Window::slot_switchTrackerClicked(bool checked) {
+	m_modelDebWinEnabled = (checked == true) ? true : false;
+	emit sig_notifySwitchTrackers(checked);
+}
+
 void Window::slot_updateDebugWindow(cv::Mat frame) {
 	if (m_debWinEnabled) {
 		cv::imshow("DEBUG_WINDOW", frame);
@@ -73,10 +91,10 @@ void Window::slot_updateModelDebugWindow(cv::Point2d point) {
 	int thickness = 2;
 	int lineType = cv::LINE_8;
 
-	cv::putText(image, "Z", cv::Point(15, 20), cv::FONT_HERSHEY_SIMPLEX, 0.75,
+	cv::putText(image, "Y", cv::Point(15, 20), cv::FONT_HERSHEY_SIMPLEX, 0.75,
 			cv::Scalar(50, 170, 50), 2);
-	cv::putText(image, "Y", cv::Point(w - 150, 60), cv::FONT_HERSHEY_SIMPLEX,
-			0.75, cv::Scalar(50, 170, 50), 2);
+//	cv::putText(image, "Y", cv::Point(w - 150, 60), cv::FONT_HERSHEY_SIMPLEX,
+//			0.75, cv::Scalar(50, 170, 50), 2);
 	cv::putText(image, "X", cv::Point(w - 30, h - 60), cv::FONT_HERSHEY_SIMPLEX,
 			0.75, cv::Scalar(50, 170, 50), 2);
 
@@ -84,8 +102,8 @@ void Window::slot_updateModelDebugWindow(cv::Point2d point) {
 			cv::Scalar(0, 0, 0), thickness, lineType);
 	cv::line(image, cv::Point(10, h - 50), cv::Point(w - 50, h - 50),
 			cv::Scalar(0, 0, 0), thickness, lineType);
-	cv::line(image, cv::Point(10, h - 50), cv::Point(w - 150, 60),
-			cv::Scalar(0, 0, 0), thickness, lineType);
+//	cv::line(image, cv::Point(10, h - 50), cv::Point(w - 150, 60),
+//			cv::Scalar(0, 0, 0), thickness, lineType);
 
 	if (m_modelDebWinEnabled) {
 		cv::imshow("MODEL_DEBUG", image);

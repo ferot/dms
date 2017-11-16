@@ -15,10 +15,14 @@ private:
     bool m_trackerInited;
     bool m_trackingEnabled;
     bool m_modelDebugWinEnabled;
+	bool m_switchTracker;
+
 
     void worker();
     VisionEngine * m_visionEngine;
     std::shared_ptr<Track::Tracker> m_tracker;
+    cv::Ptr<HaarTracker> m_htracker;
+
     cv::VideoCapture m_video;
     QTimer rythm;
 
@@ -39,6 +43,8 @@ public slots:
 	void slot_keyHandler(int);
     void slot_debugWindowClicked(bool);
     void slot_modelDebugWindowClicked(bool);
+    void slot_switchTrackerClicked(bool);
+
 
     void stopTracker();
 };

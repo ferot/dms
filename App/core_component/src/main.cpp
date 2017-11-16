@@ -75,6 +75,9 @@ int main(int argc, char **argv) {
 	QObject::connect(&mainWindow, &Window::sig_notifyKeyPressed, &visionEngine,
 			&VisionEngineWrapper::slot_keyHandler);
 
+	QObject::connect(&mainWindow, &Window::sig_notifySwitchTrackers, &visionEngine,
+			&VisionEngineWrapper::slot_switchTrackerClicked);
+
 	CommonRC ret = de->startEventReader();
 	if (ret == CMN_RC_SUCCESS) {
 		LOGMSG(LOG_DEBUG, "started reader thread");
