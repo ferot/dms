@@ -19,4 +19,5 @@ bin
 *.creator.user
 *.files
 *.includes
-*.pro
+*.pro*
+*Debug*
