@@ -74,10 +74,10 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 	Json::Value eventParam;
 	Json::FastWriter fastWriter;
 
-	eventParam["width"] = to_string(bbox.width);
-	eventParam["height"] = to_string(bbox.height);
-	eventParam["x"] = to_string(bbox.x);
-	eventParam["y"] = to_string(bbox.y);
+	eventParam["width"] = std::to_string(bbox.width);
+	eventParam["height"] = std::to_string(bbox.height);
+	eventParam["x"] = std::to_string(bbox.x);
+	eventParam["y"] = std::to_string(bbox.y);
 	eventParam["mqtt_topic"] = CommunicationEngine::getInstance()->getTopic();
 
 	trackEvent->setParam(fastWriter.write(eventParam));

@@ -276,7 +276,7 @@ ComEnRc CommunicationEngine::publish(string message, string topic) {
  * @param port
  */
 void CommunicationEngine::mergeAddrPort(int port){
-	m_address+=(":" + to_string(port));
+	m_address+=(":" + std::to_string(port));
 }
 
 

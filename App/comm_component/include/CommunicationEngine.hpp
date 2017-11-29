@@ -17,10 +17,11 @@ extern "C" {
 #include "MQTTAsync.h"
 }
 
+#include "DispatchEngine.hpp"
+#include "Event.hpp"
 #include "logger.h"
 #include "Config.hpp"
 
-using namespace std;
 
 /**
  * Node Engine Return Code.
@@ -42,18 +43,22 @@ private:
 	MQTTClient m_client;
 	MQTTClient_connectOptions m_conn_opts;
 
-	string m_address;
-	string m_clientId;
-	string m_topic;
+	std::string m_address;
+	std::string m_clientId;
+	std::string m_topic;
 	short int m_qos;
 	int m_timeout;
 	int m_port;
+
+	std::map<std::string, eventType> m_mapEvent;
 
 	CommunicationEngine(string, string, int, int, int);
 	~CommunicationEngine();
 
 	ComEnRc obtainBrokerAddr();
 	void mergeAddrPort(int port);
+
+	t_eventPtr prepareEvent(t_eventPtr msgRcvdEvent);
 
 	/*
 	 * MQTT callbacks for Async communication.
@@ -68,13 +73,13 @@ private:
 public:
 
 	static CommunicationEngine* getInstance(
-			string address = "tcp://localhost",
-			string client = "examplecl",
+			std::string address = "tcp://localhost",
+			std::string client = "examplecl",
 			int port = 1883,
 			int timeout = 10000L,
 			int qos = 1);
 
-	string getBrokerAddr();
+	std::string getBrokerAddr();
 	int getPort();
 	std::string getTopic();
 
@@ -84,9 +89,9 @@ public:
 
 	ComEnRc connect();
 	ComEnRc disconnect();
-	ComEnRc subscribe(string);
-	ComEnRc unsubscribe(string);
-	ComEnRc publish(string msg, string topic = "");
+	ComEnRc subscribe(std::string, t_eventPtr = nullptr);
+	ComEnRc unsubscribe(std::string);
+	ComEnRc publish(std::string msg, std::string topic = "");
 };
 
 #endif /* COMMUNICATIONENGINE_HPP_ */
