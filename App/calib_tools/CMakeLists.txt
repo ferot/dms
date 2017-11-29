@@ -29,6 +29,9 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
 
 target_link_libraries( ${CALIB_APP} LINK_PUBLIC 
+common
+comm_engine
+dispatch_engine 
 Qt5::Widgets
 log4c)
 
