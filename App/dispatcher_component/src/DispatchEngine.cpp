@@ -48,7 +48,7 @@ DispatchEngine::DispatchEngine() {
 
 	LOGMSG_ARG(LOG_DEBUG, "[DispatchEngine] setting queueSize : %d", queueSize);
 
-	m_eventQueue = make_shared<t_eventDeque>(queueSize);
+	m_eventQueue = std::make_shared<t_eventDeque>(queueSize);
 }
 
 /**

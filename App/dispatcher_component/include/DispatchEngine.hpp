@@ -21,10 +21,8 @@
 #include "Event.hpp"
 #include "ConcreteCommand.hpp"
 
-using namespace std;
-
-typedef shared_ptr<Event> t_eventPtr;
-typedef shared_ptr<Command> t_commandPtr;
+typedef std::shared_ptr<Event> t_eventPtr;
+typedef std::shared_ptr<Command> t_commandPtr;
 typedef MWSRQueue<std::deque<t_eventPtr>> t_eventDeque;
 
 /**
@@ -38,9 +36,9 @@ private:
 	static DispatchEngine* m_instance;
 	Config* config;
 
-	map<eventType, t_commandPtr> m_registeredCommands;
+	std::map<eventType, t_commandPtr> m_registeredCommands;
 
-	shared_ptr<t_eventDeque> m_eventQueue;
+	std::shared_ptr<t_eventDeque> m_eventQueue;
 
 	bool m_evReaderKill;
 	std::thread m_th_readerThread;

@@ -5,6 +5,7 @@
  *      Author: tf
  */
 
+#include <string>
 #include "VisionEngine.hpp"
 #include "Tracker.hpp"
 
@@ -56,7 +57,7 @@ VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int stream
 		video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
 		video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
-				(to_string(m_vidStrWid) + "x" + to_string(m_vidStrHei)).c_str());
+				(std::to_string(m_vidStrWid) + "x" + std::to_string(m_vidStrHei)).c_str());
         m_vidOpened = true;
 	}
 }
@@ -144,7 +145,7 @@ TrcEnRc VisionEngine::stopAllTrackers() {
 
 		//Find thread with such id and remove from tracker map.
 		auto trckIter = std::find_if(m_mapIdtrckTothr.begin(),
-				m_mapIdtrckTothr.end(), [thrId](std::pair<int, thread::id> pair) {
+				m_mapIdtrckTothr.end(), [thrId](std::pair<int, std::thread::id> pair) {
 					return ((pair.second == thrId) ? true : false);
 				});
 		m_trackers.erase(trckIter->first);
@@ -187,9 +188,9 @@ TrcEnRc VisionEngine::displayDebugWindow() {
 	return ret;
 }
 
-shared_ptr<Track::Tracker> VisionEngine::getTracker(int id) {
+std::shared_ptr<Track::Tracker> VisionEngine::getTracker(int id) {
 	auto iter = find_if(m_trackers.begin(), m_trackers.end(),
-			[id](std::pair<int, shared_ptr<Track::Tracker>> pair) {
+			[id](std::pair<int, std::shared_ptr<Track::Tracker>> pair) {
 				if(pair.first == id) {
 					return true;
 				} else {

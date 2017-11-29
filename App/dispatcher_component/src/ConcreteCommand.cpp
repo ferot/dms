@@ -9,9 +9,11 @@
 #include "CommunicationEngine.hpp"
 
 CommonRC PublishMsgCMD::execute(string params){
-	LOGMSG(LOG_DEBUG, "PublishMsgCMD::execute()");
-	CommunicationEngine::getInstance()->publish(params.c_str());
-	return CMN_RC_SUCCESS;
+	CommonRC ret = CMN_RC_ERROR;
+
+	LOGMSG(LOG_TRACE, "PublishMsgCMD::execute()");
+	ret = static_cast<CommonRC>(CommunicationEngine::getInstance()->publish(params.c_str()));
+	return ret;
 }
 
 CommonRC ObjectTrackMoveCMD::execute(string params){
