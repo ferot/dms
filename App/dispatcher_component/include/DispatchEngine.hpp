@@ -54,7 +54,7 @@ public:
 	static DispatchEngine* getInstance();
 
 	t_eventPtr createEvent();
-	CommonRC registerEvent(eventType type);
+	CommonRC registerEvent(eventType type, std::shared_ptr<Command> usrEvPtr = nullptr);
 	CommonRC enqueueEvent(t_eventPtr event);
 
 	CommonRC startEventReader();

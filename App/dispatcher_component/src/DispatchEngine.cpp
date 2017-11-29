@@ -94,7 +94,7 @@ CommonRC DispatchEngine::handleEvent(t_eventPtr event) {
  * @param event
  * @return
  */
-CommonRC DispatchEngine::registerEvent(eventType type) {
+CommonRC DispatchEngine::registerEvent(eventType type, std::shared_ptr<Command> usrEvPtr) {
 	CommonRC ret = CMN_RC_SUCCESS;
 
 	t_commandPtr cmdPtr;
@@ -108,9 +108,14 @@ CommonRC DispatchEngine::registerEvent(eventType type) {
 		cmdPtr = std::make_shared<ObjectTrackMoveCMD>();
 		break;
 	default:
-		LOGMSG_ARG(LOG_ERROR, "[registerEvent] Event type %d not registered!",
-				(int)type);
-		ret = CMN_RC_ERROR;
+		LOGMSG_ARG(LOG_DEBUG, "[registerEvent] Event type %d is not standard. "
+				"Registering user-type event", (int)type);
+
+		if (usrEvPtr != nullptr) {
+			cmdPtr = usrEvPtr;
+		} else {
+			ret = CMN_RC_ERROR;
+		}
 	}
 
 	LOGMSG_ARG(LOG_DEBUG,
