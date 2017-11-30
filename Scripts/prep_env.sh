@@ -27,6 +27,12 @@ cd paho.mqtt.c && mkdir -p build
 cd build && cmake ..
 make -j4 && make install
 
+echo "##########   Preparing FANN  ###########"
+git clone https://github.com/libfann/fann.git
+cd ./fann && mkdir build
+cd build && cmake ..
+make install
+
 echo "##########   Preparing libjson-rpc-cpp ###########"
 
 sudo apt-get -y install libcurl-ocaml-dev libmicrohttpd-dev libjsoncpp-dev libargtable2-dev libhiredis-dev
