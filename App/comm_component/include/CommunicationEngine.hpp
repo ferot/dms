@@ -21,7 +21,7 @@ extern "C" {
 #include "Event.hpp"
 #include "logger.h"
 #include "Config.hpp"
-
+#include "Command.hpp"
 
 /**
  * Node Engine Return Code.
@@ -31,6 +31,8 @@ enum ComEnRc {
 	COMM_ENG_SUCCESS, COMM_ENG_ERROR
 };
 
+typedef std::map<std::string, std::pair<eventType, t_commandPtr>> t_mapTopicEvtCmd;
+typedef std::pair<eventType, t_commandPtr> t_p_evtTypeCmd;
 /**
  * Class responsible for Communicating with MQTT broker.
  */
@@ -50,7 +52,9 @@ private:
 	int m_timeout;
 	int m_port;
 
-	std::map<std::string, eventType> m_mapEvent;
+	t_commandPtr m_comm;
+
+	static t_mapTopicEvtCmd m_mapTopEventCmd;
 
 	CommunicationEngine(string, string, int, int, int);
 	~CommunicationEngine();
@@ -59,6 +63,7 @@ private:
 	void mergeAddrPort(int port);
 
 	t_eventPtr prepareEvent(t_eventPtr msgRcvdEvent);
+	static void enqueueEvt(string topic, string payload);
 
 	/*
 	 * MQTT callbacks for Async communication.
@@ -89,7 +94,7 @@ public:
 
 	ComEnRc connect();
 	ComEnRc disconnect();
-	ComEnRc subscribe(std::string, t_eventPtr = nullptr);
+	ComEnRc subscribe(std::string, eventType = eventType::DEFAULT_EVENT, t_commandPtr ptr = nullptr);
 	ComEnRc unsubscribe(std::string);
 	ComEnRc publish(std::string msg, std::string topic = "");
 };

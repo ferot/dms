@@ -11,7 +11,7 @@
 using std::string;
 
 enum eventType {
-	DEFAULT_EVENT, COMMUNICATION_EVENT, TRACKING_EVENT
+	DEFAULT_EVENT, COMMUNICATION_EVENT, TRACKING_EVENT, USER_EVENT = 123
 
 };
 
@@ -28,9 +28,7 @@ private:
 	void setParamUUID();
 
 public:
-//	Event(){
-//		m_type = DEFAULT_EVENT;
-//	}
+
 	Event(eventType type);
 
 	eventType getEventType() const;

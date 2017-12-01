@@ -15,6 +15,7 @@ public:
     explicit CalibTool(QWidget *parent = 0);
     ~CalibTool();
 
+    void setValue(std::string m);
 private slots:
 
     void on_pushButton_clicked();

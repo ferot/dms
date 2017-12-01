@@ -13,7 +13,7 @@
 #include "Common.hpp"
 
 CommunicationEngine* CommunicationEngine::m_instance = nullptr;
-
+t_mapTopicEvtCmd CommunicationEngine::m_mapTopEventCmd = {};
 
 volatile MQTTClient_deliveryToken deliveredtoken;
 
@@ -94,6 +94,7 @@ CommunicationEngine::~CommunicationEngine() {
 /**
  * Delivery callback.
  * Assigns delivery token specific for exchange message session.
+ * Could be used to session control.
  * @param context
  * @param dt
  */
@@ -117,12 +118,21 @@ int CommunicationEngine::msgarrvdCallback(void *context, char *topicName,
 	LOGMSG_ARG(LOG_TRACE, "[msgarrvdCallback] Message with topic : %s arrived", topicName);
 
 	string payload = string((char*) message->payload);
+	string topic = string(topicName);
 
-	//TODO: enqueue message payload for further processing.
+	CommunicationEngine::enqueueEvt(topic, payload);
 
 	MQTTClient_freeMessage(&message);
 	MQTTClient_free(topicName);
 	return 1;
+}
+
+void CommunicationEngine::enqueueEvt(string topic, string payload) {
+	auto it = m_mapTopEventCmd.find(std::string(topic));
+
+	t_eventPtr event = std::make_shared<Event>(it->second.first);
+
+	DispatchEngine::getInstance()->enqueueEvent(event);
 }
 
 /**
@@ -179,7 +189,7 @@ int CommunicationEngine::getPort() {
  * @param topic
  * @return COMM_ENG_SUCCESS on success. COMM_ENG_ERROR on error.
  */
-ComEnRc CommunicationEngine::subscribe(string topic) {
+ComEnRc CommunicationEngine::subscribe(string topic, eventType type, t_commandPtr cmdPtr) {
 	ComEnRc ret = COMM_ENG_SUCCESS;
 	m_topic = topic;
 	if (MQTTClient_subscribe(m_client, m_topic.c_str(), m_qos) != MQTTCLIENT_SUCCESS) {
@@ -187,6 +197,12 @@ ComEnRc CommunicationEngine::subscribe(string topic) {
 		ret = COMM_ENG_ERROR;
 	} else {
 		LOGMSG_ARG(LOG_DEBUG, "Subscribing to topic %s...", topic.c_str());
+		m_mapTopEventCmd.insert(
+				std::pair<std::string, t_p_evtTypeCmd>(topic,
+						t_p_evtTypeCmd(type, cmdPtr)));
+
+		DispatchEngine::getInstance()->registerEvent(eventType::USER_EVENT, cmdPtr);
+
 	}
 	return ret;
 }

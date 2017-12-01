@@ -4,7 +4,7 @@
 #include "DispatchEngine.hpp"
 #include "CommEvent.hpp"
 #include "Config.hpp"
-
+#include "CoordRcvdCmd.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -14,13 +14,22 @@ int main(int argc, char *argv[])
 		printf("Logger init failed");
 	}
 
+	DispatchEngine *de = DispatchEngine::getInstance();
 	CommunicationEngine *ce = CommunicationEngine::getInstance();
 	ce->connect();
+
 	std::string topicName = Config::getInstance()->getValue("MQTT", "topic_name");
-	ce->subscribe(topicName);
+
+	CommonRC ret = de->startEventReader();
+	if (ret == CMN_RC_SUCCESS) {
+		LOGMSG(LOG_DEBUG, "started reader thread");
+	}
 
     QApplication a(argc, argv);
     CalibTool w;
+	t_commandPtr coordEvt(new CoordsRcvdCmd(&w));
+
+	ce->subscribe(topicName, eventType::USER_EVENT, coordEvt);
     w.show();
 
     return a.exec();

@@ -2,7 +2,10 @@
 
 set(CALIB_APP calib_tool)
 
-include_directories(include)
+include_directories(calib_tool)
+include_directories(calib_tool/include)
+
+file( GLOB calib_tool_srcs "calib_tool/src/*.cpp" )
 
 #Below path should be be parametrized!
 set(CMAKE_PREFIX_PATH "/home/tf/qt/5.9.2/gcc_64/")
@@ -14,7 +17,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 
 QT5_WRAP_UI(UI
-    calib_tool/calibtool.ui
+	calib_tool/calibtool.ui
 )
 
 set (GUI_SRC
@@ -23,10 +26,12 @@ set (GUI_SRC
     calib_tool/calibtool.h
 )
 
-add_executable( ${CALIB_APP} ${GUI_SRC} ${UI} )
+
+add_executable( ${CALIB_APP} ${GUI_SRC} ${UI} ${calib_tool_srcs})
 #needed because of default set std to C++11, what caused error on compiling C++14 srcs
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
+target_include_directories( ${CALIB_APP} PUBLIC include)
 
 target_link_libraries( ${CALIB_APP} LINK_PUBLIC 
 common
