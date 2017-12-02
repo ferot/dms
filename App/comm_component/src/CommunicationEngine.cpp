@@ -28,7 +28,7 @@ volatile MQTTClient_deliveryToken deliveredtoken;
  * @param qos - quality of servise QOS
  * @return
  */
-CommunicationEngine* CommunicationEngine::getInstance(string address, string client,
+CommunicationEngine* CommunicationEngine::getInstance(string client, string address,
 		int port, int timeout, int qos) {
 	if (!m_instance) {
 		m_instance = new CommunicationEngine(address, client, port, timeout, qos);

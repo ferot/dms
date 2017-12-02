@@ -21,6 +21,5 @@ void CalibTool::on_pushButton_clicked()
 }
 
 void CalibTool::setValue(std::string m){
-	printf("DUPA");
     ui->label_c1_x_v->setText(m.c_str());
 }

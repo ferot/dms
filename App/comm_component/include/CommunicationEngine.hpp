@@ -78,8 +78,8 @@ private:
 public:
 
 	static CommunicationEngine* getInstance(
-			std::string address = "tcp://localhost",
 			std::string client = "examplecl",
+			std::string address = "tcp://localhost",
 			int port = 1883,
 			int timeout = 10000L,
 			int qos = 1);

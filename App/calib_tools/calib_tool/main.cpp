@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 	}
 
 	DispatchEngine *de = DispatchEngine::getInstance();
-	CommunicationEngine *ce = CommunicationEngine::getInstance();
+	CommunicationEngine *ce = CommunicationEngine::getInstance("calib_tool");
 	ce->connect();
 
 	std::string topicName = Config::getInstance()->getValue("MQTT", "topic_name");
