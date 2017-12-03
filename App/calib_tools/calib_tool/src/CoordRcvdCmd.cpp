@@ -6,21 +6,28 @@
  */
 #include "CoordRcvdCmd.hpp"
 
-CommonRC CoordsRcvdCmd::execute(std::string params){
+/**
+ * Updates values of gui labels according to cam_id.
+ *
+ * @param params
+ * @return
+ */
+CommonRC CoordsRcvdCmd::execute(std::string params) {
 	std::string value;
 	Json::Value root;
-    Json::Reader reader;
-	LOGMSG_ARG(LOG_DEBUG, "value = %s", params.c_str());
+	Json::Reader reader;
 
 	reader.parse(params.c_str(), root);
-	value = root["payload"]["x"].asString();
-	LOGMSG_ARG(LOG_DEBUG, "value = %s", value.c_str());
 
-	m_ctInstance->setValue(value);
+	auto &vals = root["payload"];
+	int id = vals["cam_id"].asInt();
+	t_tup_thrstrs tuple = {
+			vals["x"].asString(),
+			vals["y"].asString(),
+			vals["width"].asString()};
+
+	m_ctInstance->setLabelValues(tuple, id);
 
 	return CMN_RC_SUCCESS;
 }
-
-
-
 

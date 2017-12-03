@@ -22,6 +22,7 @@ class Event {
 private:
 	/* Message unique ID */
 	boost::uuids::uuid m_uuid;
+
 	Json::Value m_params;
 	eventType m_type;
 
@@ -29,7 +30,7 @@ private:
 
 public:
 
-	Event(eventType type);
+	Event(eventType type, std::string params = "");
 
 	eventType getEventType() const;
 	std::string getParams() const;

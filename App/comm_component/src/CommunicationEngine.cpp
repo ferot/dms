@@ -117,10 +117,8 @@ int CommunicationEngine::msgarrvdCallback(void *context, char *topicName,
 		int topicLen, MQTTClient_message *message) {
 	LOGMSG_ARG(LOG_TRACE, "[msgarrvdCallback] Message with topic : %s arrived", topicName);
 
-	string payload = string((char*) message->payload);
 	string topic = string(topicName);
-
-	CommunicationEngine::enqueueEvt(topic, payload);
+	CommunicationEngine::enqueueEvt(topic, (char*)(message->payload));
 
 	MQTTClient_freeMessage(&message);
 	MQTTClient_free(topicName);
@@ -130,7 +128,7 @@ int CommunicationEngine::msgarrvdCallback(void *context, char *topicName,
 void CommunicationEngine::enqueueEvt(string topic, string payload) {
 	auto it = m_mapTopEventCmd.find(std::string(topic));
 
-	t_eventPtr event = std::make_shared<Event>(it->second.first);
+	t_eventPtr event = std::make_shared<Event>(it->second.first, payload);
 
 	DispatchEngine::getInstance()->enqueueEvent(event);
 }

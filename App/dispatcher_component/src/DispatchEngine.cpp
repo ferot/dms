@@ -80,7 +80,9 @@ CommonRC DispatchEngine::handleEvent(t_eventPtr event) {
 	if (it != m_registeredCommands.end()) {
 		t_commandPtr cmdPtr = it->second;
 		if (cmdPtr) {
-			ret = cmdPtr->execute(event->getEventString());
+
+			std::string payload = event->getEventString();
+			ret = cmdPtr->execute(payload);
 		} else {
 			LOGMSG(LOG_ERROR, "[handleEvent] Command is invalid!!");
 		}
@@ -138,7 +140,8 @@ CommonRC DispatchEngine::registerEvent(eventType type, std::shared_ptr<Command> 
  */
 CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 	CommonRC ret = CMN_RC_SUCCESS;
-	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d", (int)event->getEventType());
+	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d",
+			(int )event->getEventType());
 
 	m_eventQueue->push_back(move(event));
 

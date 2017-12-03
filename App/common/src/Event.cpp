@@ -6,9 +6,11 @@
  */
 #include "Event.hpp"
 
-Event::Event(eventType type) : m_type(type) {
+Event::Event(eventType type, std::string params) : m_type(type) {
 	m_uuid = boost::uuids::random_generator()();
 	setParamUUID();
+	Json::Reader reader;
+	reader.parse(params, m_params);
 }
 
 std::string Event::getEventId() const {
@@ -16,9 +18,10 @@ std::string Event::getEventId() const {
 }
 
 std::string Event::getEventString() const {
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
+	std::string value = writer.write(m_params);
 
-	return writer.write(m_params);
+	return value;
 }
 
 eventType Event::getEventType() const {
@@ -34,7 +37,8 @@ void Event::setType(eventType type) {
 }
 
 void Event::setParam(std::string param) {
-	m_params["payload"] = param;
+	Json::Reader reader;
+	reader.parse(param, m_params);
 }
 
 bool Event::operator <(const Event& src) const {
