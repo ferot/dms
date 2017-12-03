@@ -4,6 +4,7 @@
 
 #include "Tracker.hpp"
 #include "CommunicationEngine.hpp"
+#include "VisionEngine.hpp"
 #include "logger.h"
 
 using namespace Track;
@@ -74,11 +75,14 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 	Json::Value eventParam;
 	Json::FastWriter fastWriter;
 
-	eventParam["width"] = std::to_string(bbox.width);
-	eventParam["height"] = std::to_string(bbox.height);
-	eventParam["x"] = std::to_string(bbox.x);
-	eventParam["y"] = std::to_string(bbox.y);
-	eventParam["mqtt_topic"] = CommunicationEngine::getInstance()->getTopic();
+	auto &param = eventParam["payload"];
+	param["width"] = std::to_string(bbox.width);
+	param["height"] = std::to_string(bbox.height);
+	param["x"] = std::to_string(bbox.x);
+	param["y"] = std::to_string(bbox.y);
+	param["mqtt_topic"] = CommunicationEngine::getInstance()->getTopic();
+	param["cam_id"] = VisionEngine::getInstance()->getCamId();
+
 
 	trackEvent->setParam(fastWriter.write(eventParam));
 

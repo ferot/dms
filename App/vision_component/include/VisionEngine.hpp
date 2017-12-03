@@ -34,6 +34,13 @@ private:
 	std::vector<std::thread> m_th_trackers;
 	bool m_vidOpened;
 
+	/**
+	 * Id used in communication between nodes.Should be globally unique.
+	 * Obtained from config file. If not present, set to 0 by default.
+	 */
+	int m_camId;
+
+
 	/*mapping of tracker id into thread id
 	 essential to manage properly both objects*/
 	std::map<int, std::thread::id> m_mapIdtrckTothr;
@@ -50,6 +57,7 @@ public:
 			int h = 0);
 	bool getVidOpened();
 	t_imgResPair getActualImgRes();
+	int getCamId();
 
 	TrcEnRc addTracker(std::string trackerType, int id);
 	TrcEnRc startAllTrackers();

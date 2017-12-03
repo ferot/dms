@@ -50,6 +50,9 @@ VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int stream
 		m_vidStrHei = stod(config->getValue("Video", "height"));
 	}
 
+	m_camId = stoi(config->getValue("Video", "cam_id"));
+	LOGMSG_ARG(LOG_TRACE, "CAM_ID set to %d", m_camId);
+
 	if (!video.open(streamSource)) {
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Couldn't open video source %s",
 				streamSource.c_str());
@@ -205,4 +208,8 @@ std::shared_ptr<Track::Tracker> VisionEngine::getTracker(int id) {
 
 bool VisionEngine::getVidOpened(){
     return m_vidOpened;
+}
+
+int VisionEngine::getCamId() {
+	return m_camId;
 }
