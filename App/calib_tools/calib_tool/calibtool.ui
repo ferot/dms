@@ -219,8 +219,8 @@
          <rect>
           <x>20</x>
           <y>280</y>
-          <width>501</width>
-          <height>145</height>
+          <width>541</width>
+          <height>207</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -291,7 +291,7 @@
           </widget>
          </item>
          <item row="6" column="5">
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="saveVector">
            <property name="text">
             <string>save vector</string>
            </property>
@@ -301,6 +301,23 @@
           <widget class="Line" name="line_9">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="7">
+          <widget class="QTextEdit" name="textEdit"/>
+         </item>
+         <item row="11" column="6">
+          <widget class="QPushButton" name="saveToFileButton">
+           <property name="text">
+            <string>Save as ...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="4">
+          <widget class="QPushButton" name="loadFromFileButton">
+           <property name="text">
+            <string>Load from file...</string>
            </property>
           </widget>
          </item>

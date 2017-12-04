@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QLabel>
 
-
 namespace Ui {
 class CalibTool;
 }
@@ -12,29 +11,36 @@ class CalibTool;
 typedef std::vector<QLabel*> t_v_qlabel;
 typedef std::array<std::string, 3> t_tup_thrstrs;
 
-class CalibTool : public QMainWindow
-{
-    Q_OBJECT
+class CalibTool: public QMainWindow {
+	Q_OBJECT
 
 private:
-    t_v_qlabel labels_cam1;
-    t_v_qlabel labels_cam2;
-    t_v_qlabel labels_cam3;
+	t_v_qlabel labels_cam1;
+	t_v_qlabel labels_cam2;
+	t_v_qlabel labels_cam3;
 
-    std::vector<t_v_qlabel> labels;
+	std::vector<t_v_qlabel> labels;
+
+	int m_trainingSetCount;
+	std::string formVector();
+	void saveToFile();
+	void loadFromFile();
 
 public:
-    explicit CalibTool(QWidget *parent = 0);
-    ~CalibTool();
+	explicit CalibTool(QWidget *parent = 0);
+	~CalibTool();
 
-    void setLabelValues(t_tup_thrstrs tuple, int id);
+	void setLabelValues(t_tup_thrstrs tuple, int id);
 
 private slots:
 
-    void on_pushButton_clicked();
+    void on_saveVector_clicked();
+
+	void on_loadFromFileButton_clicked();
+	void on_saveToFileButton_clicked();
 
 private:
-    Ui::CalibTool *ui;
+	Ui::CalibTool *ui;
 };
 
 #endif // CALIBTOOL_H
