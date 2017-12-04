@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include "DataSet.hpp"
 
 namespace Ui {
 class CalibTool;
@@ -21,7 +22,8 @@ private:
 
 	std::vector<t_v_qlabel> labels;
 
-	int m_trainingSetCount;
+	DataSet m_dataSet;
+
 	std::string formVector();
 	void saveToFile();
 	void loadFromFile();
@@ -38,6 +40,7 @@ private slots:
 
 	void on_loadFromFileButton_clicked();
 	void on_saveToFileButton_clicked();
+
 
 private:
 	Ui::CalibTool *ui;

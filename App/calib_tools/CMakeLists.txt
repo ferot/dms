@@ -27,7 +27,7 @@ set (GUI_SRC
 )
 
 
-add_executable( ${CALIB_APP} ${GUI_SRC} ${UI} ${calib_tool_srcs})
+add_executable( ${CALIB_APP} ${calib_tool_srcs} ${GUI_SRC} ${UI} )
 #needed because of default set std to C++11, what caused error on compiling C++14 srcs
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
