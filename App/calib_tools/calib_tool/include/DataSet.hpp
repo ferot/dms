@@ -4,14 +4,17 @@
 
 class DataSet {
 private:
-
+	/**
+	 * Path to file default finding path.
+	 */
+	QString m_filepath;
 	int m_count;
 	QString m_payload;
 
 public:
 
 	DataSet() :
-			m_count(0), m_payload("") {
+			m_filepath(""), m_count(0), m_payload("") {
 	}
 
 	int getCount() const{
@@ -28,6 +31,10 @@ public:
 
 	void incrCount(){
 		m_count++;
+	}
+
+	QString getFilePath() const{
+		return m_filepath;
 	}
 
 	friend QDataStream& operator<<(QDataStream& stream, const DataSet& ds) {

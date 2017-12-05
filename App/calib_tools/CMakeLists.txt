@@ -15,6 +15,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
+find_package(fann REQUIRED)
 
 QT5_WRAP_UI(UI
 	calib_tool/calibtool.ui
@@ -38,5 +39,6 @@ common
 comm_engine
 dispatch_engine 
 Qt5::Widgets
-log4c)
+log4c
+fann)
 

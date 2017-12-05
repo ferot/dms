@@ -3,11 +3,14 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include "FANNWrapper.hpp"
+
 #include "DataSet.hpp"
 
 namespace Ui {
 class CalibTool;
 }
+
 
 typedef std::vector<QLabel*> t_v_qlabel;
 typedef std::array<std::string, 3> t_tup_thrstrs;
@@ -23,6 +26,9 @@ private:
 	std::vector<t_v_qlabel> labels;
 
 	DataSet m_dataSet;
+    std::shared_ptr<FANNWrapper> m_fann;
+
+    void refreshValues();
 
 	std::string formVector();
 	void saveToFile();
@@ -41,6 +47,10 @@ private slots:
 	void on_loadFromFileButton_clicked();
 	void on_saveToFileButton_clicked();
 
+
+    void on_button_start_training_clicked();
+
+    void on_button_save_res_File_clicked();
 
 private:
 	Ui::CalibTool *ui;

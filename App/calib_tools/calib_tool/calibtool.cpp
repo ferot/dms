@@ -3,17 +3,21 @@
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "logger.h"
 
 
 CalibTool::CalibTool(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::CalibTool) {
     ui->setupUi(this);
 
+    m_fann = std::make_shared<FANNWrapper>();
+
     labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
     labels_cam3 = {ui->label_c3_x_v, ui->label_c3_y_v, ui->label_c3_s_v};
 
     labels = {labels_cam1, labels_cam2, labels_cam3};
+
 
 }
 
@@ -26,6 +30,7 @@ void CalibTool::on_saveVector_clicked() {
     QString buffer = ui->textEdit->toPlainText()
             + QString::fromStdString(formVector());
 
+    refreshValues();
     ui->textEdit->setText(buffer);
 }
 
@@ -73,7 +78,6 @@ void CalibTool::saveToFile() {
                     file.errorString());
             return;
         }
-
         m_dataSet.setPayload(ui->textEdit->toPlainText());
         QDataStream out(&file);
         out.setVersion(QDataStream::Qt_4_9);
@@ -81,9 +85,18 @@ void CalibTool::saveToFile() {
     }
 }
 
+void CalibTool::refreshValues(){
+    ui->label_datas_nr_v->setText(QString::number(m_dataSet.getCount()));
+}
+
+/**
+ * @brief CalibTool::loadFromFile
+ * Method responsible for opening file and deserializing it into in-memory m_dataSet member,
+ * used for further manipulations.
+ */
 void CalibTool::loadFromFile() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open DataSet"),
-            "", tr("DataSet (*.data);;All Files (*)"));
+            m_dataSet.getFilePath(), tr("DataSet (*.data);;All Files (*)"));
 
     if (fileName.isEmpty())
         return;
@@ -102,6 +115,7 @@ void CalibTool::loadFromFile() {
         ui->textEdit->clear();
         in >> m_dataSet;
 
+        refreshValues();
         if (m_dataSet.getPayload().isEmpty()) {
             QMessageBox::information(this, tr("No data in file"),
                     tr("The dataset you are attempting to open contains no data."));
@@ -116,4 +130,13 @@ void CalibTool::on_loadFromFileButton_clicked() {
 
 void CalibTool::on_saveToFileButton_clicked() {
     saveToFile();
+}
+
+void CalibTool::on_button_start_training_clicked()
+{
+    //fann_train_on_file(); use object representing trained file.
+}
+
+void CalibTool::on_button_save_res_File_clicked()
+{
 }
