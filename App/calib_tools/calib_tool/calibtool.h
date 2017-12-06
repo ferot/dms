@@ -3,8 +3,9 @@
 
 #include <QMainWindow>
 #include <QLabel>
-#include "FANNWrapper.hpp"
 
+#include "ui_calibtool.h"
+#include "FANNWrapper.hpp"
 #include "DataSet.hpp"
 
 namespace Ui {

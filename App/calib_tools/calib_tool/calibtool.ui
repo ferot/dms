@@ -314,13 +314,6 @@
            </property>
           </widget>
          </item>
-         <item row="11" column="4">
-          <widget class="QPushButton" name="loadFromFileButton">
-           <property name="text">
-            <string>Load from file...</string>
-           </property>
-          </widget>
-         </item>
          <item row="11" column="0">
           <widget class="QLabel" name="label_datas_nr">
            <property name="text">
@@ -345,9 +338,9 @@
        <widget class="QWidget" name="gridLayoutWidget_3">
         <property name="geometry">
          <rect>
-          <x>60</x>
+          <x>10</x>
           <y>30</y>
-          <width>511</width>
+          <width>581</width>
           <height>411</height>
          </rect>
         </property>
@@ -369,7 +362,7 @@
          <item row="6" column="0" colspan="3">
           <widget class="QProgressBar" name="progressBar">
            <property name="value">
-            <number>24</number>
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -402,6 +395,36 @@
             <size>
              <width>20</width>
              <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_train_output">
+           <property name="text">
+            <string>Ouput:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QPushButton" name="loadFromFileButton">
+           <property name="text">
+            <string>Load from file...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="3">
+          <widget class="QTextEdit" name="text_edit_output"/>
+         </item>
+         <item row="1" column="0">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>80</height>
             </size>
            </property>
           </spacer>

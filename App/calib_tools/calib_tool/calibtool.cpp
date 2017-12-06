@@ -10,7 +10,7 @@ CalibTool::CalibTool(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::CalibTool) {
     ui->setupUi(this);
 
-    m_fann = std::make_shared<FANNWrapper>();
+    m_fann = std::make_shared<FANNWrapper>(ui);
 
     labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
@@ -116,11 +116,13 @@ void CalibTool::loadFromFile() {
         in >> m_dataSet;
 
         refreshValues();
-        if (m_dataSet.getPayload().isEmpty()) {
+        if (!m_dataSet.getPayload().isEmpty()) {
             QMessageBox::information(this, tr("No data in file"),
                     tr("The dataset you are attempting to open contains no data."));
         } else {
+        	ui->progressBar->setValue(0);
             ui->textEdit->setText(m_dataSet.getPayload());
+            m_fann->setInputFile(fileName.toStdString());
         }
     }
 }
@@ -134,7 +136,7 @@ void CalibTool::on_saveToFileButton_clicked() {
 
 void CalibTool::on_button_start_training_clicked()
 {
-    //fann_train_on_file(); use object representing trained file.
+	m_fann->trainNet();
 }
 
 void CalibTool::on_button_save_res_File_clicked()

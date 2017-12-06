@@ -3,19 +3,22 @@
 
 #include <QString>
 
-#include "doublefann.h"
+#include "floatfann.h"
 //C++ porting of FANN
 #include "fann_cpp.h"
 #include "DataSet.hpp"
-#include "calibtool.h"
+#include "logger.h"
+#include <QMessageBox>
 
 #include <ios>
 #include <iostream>
 #include <iomanip>
+#include "calibtool.h"
 
 namespace Ui {
 class CalibTool;
 }
+
 
 class FANNWrapper{
 
@@ -37,23 +40,34 @@ class FANNWrapper{
 
     Ui::CalibTool* UI;
 
+    static int printMSE_callback(FANN::neural_net &net, FANN::training_data &train,
+         unsigned int max_epochs, unsigned int epochs_between_reports,
+         float desired_error, unsigned int epochs, void *user_data)
+     {
 
-    static int print_callback(FANN::neural_net &net, FANN::training_data &train,
-          unsigned int max_epochs, unsigned int epochs_between_reports,
-          float desired_error, unsigned int epochs, void *user_data)
-      {
-  //        cout << "Epochs     " << setw(8) << epochs << ". "
-  //             << "Current Error: " << left << net.get_MSE() << right << endl;
-          return 0;
-      }
+        Ui::CalibTool* UI = static_cast<Ui::CalibTool*>(user_data);
+        printTextEdit(QString("Current EPOCH | MSE:\t") + QString::number(epochs) + " | " + QString::number(net.get_MSE()), UI);
+
+         return 0;
+     }
+
+    /**
+     * @brief printTextEdit - Helper function to show FANN output in calib_tool console.
+     * @param str - QString to be added
+     * @param UI - handle to ui. used to refer textedit component
+     */
+    static void printTextEdit(QString str, Ui::CalibTool* UI){
+        QString buffer = UI->text_edit_output->toPlainText() + str;
+        UI->text_edit_output->setText(buffer+ QString("\n"));
+    }
 
 public:
 
-    FANNWrapper( Ui::CalibTool* ui = nullptr, DataSet* ds = nullptr, std::string outFile = "trainedNet.net") :
+    FANNWrapper( Ui::CalibTool* ui = nullptr, std::string outFile = "trainedNet.net") :
         outputFilename(outFile),
-        num_input(9),
-        num_output(2),
-        num_layers(1),
+        num_input(2),
+        num_output(1),
+        num_layers(3), //this includes in and out layers. Thus cannot be less than 2!
         num_neurons_hidden(3),
         desired_error(0.001f),
         max_epochs(500000),
@@ -61,13 +75,10 @@ public:
         learning_rate(0.7f),
         UI(ui)
     {
-    	if(ds == nullptr){
-    		inputFilename = "trainSet.data";
-    	}else {
-    		inputFilename = (ds->getFilePath()).toStdString();
-    	}
 
         net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
+        LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
+
         net.set_learning_rate(learning_rate);
 
         net.set_activation_steepness_hidden(1.0);
@@ -76,58 +87,77 @@ public:
         net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
         net.set_activation_function_output(FANN::SIGMOID_SYMMETRIC_STEPWISE);
 
-        //net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
+//        net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
         net.print_parameters();
-
     }
 
     ~FANNWrapper(){
     }
 
     void trainNet(){
-    	using std::cout;
-    	using std::cerr;
-    	using std::endl;
-    	using std::setw;
-    	using std::left;
-    	using std::right;
-    	using std::showpos;
-    	using std::noshowpos;
-
-        if (data.read_train_from_file(inputFilename))
-        {
-            // Initialize and train the network with the data
-            net.init_weights(data);
-
-            cout << "Max Epochs " << setw(8) << max_epochs << ". "
-                << "Desired Error: " << left << desired_error << right << endl;
-            net.set_callback(print_callback, NULL);
-            net.train_on_data(data, max_epochs,
-            		epochs_between_reports, desired_error);
-
-            cout << endl << "Testing network." << endl;
-
-            for (unsigned int i = 0; i < data.length_train_data(); ++i)
+         if (data.read_train_from_file(inputFilename))
             {
-                // Run the network on the test data
-                fann_type *calc_out = net.run(data.get_input()[i]);
+                // Initialize and train the network with the data
+                net.init_weights(data);
 
-                cout << "XOR test (" << showpos << data.get_input()[i][0] << ", "
-                     << data.get_input()[i][1] << ") -> " << *calc_out
-                     << ", should be " << data.get_output()[i][0] << ", "
-                     << "difference = " << noshowpos
-                     << fann_abs(*calc_out - data.get_output()[i][0]) << endl;
-            }
+//                cout << "Max Epochs " << setw(8) << max_epochs << ". "
+//                    << "Desired Error: " << left << desired_error << right << endl;
+                net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
-            cout << endl << "Saving network." << endl;
+                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet()...", inputFilename.c_str());
+                net.train_on_data(data, max_epochs,
+                    epochs_between_reports, desired_error);
 
-            // Save the network in floating point and fixed point
-            net.save(outputFilename);
-            unsigned int decimal_point = net.save_to_fixed(std::string("fixed") + outputFilename);
-            data.save_train_to_fixed("xor_fixed.data", decimal_point);
+                UI->progressBar->setValue(50);
+                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
 
-            cout << endl << "XOR test completed." << endl;
-        }
+                for (unsigned int i = 0; i < data.length_train_data(); ++i)
+                {
+                    // Run the network on the test data
+                    fann_type *calc_out = net.run(data.get_input()[i]);
+
+                    QString strBffer =
+                            QString("\nTest(" + QString::number(data.get_input()[i][0]) +
+                            		" , " + QString::number(data.get_input()[i][1]) +
+                                    ") --> " + QString::number(*calc_out) +
+                            		"\nshould be : " + QString::number(data.get_output()[i][0])+
+                            		"\ndiff = " + QString::number(fann_abs(*calc_out - data.get_output()[i][0])));
+                    printTextEdit(strBffer, UI);
+
+                }
+
+                UI->progressBar->setValue(75);
+                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", outputFilename.c_str());
+
+                net.save(outputFilename);
+                unsigned int decimal_point = net.save_to_fixed(std::string("fixed") + outputFilename);
+                data.save_train_to_fixed(std::string("fixed") + inputFilename, decimal_point);
+
+                UI->progressBar->setValue(100);
+
+                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
+
+		} else {
+			LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
+		}
+    }
+
+    /**
+     * Sets filename for ANN input for training. It's assumed to have .data extension.
+     * @param inpFile
+     */
+    void setInputFile(std::string inpFile){
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Setting input file to %s", inpFile.c_str());
+        inputFilename = inpFile;
+    }
+
+    /**
+     * Sets filename for trained ANN. It's assumed to have .net extension.
+     * @param outFile
+     */
+    void setOutputFile(std::string outFile){
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Setting output file to %s", outFile.c_str());
+        inputFilename = outFile;
     }
 
 };
