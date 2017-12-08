@@ -34,35 +34,6 @@ cv::Ptr<cv::Tracker> Tracker::createTracker(string trackerType) {
 	{
 		tracker = cv::Tracker::create(trackerType);
 	}
-#else
-	{
-		switch(trackerType) {
-
-			case "BOOSTING":
-			tracker = TrackerBoosting::create();
-			break;
-
-			case "MIL":
-			tracker = TrackerMIL::create();
-			break;
-
-			case "KCF":
-			tracker = TrackerKCF::create();
-			break;
-
-			case "TLD":
-			tracker = TrackerTLD::create();
-			break;
-
-			case "MEDIANFLOW":
-			tracker = TrackerMedianFlow::create();
-			break;
-
-			default :
-			tracker = TrackerKCF::create();
-			this->trackerType = "KCF";
-		}
-	}
 #endif
 	LOGMSG_ARG(LOG_DEBUG, "Creating %s tracker.", trackerType.c_str());
 
