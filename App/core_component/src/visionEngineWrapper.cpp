@@ -70,7 +70,7 @@ t_bBox VisionEngineWrapper::track() {
 				if(m_switchTracker == false) {
 					ret = this->m_visionEngine->getTracker(0)->processFrame(g_frame, bounding);
 				} else {
-					ret = this->m_htracker->update(g_frame, bounding);
+					ret = checkObjAtBnd(g_frame, bounding);
 				}
 				return ret;
 			});
@@ -78,12 +78,22 @@ t_bBox VisionEngineWrapper::track() {
 	std::future<bool> futureBoundings = trackTask.get_future();
 
 	std::thread th(std::move(trackTask));
-
 	th.join();
 
 	return bounding;
 }
 
+/**
+ * Checks if object exists in desired ROI.
+ *
+ * @param frame
+ * @param bounding
+ * @return true if object is detected, otherwise false.
+ */
+bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox bounding){
+	return this->m_htracker->update(g_frame, bounding);
+
+}
 void VisionEngineWrapper::worker() {
 	t_bBox trackResult;
 	float fps;
@@ -107,7 +117,6 @@ void VisionEngineWrapper::worker() {
 
 	if (m_debugWinEnabled) {
 		//update debug window
-
 		cv::rectangle(g_frame, trackResult, cv::Scalar(255, 255, 0), 2, 1);
 		if (m_trackerInited == false) {
 			cv::rectangle(g_frame, *bbox, cv::Scalar(255, 0, 0), 2, 1);

@@ -17,7 +17,6 @@ private:
     bool m_modelDebugWinEnabled;
 	bool m_switchTracker;
 
-
     void worker();
     VisionEngine * m_visionEngine;
     std::shared_ptr<Track::Tracker> m_tracker;
@@ -29,6 +28,8 @@ private:
     bool m_debugWinEnabled;
     cv::Mat cameraFrame;
     cv::Rect2d * bbox;
+
+    bool checkObjAtBnd(cv::Mat& frame, t_bBox bounding);
 public:
     t_bBox track();
 //    void getROI();
