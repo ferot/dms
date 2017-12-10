@@ -29,10 +29,11 @@ typedef cv::Rect2d t_bBox;
  */
 class VisionEngine {
 private:
+
 	static VisionEngine* m_instance;
-	std::map<int, std::shared_ptr<Track::Tracker>> m_trackers;
-	std::vector<std::thread> m_th_trackers;
 	bool m_vidOpened;
+
+	std::map<int, std::shared_ptr<Track::Tracker>> m_trackers;
 
 	/**
 	 * Id used in communication between nodes.Should be globally unique.
@@ -61,7 +62,7 @@ public:
 
 	TrcEnRc addTracker(std::string trackerType, int id);
 	TrcEnRc startAllTrackers();
-	TrcEnRc stopAllTrackers();
+	TrcEnRc stopTracker(int id);
 	std::shared_ptr<Track::Tracker> getTracker(int id);
 
 	inline cv::VideoCapture getVidCapture() {

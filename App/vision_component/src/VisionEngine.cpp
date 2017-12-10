@@ -118,75 +118,27 @@ TrcEnRc VisionEngine::startAllTrackers() {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 
 	for (auto it : m_trackers) {
-		m_th_trackers.push_back(std::thread(&Track::Tracker::enableTracking, it.second));
-
-		auto id = m_th_trackers.back().get_id();
-		m_mapIdtrckTothr.insert(make_pair(it.first, id));
-
-		LOGMSG_ARG(LOG_TRACE, "Spawning tracker[%d]", (it.first));
-		LOGMSG_ARG(LOG_TRACE, "...with threads id[%d]", id);
-
+		it.second->enableTracking();
 	}
 	return ret;
 }
 
 /*
- * Method responsible for stopping all threads mapped by m_trackers member.
- * Erases both tracker and associated thread.
+ * Method responsible for stopping all trackers mapped by m_trackers id.
+ * And also erases map's entry.
  */
-TrcEnRc VisionEngine::stopAllTrackers() {
+TrcEnRc VisionEngine::stopTracker(int id) {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 
-	std::vector<std::thread>::iterator iter = m_th_trackers.begin();
-	while (iter != m_th_trackers.end()) {
-		auto thrId = iter->get_id();
+	auto& tracker = m_trackers[id];
+	//Find thread with such id and remove from tracker map.
+	if (tracker) {
+		tracker->disableTracking();
 
-		//Wait for thread to join and erase it from thread vector.
-		iter->join();
-		iter = m_th_trackers.erase(iter);
-		LOGMSG_ARG(LOG_TRACE, "Erasing tracker thread [%d]", (thrId));
+		LOGMSG_ARG(LOG_TRACE, "Erasing tracker [%d]", id);
+		m_trackers.erase(id);
 
-		//Find thread with such id and remove from tracker map.
-		auto trckIter = std::find_if(m_mapIdtrckTothr.begin(),
-				m_mapIdtrckTothr.end(), [thrId](std::pair<int, std::thread::id> pair) {
-					return ((pair.second == thrId) ? true : false);
-				});
-		m_trackers.erase(trckIter->first);
-		LOGMSG_ARG(LOG_TRACE, "Erasing tracker [%d]", (thrId));
-
-		//also update trackerId to threadId map
-		m_mapIdtrckTothr.erase(trckIter);
-		LOGMSG_ARG(LOG_TRACE, "Erasing m_mapIdtrckTothr entry with key-Id [%d]", trckIter);
-
-	}
-	return ret;
-}
-
-/*
- * Method responsible for displaying debug window with stream.
- * On 'ESC' key window is terminated.
- */
-TrcEnRc VisionEngine::displayDebugWindow() {
-	TrcEnRc ret = TRCK_ENG_ERROR;
-	LOGMSG(LOG4C_PRIORITY_CRIT, "Opening debug window...");
-
-	cv::namedWindow( "Tracking", cv::WINDOW_AUTOSIZE );// Create a window for display.
-
-	if (isVidOpened() == TRCK_ENG_SUCCESS) {
-		cv::VideoCapture video = getVidCapture();
-		cv::Mat frame;
-		while (video.read(frame)) {
-			// Display frame.
-			cv::imshow("Tracking", frame);
-
-			// Exit if ESC pressed. This needs to be replaced for some signalling probably from UI.
-			int k = cv::waitKey(1);
-			if (k == 27) {
-				stopAllTrackers();
-				ret = TRCK_ENG_SUCCESS;
-				break;
-			}
-		}
+		ret = TRCK_ENG_SUCCESS;
 	}
 	return ret;
 }
@@ -203,7 +155,7 @@ std::shared_ptr<Track::Tracker> VisionEngine::getTracker(int id) {
 	if (iter != m_trackers.end()) {
 		return iter->second;
 	}
-    return nullptr;
+	return nullptr;
 }
 
 bool VisionEngine::getVidOpened(){

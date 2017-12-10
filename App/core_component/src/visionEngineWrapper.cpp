@@ -21,7 +21,7 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	m_visionEngine = VisionEngine::getInstance();
 
 	m_visionEngine->addTracker("KCF", 0);
-	m_tracker = m_visionEngine->getTracker(0);
+//	m_tracker = m_visionEngine->getTracker(0);
 
 	m_htracker = HaarTracker::createTracker();
 
@@ -44,7 +44,7 @@ VisionEngineWrapper::VisionEngineWrapper() :
 }
 
 void VisionEngineWrapper::stopTracker() {
-	m_visionEngine->stopAllTrackers();
+	m_visionEngine->stopTracker(0);
 }
 
 void VisionEngineWrapper::slot_debugWindowClicked(bool switched) {
@@ -104,14 +104,16 @@ void VisionEngineWrapper::worker() {
 		m_video.read(g_frame);
 	}
 
-	if (m_trackingEnabled) {
-		trackResult = track();
-		if (interval % 5 == 0) {
-			t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
-			m_tracker->enqueueEvent(trackEvent);
-		}
+		if (m_trackingEnabled) {
+			trackResult = track();
+			if (interval % 5 == 0) {
+				t_eventPtr trackEvent =
+						this->m_visionEngine->getTracker(0)->prepareEvent(
+								trackResult);
+				this->m_visionEngine->getTracker(0)->enqueueEvent(trackEvent);
+			}
 
-	}
+		}
 	//Calculate FPS
 	fps = cv::getTickFrequency() / ((double) cv::getTickCount() - timer);
 
@@ -134,41 +136,49 @@ void VisionEngineWrapper::worker() {
 
 	}
 }
-
+static bool reinitFlag = false;
 
 /**
  * Slot responsible for setting bounding box, to start tracker.
+ * Allows to reset bound box and reinitialize tracker for new region.
  * @param keyCode - Qt::Key code.
  */
-void VisionEngineWrapper::slot_keyHandler(int keyCode){
+void VisionEngineWrapper::slot_keyHandler(int keyCode) {
 
-	switch(keyCode){
+	switch (keyCode) {
 	case 68:	// "D"
-		bbox->x+=5;
+		bbox->x += 5;
 		break;
 	case 65:	// "A"
-		bbox->x-=5;
+		bbox->x -= 5;
 		break;
 	case 87:	// "S"
-		bbox->y-=5;
+		bbox->y -= 5;
 		break;
 	case 83:	// "W"
-		bbox->y+=5;
+		bbox->y += 5;
 		break;
 	case 82:	// "R" --> reset tracking region
-		m_trackerInited = false;
-		m_trackingEnabled = false;
-		break;
-	case 84:	// "T" --> track
-		TrcEnRc ret = this->m_visionEngine->getTracker(0)->initializeTracker(
-				g_frame, *bbox);
+	{
+		if (reinitFlag) {
+			m_trackingEnabled = false;
+			m_trackerInited = false;
+			reinitFlag = false;
 
-		if (ret == TRCK_ENG_SUCCESS) {
-			LOGMSG(LOG_DEBUG, "initialized tracker");
-			m_trackingEnabled = true;
-			m_trackerInited = true;
+			stopTracker();
 		}
 		break;
+	}
+	case 84: // "T" --> track (reinitialize)
+	{
+		this->m_visionEngine->addTracker("KCF", 0);
+		this->m_visionEngine->getTracker(0)->initializeTracker(g_frame, *bbox);
+
+		m_trackingEnabled = true;
+		m_trackerInited = true;
+		reinitFlag = true;
+		break;
+	}
 
 	}
 }
