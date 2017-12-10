@@ -96,16 +96,16 @@ t_imgResPair VisionEngine::getActualImgRes(){
  */
 TrcEnRc VisionEngine::addTracker(string trackerType, int id) {
 	TrcEnRc ret = TRCK_ENG_SUCCESS;
-	static int trackerCount;
-	if (!id) {
-		//not user-friendly format
-		id = trackerCount++;
+	id = 0;
+
+	auto it = m_trackers.insert(m_trackers.begin(), //hint for maximum performance in inserting.
+			std::make_pair(id, new Track::Tracker(trackerType, id)));
+	if (it->second) {
+		LOGMSG_ARG(LOG_DEBUG, "Added tracker with id : %d", id);
+	} else {
+		LOGMSG_ARG(LOG_ERROR, "Couldn't add tracker with id : %d", id);
+		ret = TRCK_ENG_ERROR;
 	}
-
-	m_trackers.insert(std::make_pair(id, new Track::Tracker(trackerType, id)));
-//	config->setValue("nodes", "client-" + id, ip + ":" + numToString(port));
-	LOGMSG_ARG(LOG_DEBUG, "Added tracker with id : %d", id);
-
 	return ret;
 }
 
