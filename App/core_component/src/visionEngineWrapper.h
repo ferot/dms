@@ -36,7 +36,7 @@ private:
 
     void disableTracking();
     void worker();
-    bool checkObjAtBnd(cv::Mat& frame, t_bBox bounding);
+    bool checkObjAtBnd(cv::Mat& frame, t_bBox &bounding);
 public:
     t_bBox track();
     explicit VisionEngineWrapper();

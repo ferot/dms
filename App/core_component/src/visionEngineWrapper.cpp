@@ -72,10 +72,14 @@ t_bBox VisionEngineWrapper::track() {
 	std::packaged_task<bool()> trackTask(
 			[&]() {
 				if(m_switchTracker == false) {
-					ret = m_tracker->processFrame(g_frame, bounding);
+                    ret = m_tracker->processFrame(g_frame, bounding);
 				} else {
-					ret = checkObjAtBnd(g_frame, bounding);
-				}
+                    LOGMSG(LOG_DEBUG, "trigger haar");
+
+                    cv::Mat Roi = cv::Mat::zeros(320, 240, CV_8UC3);
+                    Roi = g_frame(bounding);
+                    ret = checkObjAtBnd(Roi, bounding);
+                }
 				return ret;
 			});
 
@@ -94,9 +98,14 @@ t_bBox VisionEngineWrapper::track() {
  * @param bounding
  * @return true if object is detected, otherwise false.
  */
-bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox bounding){
-	return this->m_htracker->update(g_frame, bounding);
+bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox &bounding){
+    cv::Rect bnd = static_cast<cv::Rect>(bounding);
+    LOGMSG(LOG_DEBUG, "in checkobjatbnd");
 
+    bool ret = this->m_htracker->update(frame, bnd);
+    bounding = bnd;
+    LOGMSG(LOG_DEBUG, "after checkobjatbnd");
+    return ret;
 }
 void VisionEngineWrapper::worker() {
 

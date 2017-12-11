@@ -24,6 +24,8 @@ private:
 
 	cv::CascadeClassifier m_face_cascade;
 	cv::CascadeClassifier m_profile_cascade;
+
+    cv::Rect2d findMaxObj(std::vector<cv::Rect> objects, const cv::Mat & image);
 public:
 
 	static cv::Ptr<HaarTracker> createTracker();
