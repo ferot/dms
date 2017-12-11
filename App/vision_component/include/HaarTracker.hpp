@@ -29,7 +29,7 @@ public:
 	static cv::Ptr<HaarTracker> createTracker();
 	static HaarTracker* getInstance();
 	bool init();
-	bool update(const cv::Mat& image, cv::Rect2d& boundingBox);
+	bool update(const cv::Mat& image, cv::Rect& boundingBox);
 
 	HaarTracker();
 

@@ -52,7 +52,7 @@ cv::Ptr<HaarTracker> HaarTracker::createTracker(){
  * @param boundingBox - region of interest (ROI) to be checked.
  * @return true on successfull check, otherwise false.
  */
-bool HaarTracker::update(const cv::Mat& image, cv::Rect2d& boundingBox) {
+bool HaarTracker::update(const cv::Mat& image, cv::Rect& boundingBox) {
 	std::vector<cv::Rect> faces;
 	cv::Mat frame_gray;
 	bool ret = false;
@@ -78,3 +78,14 @@ bool HaarTracker::update(const cv::Mat& image, cv::Rect2d& boundingBox) {
 
 	return ret;
 }
+
+//cv::Rect2d& findMaxObj(std::vector<cv::Rect> objects){
+//	cv::Rect2d& maxObj;
+//	  for( size_t i = 0; i < objects.size(); i++ )
+//	  {
+//		  using namespace cv;
+//	    Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+//	    ellipse( image, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+//	  }
+//	return maxObj;
+//}

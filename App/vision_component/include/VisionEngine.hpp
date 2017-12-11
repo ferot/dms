@@ -22,7 +22,7 @@
 #include "Tracker.hpp"
 
 typedef std::pair<int, int> t_imgResPair;
-typedef cv::Rect2d t_bBox;
+typedef cv::Rect t_bBox;
 /*
  * Class responsible for Vision operations.
  * Handles video sources and tracking workers management.

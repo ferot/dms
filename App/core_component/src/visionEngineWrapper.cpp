@@ -20,9 +20,10 @@ VisionEngineWrapper::VisionEngineWrapper() :
 		rythm(this) {
 	m_visionEngine = VisionEngine::getInstance();
 
-	m_visionEngine->addTracker("KCF", 0);
-//	m_tracker = m_visionEngine->getTracker(0);
+	m_state = INIT_S;
 
+	m_visionEngine->addTracker("KCF", 0);
+	m_tracker = m_visionEngine->getTracker(0);
 	m_htracker = HaarTracker::createTracker();
 
 	m_video = m_visionEngine->getVidCapture();
@@ -44,7 +45,10 @@ VisionEngineWrapper::VisionEngineWrapper() :
 }
 
 void VisionEngineWrapper::stopTracker() {
-	m_visionEngine->stopTracker(0);
+	if (m_visionEngine->stopTracker(0) != TRCK_ENG_SUCCESS) {
+		LOGMSG(LOG_ERROR,
+				"[VisionEngineWrapper::stopTracker] Couldn't stop tracker !");
+	}
 }
 
 void VisionEngineWrapper::slot_debugWindowClicked(bool switched) {
@@ -68,7 +72,7 @@ t_bBox VisionEngineWrapper::track() {
 	std::packaged_task<bool()> trackTask(
 			[&]() {
 				if(m_switchTracker == false) {
-					ret = this->m_visionEngine->getTracker(0)->processFrame(g_frame, bounding);
+					ret = m_tracker->processFrame(g_frame, bounding);
 				} else {
 					ret = checkObjAtBnd(g_frame, bounding);
 				}
@@ -95,6 +99,23 @@ bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox bounding){
 
 }
 void VisionEngineWrapper::worker() {
+
+	switch(m_state){
+
+	case INIT_S:
+		break;
+	case FIND_TRGT_S:
+		break;
+	case INIT_TRCK_S:
+		break;
+	case RUN_TRCK_S:
+		break;
+	case VERIF_TRGT_S:
+		break;
+	case STOP_S:
+		break;
+	}
+
 	t_bBox trackResult;
 	float fps;
 
@@ -108,9 +129,9 @@ void VisionEngineWrapper::worker() {
 			trackResult = track();
 			if (interval % 5 == 0) {
 				t_eventPtr trackEvent =
-						this->m_visionEngine->getTracker(0)->prepareEvent(
+						m_tracker->prepareEvent(
 								trackResult);
-				this->m_visionEngine->getTracker(0)->enqueueEvent(trackEvent);
+				m_tracker->enqueueEvent(trackEvent);
 			}
 
 		}
@@ -136,6 +157,14 @@ void VisionEngineWrapper::worker() {
 
 	}
 }
+
+void VisionEngineWrapper::disableTracking(){
+	m_trackingEnabled = false;
+	m_trackerInited = false;
+
+	stopTracker();
+}
+
 static bool reinitFlag = false;
 
 /**
@@ -161,18 +190,15 @@ void VisionEngineWrapper::slot_keyHandler(int keyCode) {
 	case 82:	// "R" --> reset tracking region
 	{
 		if (reinitFlag) {
-			m_trackingEnabled = false;
-			m_trackerInited = false;
+			disableTracking();
 			reinitFlag = false;
-
-			stopTracker();
 		}
 		break;
 	}
 	case 84: // "T" --> track (reinitialize)
 	{
 		this->m_visionEngine->addTracker("KCF", 0);
-		this->m_visionEngine->getTracker(0)->initializeTracker(g_frame, *bbox);
+		m_tracker->initializeTracker(g_frame, *bbox);
 
 		m_trackingEnabled = true;
 		m_trackerInited = true;

@@ -8,6 +8,10 @@
 #include "Tracker.hpp"
 #include "HaarTracker.hpp"
 
+enum State {
+	INIT_S, FIND_TRGT_S, INIT_TRCK_S, RUN_TRCK_S, VERIF_TRGT_S, STOP_S = 0xff
+};
+
 class VisionEngineWrapper : public QObject
 {
     Q_OBJECT
@@ -17,7 +21,8 @@ private:
     bool m_modelDebugWinEnabled;
 	bool m_switchTracker;
 
-    void worker();
+    State m_state;
+
     VisionEngine * m_visionEngine;
     std::shared_ptr<Track::Tracker> m_tracker;
     cv::Ptr<HaarTracker> m_htracker;
@@ -29,10 +34,11 @@ private:
     cv::Mat cameraFrame;
     cv::Rect2d * bbox;
 
+    void disableTracking();
+    void worker();
     bool checkObjAtBnd(cv::Mat& frame, t_bBox bounding);
 public:
     t_bBox track();
-//    void getROI();
     explicit VisionEngineWrapper();
     ~VisionEngineWrapper();
 signals:
