@@ -10,6 +10,8 @@
 #include <opencv2/core/ocl.hpp>
 
 cv::Mat g_frame;
+t_bBox trackResult;
+
 unsigned long long interval;
 
 VisionEngineWrapper::~VisionEngineWrapper(){
@@ -38,8 +40,8 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	QObject::connect(&rythm, &QTimer::timeout, this,
 			&VisionEngineWrapper::worker);
 
-	t_imgResPair resolution = m_visionEngine->getActualImgRes();
-	bbox = new cv::Rect2d(resolution.first/2, resolution.second/2, 80, 150);
+//	t_imgResPair resolution = m_visionEngine->getActualImgRes();
+	bbox = new cv::Rect2d(50, 50, 150, 150);
 
 	rythm.start(0);
 }
@@ -76,9 +78,9 @@ t_bBox VisionEngineWrapper::track() {
 				} else {
                     LOGMSG(LOG_DEBUG, "trigger haar");
 
-                    cv::Mat Roi = cv::Mat::zeros(320, 240, CV_8UC3);
-                    Roi = g_frame(bounding);
-                    ret = checkObjAtBnd(Roi, bounding);
+                    cv::Mat Roi = g_frame(*bbox);
+                    ret = checkObjAtBnd(Roi, *bbox);
+
                 }
 				return ret;
 			});
@@ -99,51 +101,108 @@ t_bBox VisionEngineWrapper::track() {
  * @return true if object is detected, otherwise false.
  */
 bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox &bounding){
-    cv::Rect bnd = static_cast<cv::Rect>(bounding);
+    //conversion needed as haar detect needs Rect<int>
+	cv::Rect bnd = static_cast<cv::Rect>(bounding);
     LOGMSG(LOG_DEBUG, "in checkobjatbnd");
 
     bool ret = this->m_htracker->update(frame, bnd);
     bounding = bnd;
+
     LOGMSG(LOG_DEBUG, "after checkobjatbnd");
     return ret;
 }
-void VisionEngineWrapper::worker() {
 
-	switch(m_state){
+/**
+ * Checks in whole image for existence of faces.
+ *
+ * @param tr - track result - modified if any face had been detected.
+ */
+void VisionEngineWrapper::findTargetStateFn(t_bBox& tr) {
+	if (checkObjAtBnd(g_frame, *bbox)) {
+		tr = *bbox;
+		// state transition should be done only if any target was found!!!
+		m_state = INIT_TRCK_S;
+	}
+}
 
-	case INIT_S:
-		break;
-	case FIND_TRGT_S:
-		break;
-	case INIT_TRCK_S:
-		break;
-	case RUN_TRCK_S:
-		break;
-	case VERIF_TRGT_S:
-		break;
-	case STOP_S:
-		break;
+void VisionEngineWrapper::initTrackStateFn(t_bBox& tr) {
+	this->m_visionEngine->addTracker("KCF", 0);
+	m_tracker->initializeTracker(g_frame, tr);
+
+	m_trackingEnabled = true;
+	m_trackerInited = true;
+
+	m_state = RUN_TRCK_S;
+}
+
+void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
+
+	LOGMSG(LOG_DEBUG, "in track");
+	bool ret = false;
+	std::packaged_task<bool()> trackTask([&]() {
+		ret = m_tracker->processFrame(g_frame, tr);
+		return ret;
+	});
+
+	std::future<bool> futureBoundings = trackTask.get_future();
+
+	std::thread th(std::move(trackTask));
+	th.join();
+
+	if (interval % 5 == 0) {
+		t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
+		m_tracker->enqueueEvent(trackEvent);
+
+		m_state = VERIF_TRGT_S;
+	}
+}
+
+void VisionEngineWrapper::verifyTargetStateFn(t_bBox& tr) {
+	if (checkObjAtBnd(g_frame, tr)) {
+		m_state = RUN_TRCK_S;
+	} else {
+		disableTracking();
+		m_state = FIND_TRGT_S;
 	}
 
-	t_bBox trackResult;
-	float fps;
+}
 
+void VisionEngineWrapper::worker() {
+	float fps;
 	// Start timer
 	double timer = (double) cv::getTickCount();
 	if (m_visionEngine->getVidOpened()) {
 		m_video.read(g_frame);
 	}
 
-		if (m_trackingEnabled) {
-			trackResult = track();
-			if (interval % 5 == 0) {
-				t_eventPtr trackEvent =
-						m_tracker->prepareEvent(
-								trackResult);
-				m_tracker->enqueueEvent(trackEvent);
-			}
+	switch (m_state) {
+	case INIT_S:
+		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]INIT_S");
 
-		}
+	case FIND_TRGT_S:
+		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]FIND_TRGT_S");
+
+		findTargetStateFn(trackResult);
+		break;
+	case INIT_TRCK_S:
+		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]INIT_TRCK_S");
+
+		initTrackStateFn(trackResult);
+		break;
+	case RUN_TRCK_S:
+		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]RUN_TRCK_S");
+
+		runTrackStateFn(trackResult);
+		break;
+	case VERIF_TRGT_S:
+		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]VERIF_TRGT_S");
+
+		verifyTargetStateFn(trackResult);
+		break;
+	case STOP_S:
+		break;
+	}
+
 	//Calculate FPS
 	fps = cv::getTickFrequency() / ((double) cv::getTickCount() - timer);
 
