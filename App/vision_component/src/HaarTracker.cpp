@@ -73,7 +73,7 @@ bool HaarTracker::update(const cv::Mat& image, cv::Rect& boundingBox) {
 				0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
 
 	}
-    findMaxObj(faces, image);
+//    findMaxObj(faces, image);
 	//Checking again, cause it may change after second cascade apply.
 	if (faces.size() != 0) {
 		boundingBox = faces[0];

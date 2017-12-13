@@ -149,7 +149,7 @@ void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
 	std::thread th(std::move(trackTask));
 	th.join();
 
-	if (interval % 5 == 0) {
+	if (interval % 1000 == 0) {
 		t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
 		m_tracker->enqueueEvent(trackEvent);
 
@@ -175,27 +175,29 @@ void VisionEngineWrapper::worker() {
 		m_video.read(g_frame);
 	}
 
+	interval++;
+
 	switch (m_state) {
 	case INIT_S:
-		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]INIT_S");
+		LOGMSG(LOG_ERROR, "[VisionEngineWrapper::worker]INIT_S");
 
 	case FIND_TRGT_S:
-		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]FIND_TRGT_S");
+		LOGMSG(LOG_ERROR, "[VisionEngineWrapper::worker]FIND_TRGT_S");
 
 		findTargetStateFn(trackResult);
 		break;
 	case INIT_TRCK_S:
-		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]INIT_TRCK_S");
+		LOGMSG(LOG_ERROR, "[VisionEngineWrapper::worker]INIT_TRCK_S");
 
 		initTrackStateFn(trackResult);
 		break;
 	case RUN_TRCK_S:
-		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]RUN_TRCK_S");
+		LOGMSG(LOG_ERROR, "[VisionEngineWrapper::worker]RUN_TRCK_S");
 
 		runTrackStateFn(trackResult);
 		break;
 	case VERIF_TRGT_S:
-		LOGMSG(LOG_DEBUG, "[VisionEngineWrapper::worker]VERIF_TRGT_S");
+		LOGMSG(LOG_ERROR, "[VisionEngineWrapper::worker]VERIF_TRGT_S");
 
 		verifyTargetStateFn(trackResult);
 		break;
