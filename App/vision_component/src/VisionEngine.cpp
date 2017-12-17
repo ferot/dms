@@ -158,10 +158,10 @@ std::shared_ptr<Track::Tracker> VisionEngine::getTracker(int id) {
 	return nullptr;
 }
 
-bool VisionEngine::getVidOpened(){
+const bool& VisionEngine::getVidOpened() const{
     return m_vidOpened;
 }
 
-int VisionEngine::getCamId() {
+const int& VisionEngine::getCamId() const{
 	return m_camId;
 }

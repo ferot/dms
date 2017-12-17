@@ -56,9 +56,9 @@ public:
 	~VisionEngine();
 	static VisionEngine* getInstance(string streamSource = "", int w = 0,
 			int h = 0);
-	bool getVidOpened();
+	const bool& getVidOpened() const;
 	t_imgResPair getActualImgRes();
-	int getCamId();
+	const int& getCamId() const;
 
 	TrcEnRc addTracker(std::string trackerType, int id);
 	TrcEnRc startAllTrackers();

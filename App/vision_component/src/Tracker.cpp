@@ -93,7 +93,7 @@ void Tracker::disableTracking() {
 	m_trackingEnabled = false;
 }
 
-bool Tracker::processFrame(cv::Mat frame, t_bBox & bbox) {
+bool Tracker::processFrame(cv::Mat & frame, t_bBox & bbox) {
 	bool ok = false;
 	if (m_trackingEnabled) {
 		ok = m_tracker->update(frame, bbox);
@@ -101,7 +101,7 @@ bool Tracker::processFrame(cv::Mat frame, t_bBox & bbox) {
 	return ok;
 }
 
-TrcEnRc Tracker::initializeTracker(cv::Mat frame, t_bBox box) {
+TrcEnRc Tracker::initializeTracker(cv::Mat& frame, t_bBox box) {
 	TrcEnRc ret = TRCK_ENG_ERROR;
 	bool inited = m_tracker->init(frame, box);
 

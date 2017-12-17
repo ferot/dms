@@ -40,8 +40,8 @@ public:
 
 	Tracker(std::string trackerType, int id = 0);
 
-	bool processFrame(cv::Mat frame, t_bBox&);
-	TrcEnRc initializeTracker(cv::Mat, t_bBox);
+	bool processFrame(cv::Mat& frame, t_bBox&);
+	TrcEnRc initializeTracker(cv::Mat&, t_bBox);
 	void enableTracking();
 	void disableTracking();
 
