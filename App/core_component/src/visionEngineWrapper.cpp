@@ -36,6 +36,7 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	m_trackerInited = false;
 	m_switchTracker = false;
 
+	scaler = 1;
 
 	QObject::connect(&rythm, &QTimer::timeout, this,
 			&VisionEngineWrapper::worker);
@@ -149,12 +150,11 @@ void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
 	std::thread th(std::move(trackTask));
 	th.join();
 
-	if (interval % 1000 == 0) {
-		t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
-		m_tracker->enqueueEvent(trackEvent);
-
+	if (interval % scaler == 0) {
 		m_state = VERIF_TRGT_S;
 	}
+	t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
+	m_tracker->enqueueEvent(trackEvent);
 }
 
 void VisionEngineWrapper::verifyTargetStateFn(t_bBox& tr) {
@@ -253,7 +253,20 @@ void VisionEngineWrapper::slot_keyHandler(int keyCode) {
 		break;
 	case 87:	// "S"
 		bbox->y -= 5;
+	case 73:	// "I"
+	{
+		if (interval > 0) {
+			scaler -= 1;
+		}
+		LOGMSG_ARG(LOG_ERROR, "[slot_keyHandler] scaler = %d", scaler);
 		break;
+	}
+		case 79:
+		// "O"
+		scaler += 1;
+		LOGMSG_ARG(LOG_ERROR, "[slot_keyHandler] scaler = %d", scaler);
+		break;
+
 	case 83:	// "W"
 		bbox->y += 5;
 		break;

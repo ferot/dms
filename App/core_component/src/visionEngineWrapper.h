@@ -33,6 +33,8 @@ private:
 	cv::Mat cameraFrame;
 	cv::Rect2d * bbox;
 
+	int scaler;
+
 	void disableTracking();
 	void worker();
 	bool checkObjAtBnd(cv::Mat& frame, t_bBox &bounding);
