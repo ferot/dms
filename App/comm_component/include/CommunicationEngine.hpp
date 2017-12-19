@@ -45,7 +45,7 @@ private:
 	MQTTClient m_client;
 	MQTTClient_connectOptions m_conn_opts;
 
-	std::string m_address;
+	std::string m_brokerAddress;
 	std::string m_clientId;
 	std::string m_topic;
 	short int m_qos;
@@ -79,7 +79,7 @@ public:
 
 	static CommunicationEngine* getInstance(
 			std::string client = "examplecl",
-			std::string address = "tcp://localhost",
+			std::string brokerAddress = "",
 			int port = 1883,
 			int timeout = 10000L,
 			int qos = 1);

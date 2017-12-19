@@ -47,24 +47,28 @@ CommunicationEngine* CommunicationEngine::getInstance(string client, string addr
  * @param timeout
  * @param qos
  */
-CommunicationEngine::CommunicationEngine(string address, string client,
+CommunicationEngine::CommunicationEngine(string brokerAddress, string client,
 		int port, int timeout, int qos) :
-		m_address(address),
+		m_brokerAddress(brokerAddress),
 		m_clientId(client),
 		m_qos(qos),
 		m_timeout(timeout),
 		m_port(port)
 {
-	mergeAddrPort(m_port);
-	LOGMSG_ARG(LOG_TRACE, "MQTT full client's address %s", m_address.c_str());
-
 	config = Config::getInstance();
 
 	m_conn_opts = MQTTClient_connectOptions_initializer;
 	m_conn_opts.keepAliveInterval = 20;
 	m_conn_opts.cleansession = 1;
 
-	if ((MQTTClient_create(&m_client, m_address.c_str(), m_clientId.c_str(),
+	if(m_brokerAddress.empty()){
+		obtainBrokerAddr();
+	} else {
+		mergeAddrPort(m_port);
+	}
+	LOGMSG_ARG(LOG_TRACE, "MQTT full client's address %s", m_brokerAddress.c_str());
+
+	if ((MQTTClient_create(&m_client, m_brokerAddress.c_str(), m_clientId.c_str(),
 			MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTCLIENT_SUCCESS) {
 		LOGMSG_ARG(LOG_ERROR, "Client %s creation failed !", m_clientId.c_str());
 	} else {
@@ -151,13 +155,14 @@ void CommunicationEngine::connlostCallback(void *context, char *cause)
  */
 ComEnRc CommunicationEngine::obtainBrokerAddr() {
 	ComEnRc ret = COMM_ENG_SUCCESS;
-	m_address = config->getValue("nodes", "broker_address");
-	m_port = stoi(config->getValue("nodes", "port"));
+	m_brokerAddress = config->getValue("MQTT", "broker_address");
+	m_port = stoi(config->getValue("MQTT", "broker_port"));
 
 	mergeAddrPort(m_port);
 
-	if (m_address.empty() || m_port == 0) {
-		LOGMSG(LOG_ERROR, "Cannot get broker address from config file!");
+	if (m_brokerAddress.empty() || m_port == 0) {
+		LOGMSG(LOG_ERROR, "Cannot get broker address from config file! Setting to default tcp://localhost...");
+		m_brokerAddress = "tcp://localhost";
 		ret = COMM_ENG_ERROR;
 	}
 	return ret;
@@ -169,7 +174,7 @@ ComEnRc CommunicationEngine::obtainBrokerAddr() {
  * @return
  */
 string CommunicationEngine::getBrokerAddr() {
-	return m_address;
+	return m_brokerAddress;
 }
 
 /**
@@ -231,10 +236,10 @@ ComEnRc CommunicationEngine::unsubscribe(string topic) {
 ComEnRc CommunicationEngine::connect() {
 	ComEnRc ret = COMM_ENG_SUCCESS;
 	if ((MQTTClient_connect(m_client, &m_conn_opts)) != MQTTCLIENT_SUCCESS) {
-		LOGMSG_ARG(LOG_ERROR, "Couldn't connect to broker %s !", m_address.c_str());
+		LOGMSG_ARG(LOG_ERROR, "Couldn't connect to broker %s !", m_brokerAddress.c_str());
 		ret = COMM_ENG_ERROR;
 	} else {
-		LOGMSG_ARG(LOG_DEBUG, "Connected to broker %s...", m_address.c_str());
+		LOGMSG_ARG(LOG_DEBUG, "Connected to broker %s...", m_brokerAddress.c_str());
 	}
 	return ret;
 }
@@ -290,7 +295,7 @@ ComEnRc CommunicationEngine::publish(string message, string topic) {
  * @param port
  */
 void CommunicationEngine::mergeAddrPort(int port){
-	m_address+=(":" + std::to_string(port));
+	m_brokerAddress+=(":" + std::to_string(port));
 }
 
 
