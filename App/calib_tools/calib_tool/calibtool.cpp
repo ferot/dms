@@ -5,7 +5,11 @@
 #include <QMessageBox>
 #include "logger.h"
 
-
+/**
+ * Default destructor.
+ * As param gets widget handle to parent object (essential for clean-up) when parent destroys
+ * @param parent -handle for parent, owning this object
+ */
 CalibTool::CalibTool(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::CalibTool) {
     ui->setupUi(this);
@@ -21,19 +25,20 @@ CalibTool::CalibTool(QWidget *parent) :
 
 }
 
+/**
+ * Default destructor.
+ * Cleans up ui.
+ */
 CalibTool::~CalibTool() {
     delete ui;
 }
 
-void CalibTool::on_saveVector_clicked() {
-//append dataset vector to file
-    QString buffer = ui->textEdit->toPlainText()
-            + QString::fromStdString(formVector());
-
-    refreshValues();
-    ui->textEdit->setText(buffer);
-}
-
+/**
+ * Sets values of features, extracted from MQTT messages.
+ * Indexing is made from 0.
+ * @param tuple - tuple of threr values describing input vector (x_pos, y_pos, size (AXA)).
+ * @param id - id of cam values to be set (row in GUI app)
+ */
 void CalibTool::setLabelValues(t_tup_thrstrs tuple, int id) {
     auto &lab = labels[id];
     int index = 0;
@@ -66,6 +71,10 @@ std::string CalibTool::formVector() {
     return resultVector;
 }
 
+/**
+ * Saves dataset into file.
+ * Uses interactive mode to choose file output.
+ */
 void CalibTool::saveToFile() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save DataSet"),
             "", tr("DataSet (*.data);;All Files (*)"));
@@ -85,6 +94,10 @@ void CalibTool::saveToFile() {
     }
 }
 
+/**
+ * Refreshes values of labels.
+ * May be used when loaded file.
+ */
 void CalibTool::refreshValues(){
     ui->label_datas_nr_v->setText(QString::number(m_dataSet.getCount()));
 }
@@ -126,6 +139,24 @@ void CalibTool::loadFromFile() {
         }
     }
 }
+
+/**
+ * Helper slots
+ */
+
+/**
+ * Callback used when user decides to store vector of (x_pos, y_pos, size) values.
+ * Note: sets it only in text edit widget! TODO: store in kind of structure.
+ */
+void CalibTool::on_saveVector_clicked() {
+//append dataset vector to file
+    QString buffer = ui->textEdit->toPlainText()
+            + QString::fromStdString(formVector());
+
+    refreshValues();
+    ui->textEdit->setText(buffer);
+}
+
 void CalibTool::on_loadFromFileButton_clicked() {
     loadFromFile();
 }
@@ -142,3 +173,5 @@ void CalibTool::on_button_start_training_clicked()
 void CalibTool::on_button_save_res_File_clicked()
 {
 }
+
+
