@@ -67,33 +67,6 @@ void VisionEngineWrapper::slot_switchTrackerClicked(bool)
 	m_switchTracker = (m_switchTracker == false) ? true : false;
 }
 
-t_bBox VisionEngineWrapper::track() {
-	t_bBox bounding;
-
-	LOGMSG(LOG_DEBUG, "in track");
-	bool ret = false;
-	std::packaged_task<bool()> trackTask(
-			[&]() {
-				if(m_switchTracker == false) {
-                    ret = m_tracker->processFrame(g_frame, bounding);
-				} else {
-                    LOGMSG(LOG_DEBUG, "trigger haar");
-
-                    cv::Mat Roi = g_frame(*bbox);
-                    ret = checkObjAtBnd(Roi, *bbox);
-
-                }
-				return ret;
-			});
-
-	std::future<bool> futureBoundings = trackTask.get_future();
-
-	std::thread th(std::move(trackTask));
-	th.join();
-
-	return bounding;
-}
-
 /**
  * Checks if object exists in desired ROI.
  *
