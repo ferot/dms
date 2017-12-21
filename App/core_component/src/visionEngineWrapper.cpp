@@ -14,6 +14,19 @@ t_bBox trackResult;
 
 unsigned long long interval;
 
+//**
+// * Helper func printing bounding values essential for debugging.
+// * @param rect
+// */
+//static void printRectInfo(cv::Rect rect) {
+//	LOGMSG_ARG(LOG_TRACE, "Rect X = %d", rect.x);
+//	LOGMSG_ARG(LOG_TRACE, "Rect Y = %d", rect.y);
+//	LOGMSG_ARG(LOG_TRACE, "Rect WIDTH = %d", rect.width);
+//	LOGMSG_ARG(LOG_TRACE, "Rect HEIGHT = %d", rect.height);
+//
+//}
+
+
 VisionEngineWrapper::~VisionEngineWrapper(){
 	rythm.stop();
 }
@@ -68,22 +81,32 @@ void VisionEngineWrapper::slot_switchTrackerClicked(bool)
 }
 
 /**
- * Checks if object exists in desired ROI.
+ * Checks if object exists in desired ROI. By default cropps image to check only ROI region.
+ * If desired (for finding target when lost focus) checks whole image for object existence.
+ * Returns true if object is found. Also returns (by modyfing initial bounding obj) bounding,
+ * for object found in image.
  *
  * @param frame
  * @param bounding
+ * @param whole_im - if true send whole image, otherwise crop to bounding
  * @return true if object is detected, otherwise false.
  */
-bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox &bounding){
-    //conversion needed as haar detect needs Rect<int>
+bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox &bounding,
+		bool whole_im = false) {
+	//conversion needed as haar detect needs Rect<int>
 	cv::Rect bnd = static_cast<cv::Rect>(bounding);
-    LOGMSG(LOG_DEBUG, "in checkobjatbnd");
+	cv::Mat roi;
 
-    bool ret = this->m_htracker->update(frame, bnd);
-    bounding = bnd;
+	if (!whole_im) { //avoid copying when we need to check whole frame anyway
+		frame(bnd).copyTo(roi);
+	} else {
+		roi = frame;
+	}
 
-    LOGMSG(LOG_DEBUG, "after checkobjatbnd");
-    return ret;
+	bool ret = this->m_htracker->update(roi, bnd);
+	bounding = bnd;
+
+	return ret;
 }
 
 /**
@@ -92,15 +115,30 @@ bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox &bounding){
  * @param tr - track result - modified if any face had been detected.
  */
 void VisionEngineWrapper::findTargetStateFn(t_bBox& tr) {
-	if (checkObjAtBnd(g_frame, *bbox)) {
-		tr = *bbox;
-		// state transition should be done only if any target was found!!!
+
+	if (checkObjAtBnd(g_frame, tr, true)) {
 		m_state = INIT_TRCK_S;
 	}
 }
 
 void VisionEngineWrapper::initTrackStateFn(t_bBox& tr) {
 	this->m_visionEngine->addTracker("KCF", 0);
+
+#ifdef TRACKER_INC_ROI_OPT
+	cv::Size deltaSize(tr.width * 0.3f, tr.height * 0.3f); // 0.1f = 10/100
+	cv::Point offset(deltaSize.width / 2, deltaSize.height / 2);
+	cv::Rect rect = tr;
+
+	if ((rect.x + offset.x > 0) && (rect.y + offset.y > 0)
+			&& (rect.x + offset.x + rect.width < m_visionEngine->getActualImgRes().first)
+			&& (rect.y + offset.y + rect.height < m_visionEngine->getActualImgRes().second))
+	{
+		rect += deltaSize;
+		rect -= offset;
+	}
+	tr = rect;
+#endif
+
 	m_tracker->initializeTracker(g_frame, tr);
 
 	m_trackingEnabled = true;
@@ -111,7 +149,6 @@ void VisionEngineWrapper::initTrackStateFn(t_bBox& tr) {
 
 void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
 
-	LOGMSG(LOG_DEBUG, "in track");
 	bool ret = false;
 	std::packaged_task<bool()> trackTask([&]() {
 		ret = m_tracker->processFrame(g_frame, tr);
@@ -126,12 +163,31 @@ void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
 	if (interval % scaler == 0) {
 		m_state = VERIF_TRGT_S;
 	}
+
 	t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
 	m_tracker->enqueueEvent(trackEvent);
 }
 
 void VisionEngineWrapper::verifyTargetStateFn(t_bBox& tr) {
-	if (checkObjAtBnd(g_frame, tr)) {
+
+#ifdef TRACKER_INC_ROI_OPT
+	if (tr.x < 0) {
+		tr.x = 0;
+	}
+	if (tr.y < 0) {
+		tr.y = 0;
+	}
+	if (tr.y + tr.height > m_visionEngine->getActualImgRes().second) {
+		tr.y = m_visionEngine->getActualImgRes().second - tr.height;
+	}
+	if (tr.x + tr.width > m_visionEngine->getActualImgRes().first) {
+		m_visionEngine->getActualImgRes().first);
+		tr.x = m_visionEngine->getActualImgRes().first - tr.width;
+	}
+#endif
+
+	t_bBox box(tr);
+	if (checkObjAtBnd(g_frame, box)) {
 		m_state = RUN_TRCK_S;
 	} else {
 		disableTracking();
@@ -183,9 +239,8 @@ void VisionEngineWrapper::worker() {
 
 	if (m_debugWinEnabled) {
 		//update debug window
-		cv::rectangle(g_frame, trackResult, cv::Scalar(255, 255, 0), 2, 1);
-		if (m_trackerInited == false) {
-			cv::rectangle(g_frame, *bbox, cv::Scalar(255, 0, 0), 2, 1);
+		if (m_trackerInited) {
+			cv::rectangle(g_frame, trackResult, cv::Scalar(255, 255, 0), 2, 1);
 		}
 		//		// Display FPS on frame
 		cv::putText(g_frame, "FPS : " + std::to_string(int(fps)),
@@ -264,3 +319,4 @@ void VisionEngineWrapper::slot_keyHandler(int keyCode) {
 
 	}
 }
+

@@ -60,11 +60,10 @@ bool HaarTracker::update(const cv::Mat& image, cv::Rect& boundingBox) {
 
 	cv::cvtColor(image, frame_gray, CV_BGR2GRAY);
 	cv::equalizeHist(frame_gray, frame_gray);
-    LOGMSG(LOG_TRACE, "[HaarTracker::update] after converting to gray");
+
 
 	m_face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2,
 			0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
-    LOGMSG(LOG_TRACE, "[HaarTracker::update] after detection");
 
 	if (faces.size() == 0) {
 		LOGMSG(LOG_TRACE, "[HaarTracker::update] Applying next cascade!");
@@ -73,9 +72,10 @@ bool HaarTracker::update(const cv::Mat& image, cv::Rect& boundingBox) {
 				0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
 
 	}
-//    findMaxObj(faces, image);
+
 	//Checking again, cause it may change after second cascade apply.
 	if (faces.size() != 0) {
+		//Note : Current version assumption that only one object is extracted!
 		boundingBox = faces[0];
 		ret = true;
 	}
@@ -83,6 +83,13 @@ bool HaarTracker::update(const cv::Mat& image, cv::Rect& boundingBox) {
 	return ret;
 }
 
+/**
+ * TODO: Finish implementation (if needed).
+ * Method responsible for filtering biggest object in vector of detected objects.
+ * @param faces
+ * @param image
+ * @return
+ */
 cv::Rect2d HaarTracker::findMaxObj(std::vector<cv::Rect> faces, const cv::Mat & image){
     cv::Rect2d maxObj;
     LOGMSG(LOG_DEBUG, "in findMaxObj");
