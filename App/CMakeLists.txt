@@ -15,6 +15,7 @@ add_subdirectory(dispatcher_component)
 add_subdirectory(strg_component)
 add_subdirectory(common)
 add_subdirectory(calib_tools)
+add_subdirectory(model_app)
 
 install (DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 DESTINATION "/usr")
