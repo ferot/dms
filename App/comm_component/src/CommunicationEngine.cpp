@@ -62,10 +62,11 @@ CommunicationEngine::CommunicationEngine(string brokerAddress, string client,
 	m_conn_opts.cleansession = 1;
 
 	if(m_brokerAddress.empty()){
-		obtainBrokerAddr();
+		obtainMQTTcred();
 	} else {
 		mergeAddrPort(m_port);
 	}
+
 	LOGMSG_ARG(LOG_TRACE, "MQTT full client's address %s", m_brokerAddress.c_str());
 
 	if ((MQTTClient_create(&m_client, m_brokerAddress.c_str(), m_clientId.c_str(),
@@ -149,16 +150,18 @@ void CommunicationEngine::connlostCallback(void *context, char *cause)
 }
 
 /**
- * Gets broker's address from config file.
+ * Gets all information essential for MQTT connection establishment
+ * and forms them in proper format.
  *
  * @return COMM_ENG_SUCCESS on success. COMM_ENG_ERROR on error.
  */
-ComEnRc CommunicationEngine::obtainBrokerAddr() {
+ComEnRc CommunicationEngine::obtainMQTTcred() {
 	ComEnRc ret = COMM_ENG_SUCCESS;
 	m_brokerAddress = config->getValue("MQTT", "broker_address");
 	m_port = stoi(config->getValue("MQTT", "broker_port"));
-
 	mergeAddrPort(m_port);
+
+	m_clientId += config->getValue("Video", "cam_id");
 
 	if (m_brokerAddress.empty() || m_port == 0) {
 		LOGMSG(LOG_ERROR, "Cannot get broker address from config file! Setting to default tcp://localhost...");
@@ -195,6 +198,7 @@ int CommunicationEngine::getPort() {
 ComEnRc CommunicationEngine::subscribe(string topic, eventType type, t_commandPtr cmdPtr) {
 	ComEnRc ret = COMM_ENG_SUCCESS;
 	m_topic = topic;
+
 	if (MQTTClient_subscribe(m_client, m_topic.c_str(), m_qos) != MQTTCLIENT_SUCCESS) {
 		LOGMSG_ARG(LOG_ERROR, "Couldn't subscribe to topic %s !", topic.c_str());
 		ret = COMM_ENG_ERROR;
@@ -291,7 +295,7 @@ ComEnRc CommunicationEngine::publish(string message, string topic) {
 }
 
 /**
- * Merges member address string value with port
+ * Merges member address string value with port as MQTT desires.
  * @param port
  */
 void CommunicationEngine::mergeAddrPort(int port){

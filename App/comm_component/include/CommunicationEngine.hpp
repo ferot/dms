@@ -59,7 +59,7 @@ private:
 	CommunicationEngine(string, string, int, int, int);
 	~CommunicationEngine();
 
-	ComEnRc obtainBrokerAddr();
+	ComEnRc obtainMQTTcred();
 	void mergeAddrPort(int port);
 
 	t_eventPtr prepareEvent(t_eventPtr msgRcvdEvent);
@@ -78,7 +78,7 @@ private:
 public:
 
 	static CommunicationEngine* getInstance(
-			std::string client = "examplecl",
+			std::string client = "cam_",
 			std::string brokerAddress = "",
 			int port = 1883,
 			int timeout = 10000L,
