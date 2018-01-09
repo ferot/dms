@@ -40,6 +40,7 @@ VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int stream
 	if (streamSource.empty()) {
 		streamSource = "/dev/video0";
 	}
+
 	config = Config::getInstance();
 
 	if (m_vidStrHei && m_vidStrWid) {
@@ -53,16 +54,34 @@ VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int stream
 	m_camId = stoi(config->getValue("Video", "cam_id"));
 	LOGMSG_ARG(LOG_TRACE, "CAM_ID set to %d", m_camId);
 
-	if (!video.open(streamSource)) {
-		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Couldn't open video source %s",
-				streamSource.c_str());
-	} else {
+	if (openVideo(streamSource)) {
 		video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
 		video.set(CV_CAP_PROP_FRAME_HEIGHT, m_vidStrHei);
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
 				(std::to_string(m_vidStrWid) + "x" + std::to_string(m_vidStrHei)).c_str());
-        m_vidOpened = true;
+		m_vidOpened = true;
 	}
+}
+
+/**
+ * Tries to open specified dev node as opencv video handler.
+ * If fails attempts to get next devnode as fallback.
+ * In case none of the nodes is working false is returned, otherwise true.
+ *
+ * @param streamSource
+ * @return boolean true if successfull, false on failure
+ */
+bool VisionEngine::openVideo(std::string streamSource){
+	std::string fallback_dev = "/dev/video1";
+
+	bool openedFlag = video.open(streamSource) ? true : video.open(fallback_dev);
+
+	if (!openedFlag) {
+		LOGMSG_ARG(LOG_ERROR, "Couldn't open video source %s",
+				streamSource.c_str());
+	}
+
+	return openedFlag;
 }
 
 /*

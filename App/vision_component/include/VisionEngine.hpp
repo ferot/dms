@@ -56,6 +56,8 @@ public:
 	~VisionEngine();
 	static VisionEngine* getInstance(string streamSource = "", int w = 0,
 			int h = 0);
+
+	bool openVideo(std::string streamSource);
 	const bool& getVidOpened() const;
 	t_imgResPair getActualImgRes();
 	const int& getCamId() const;
