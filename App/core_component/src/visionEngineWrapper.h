@@ -18,7 +18,6 @@ private:
 	bool m_trackerInited;
 	bool m_trackingEnabled;
 	bool m_modelDebugWinEnabled;
-	bool m_switchTracker;
 
 	State m_state;
 
@@ -54,7 +53,6 @@ public:
 	void slot_keyHandler(int);
 	void slot_debugWindowClicked(bool);
 	void slot_modelDebugWindowClicked(bool);
-	void slot_switchTrackerClicked(bool);
 
 	void stopTracker();
 };
