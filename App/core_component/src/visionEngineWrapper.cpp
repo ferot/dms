@@ -77,12 +77,10 @@ void VisionEngineWrapper::slot_switchTrackerClicked(bool)
 bool VisionEngineWrapper::checkObjAtBnd(cv::Mat& frame, t_bBox &bounding){
     //conversion needed as haar detect needs Rect<int>
 	cv::Rect bnd = static_cast<cv::Rect>(bounding);
-    LOGMSG(LOG_DEBUG, "in checkobjatbnd");
 
     bool ret = this->m_htracker->update(frame, bnd);
     bounding = bnd;
 
-    LOGMSG(LOG_DEBUG, "after checkobjatbnd");
     return ret;
 }
 
@@ -111,7 +109,6 @@ void VisionEngineWrapper::initTrackStateFn(t_bBox& tr) {
 
 void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
 
-	LOGMSG(LOG_DEBUG, "in track");
 	bool ret = false;
 	std::packaged_task<bool()> trackTask([&]() {
 		ret = m_tracker->processFrame(g_frame, tr);
