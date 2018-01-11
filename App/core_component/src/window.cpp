@@ -25,19 +25,12 @@ Window::Window(QWidget *parent) :
 	m_buttonStartTrack->setToolTip("Starts tracking");
 	m_buttonStartTrack->setCheckable(true);
 
-	m_buttonSwitchTrack = new QPushButton("switch_tracker", this);
-	m_buttonSwitchTrack->setGeometry(10, 90, 150, 30);
-	m_buttonSwitchTrack->setToolTip("Switches trackers");
-	m_buttonSwitchTrack->setCheckable(true);
 
 	connect(m_button, SIGNAL(clicked(bool)), this,
 			SLOT(slot_debugWindowClicked(bool)));
 
 	connect(m_buttonStartTrack, SIGNAL(clicked(bool)), this,
 			SLOT(slot_modelDebugWindowClicked(bool)));
-
-	connect(m_buttonSwitchTrack, SIGNAL(clicked(bool)), this,
-			SLOT(slot_switchTrackerClicked(bool)));
 
 
 }

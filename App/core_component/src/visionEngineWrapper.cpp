@@ -34,7 +34,6 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	m_modelDebugWinEnabled = false;
 	m_trackingEnabled = false;
 	m_trackerInited = false;
-	m_switchTracker = false;
 
 	scaler = 1;
 
@@ -60,11 +59,6 @@ void VisionEngineWrapper::slot_debugWindowClicked(bool switched) {
 
 void VisionEngineWrapper::slot_modelDebugWindowClicked(bool){
 	m_modelDebugWinEnabled = (m_modelDebugWinEnabled == false) ? true : false;
-}
-
-void VisionEngineWrapper::slot_switchTrackerClicked(bool)
-{
-	m_switchTracker = (m_switchTracker == false) ? true : false;
 }
 
 /**
