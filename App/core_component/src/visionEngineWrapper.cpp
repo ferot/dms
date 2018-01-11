@@ -116,9 +116,10 @@ void VisionEngineWrapper::runTrackStateFn(t_bBox& tr) {
 
 	if (interval % scaler == 0) {
 		m_state = VERIF_TRGT_S;
+		t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
+		m_tracker->enqueueEvent(trackEvent);
 	}
-	t_eventPtr trackEvent = m_tracker->prepareEvent(trackResult);
-	m_tracker->enqueueEvent(trackEvent);
+
 }
 
 void VisionEngineWrapper::verifyTargetStateFn(t_bBox& tr) {
