@@ -37,7 +37,7 @@ private:
 
 	void disableTracking();
 	void worker();
-	bool checkObjAtBnd(cv::Mat& frame, t_bBox &bounding, bool);
+	bool checkObjAtBnd(cv::Mat& frame, t_bBox &bounding);
 
 	void findTargetStateFn(t_bBox&);
 	void initTrackStateFn(t_bBox& tr);
