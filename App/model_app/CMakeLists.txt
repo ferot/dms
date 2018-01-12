@@ -14,15 +14,15 @@ set (GUI_SRC
     src/window.h
 )
 
-set (VISION_SRC 
-	src/ModelEngine.h
+set (MODEL_SRC 
+	include/ModelEngine.h
 	src/ModelEngine.cpp
 	)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 
-add_executable( ${APP_NAME} ${core_comp_srcs} ${GUI_SRC})
+add_executable( ${APP_NAME} ${core_comp_srcs} ${MODEL_SRC} ${GUI_SRC} )
 #needed because of default set std to C++11, what caused error on compiling C++14 srcs
 set_property(TARGET ${APP_NAME} PROPERTY CXX_STANDARD 14)
 
