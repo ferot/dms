@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QTimer>
 
+#include "floatfann.h"
+#include "fann_cpp.h"
+
 #include "CommunicationEngine.hpp"
 #include "CommEvent.hpp"
 #include "Config.hpp"
@@ -11,7 +14,7 @@
 #include "VisionEngine.hpp"
 
 typedef std::array<std::string, 3> t_tup_thrstrs;
-
+typedef struct fann t_fann_s;
 
 const int cam_nrs = 3;
 
@@ -53,11 +56,13 @@ struct Coords{
 class ModelEngine: public QObject {
 	Q_OBJECT
 private:
-	Coords m_coords;
 
 	QTimer rythm;
 	CommunicationEngine *ce;
 	DispatchEngine *de;
+
+	Coords m_coords;
+	t_fann_s * m_ann;
 
 	bool m_modelWinEnabled;
 
@@ -68,17 +73,17 @@ public:
 	explicit ModelEngine();
 	~ModelEngine();
 
+	CommonRC loadNetFile(std::string filepath);
+	fann_type* calculateResult(fann_type input);
+
 	const t_tup_thrstrs& getCoords(int id);
 	void setCoords(int id, t_tup_thrstrs tuple);
-
 	void printCamDebug();
 
 	signals:
-
 	void sig_notifyModelWindow(cv::Point);
 
 	public slots:
-
 	void slot_modelWindowButtonClicked(bool);
 
 };

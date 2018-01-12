@@ -33,7 +33,8 @@ dispatch_engine
 vision_engine
 common
 Qt5::Widgets
-log4c 
+log4c
+fann 
 pthread)
 
 #copy log4crc setting file to newly created dir
