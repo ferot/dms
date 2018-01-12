@@ -6,9 +6,7 @@
  */
 #include "CoordRcvdCmd.hpp"
 #include "logger.h"
-
-typedef std::array<std::string, 3> t_tup_thrstrs;
-
+#include <memory>
 /**
  * Updates values of gui labels according to cam_id.
  *
@@ -24,15 +22,17 @@ CommonRC CoordsRcvdCmd::execute(std::string params) {
 
 	auto &vals = root["payload"];
 	int id = vals["cam_id"].asInt();
+
 	t_tup_thrstrs tuple = {
-			vals["x"].asString(),
-			vals["y"].asString(),
-			vals["width"].asString()};
+				vals["x"].asString(),
+				vals["y"].asString(),
+				vals["width"].asString()
+	};
+
 
 	LOGMSG_ARG(LOG_DEBUG, "received message from cam_id : %d", id);
 
-	(void) id;
-	(void) tuple;
+	  m_model->setCoords(id, tuple);
 
 	return CMN_RC_SUCCESS;
 }

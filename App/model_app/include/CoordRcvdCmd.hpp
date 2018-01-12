@@ -11,7 +11,8 @@
 #include "Command.hpp"
 #include "Common.hpp"
 
-#include "Model.hpp"
+#include "ModelEngine.h"
+
 
 /**
  * Abstract representation of command object.
@@ -19,9 +20,9 @@
  */
 class CoordsRcvdCmd: public Command {
 private:
-
+std::shared_ptr<ModelEngine> m_model;
 public:
-	CoordsRcvdCmd(){}
+	CoordsRcvdCmd(ModelEngine* model): m_model(model){}
 	CommonRC execute(std::string params);
 	~CoordsRcvdCmd(){};
 };
