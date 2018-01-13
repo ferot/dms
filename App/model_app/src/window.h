@@ -39,12 +39,25 @@ private:
 
     bool m_switchTracker;
 
+    int model_win_h, model_win_w;
+
     QPushButton * m_button;
     QPushButton * m_buttonStartTrack;
     QPushButton * m_buttonSwitchTrack;
 
     keyReceiver* m_keyFilter;
 
+    int m_grid_h_dim;
+    int m_grid_w_dim;
+
+    int m_step_x;
+    int m_step_y;
+
+    void setModelWinRes(const int& w, const int& h);
+    void setGridDim(const int& w_dim, const int& h_dim);
+    void updateStep();
+
+    cv::Mat drawGrid(const int&, const int&);
 
 signals:
     void sig_notifyAppQuit();
@@ -54,7 +67,7 @@ signals:
     void sig_notifyKeyPressed(int);
 
 public slots:
-    void slot_updateModelWindow(cv::Point2d);
+    void slot_updateModelWindow(int, int);
 
     void slot_modelWindowClicked(bool checked);
 

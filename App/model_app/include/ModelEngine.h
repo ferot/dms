@@ -81,7 +81,7 @@ public:
 	void printCamDebug();
 
 	signals:
-	void sig_notifyModelWindow(cv::Point);
+	void sig_notifyModelWindow(int x, int y);
 
 	public slots:
 	void slot_modelWindowButtonClicked(bool);

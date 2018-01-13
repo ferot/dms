@@ -63,11 +63,8 @@ void ModelEngine::worker() {
 	printCamDebug();
 
 	if (m_modelWinEnabled) {
-		QThread::msleep(1); //this is unfortunately essential for now due to crash.
-
-		emit sig_notifyModelWindow(
-				cv::Point(trackResult.x + 50, trackResult.y + 50));
-
+		QThread::msleep(10); //this is unfortunately essential for now due to crash.
+		emit sig_notifyModelWindow(2, 2); //exemplary view trigger
 	}
 }
 
