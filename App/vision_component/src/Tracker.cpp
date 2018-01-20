@@ -47,10 +47,10 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 	Json::FastWriter fastWriter;
 
 	auto &param = eventParam["payload"];
-	param["width"] = std::to_string(bbox.width);
-	param["height"] = std::to_string(bbox.height);
-	param["x"] = std::to_string(bbox.x);
-	param["y"] = std::to_string(bbox.y);
+	param["width"] = std::to_string(static_cast<int>(bbox.width));
+	param["height"] = std::to_string(static_cast<int>(bbox.height));
+	param["x"] = std::to_string(static_cast<int>(bbox.x));
+	param["y"] = std::to_string(static_cast<int>(bbox.y));
 	param["mqtt_topic"] = CommunicationEngine::getInstance()->getTopic();
 	param["cam_id"] = VisionEngine::getInstance()->getCamId();
 
