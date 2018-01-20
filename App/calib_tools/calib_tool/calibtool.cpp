@@ -77,7 +77,7 @@ std::string CalibTool::formVector() {
  */
 void CalibTool::saveToFile() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save DataSet"),
-            "", tr("DataSet (*.data);;All Files (*)"));
+            "", tr("DataSet (*.dat);;All Files (*)"));
     if (fileName.isEmpty())
         return;
     else {
@@ -109,7 +109,7 @@ void CalibTool::refreshValues(){
  */
 void CalibTool::loadFromFile() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open DataSet"),
-            m_dataSet.getFilePath(), tr("DataSet (*.data);;All Files (*)"));
+            m_dataSet.getFilePath(), tr("DataSet (*.dat);;All Files (*)"));
 
     if (fileName.isEmpty())
         return;
@@ -129,7 +129,7 @@ void CalibTool::loadFromFile() {
         in >> m_dataSet;
 
         refreshValues();
-        if (!m_dataSet.getPayload().isEmpty()) {
+        if (m_dataSet.getPayload().isEmpty()) {
             QMessageBox::information(this, tr("No data in file"),
                     tr("The dataset you are attempting to open contains no data."));
         } else {
