@@ -62,7 +62,7 @@ public:
 		waitrd.notify_one();
 	}
 
-	std::pair<bool, typename FSC::value_type> pop_back() {
+	std::pair<bool, typename FSC::value_type> pop_front() {
 		std::unique_lock<std::mutex> lock(mx);
 		while (coll.size() == 0 && !killflag) {
 			waitrd.wait(lock);
@@ -72,8 +72,8 @@ public:
 					typename FSC::value_type());
 
 		assert(coll.size() > 0);
-		typename FSC::value_type ret = std::move(coll.back());
-		coll.pop_back();
+		typename FSC::value_type ret = std::move(coll.front());
+		coll.pop_front();
 		lock.unlock();
 		waitwr.notify_one();
 

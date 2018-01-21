@@ -184,7 +184,7 @@ CommonRC DispatchEngine::stopEventReader(){
 CommonRC DispatchEngine::eventReader() {
 	CommonRC ret = CMN_RC_SUCCESS;
 	do {
-		auto event = m_eventQueue->pop_back();
+		auto event = m_eventQueue->pop_front();
 		handleEvent(event.second);
 		LOGMSG_ARG(LOG_DEBUG,
 				"[PublishMsgCMD::execute()] Handled event type : %d",
