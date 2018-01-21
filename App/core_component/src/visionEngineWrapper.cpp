@@ -13,8 +13,12 @@ cv::Mat g_frame;
 t_bBox trackResult;
 
 unsigned long long interval;
+bool finishedFlag;
 
 VisionEngineWrapper::~VisionEngineWrapper(){
+	m_state = STOP_S;
+	while(!finishedFlag)
+		;
 	rythm.stop();
 }
 
@@ -34,6 +38,8 @@ VisionEngineWrapper::VisionEngineWrapper() :
 	m_modelDebugWinEnabled = false;
 	m_trackingEnabled = false;
 	m_trackerInited = false;
+
+	finishedFlag = false;
 
 	scaler = 1;
 
@@ -167,6 +173,10 @@ void VisionEngineWrapper::worker() {
 		verifyTargetStateFn(trackResult);
 		break;
 	case STOP_S:
+		LOGMSG(LOG_ERROR, "[VisionEngineWrapper::worker]STOP_S");
+
+		stopTracker();
+		finishedFlag = true;
 		break;
 	}
 

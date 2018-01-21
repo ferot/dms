@@ -55,7 +55,7 @@ DispatchEngine::DispatchEngine() {
  * Cleans up connection handler as they're allocated manually
  */
 DispatchEngine::~DispatchEngine() {
-
+	stopEventReader();
 }
 
 /**
@@ -171,6 +171,7 @@ CommonRC DispatchEngine::stopEventReader(){
 
 	m_evReaderKill = true;
 	m_th_readerThread.join();
+	m_eventQueue->kill();
 
 	LOGMSG(LOG_DEBUG, "[stopEventReader] Joined event-reader thread...");
 
