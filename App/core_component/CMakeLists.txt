@@ -1,4 +1,6 @@
-#Core component
+#Cam component
+
+set (APP_NAME cam_app)
 
 file( GLOB core_comp_srcs "src/*.cpp" )
 include_directories(include)
@@ -19,12 +21,12 @@ set (VISION_SRC
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 
-add_executable( ${PROJECT_NAME} ${core_comp_srcs} ${GUI_SRC})
+add_executable( ${APP_NAME} ${core_comp_srcs} ${GUI_SRC})
 #needed because of default set std to C++11, what caused error on compiling C++14 srcs
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${APP_NAME} PROPERTY CXX_STANDARD 14)
 
 
-target_link_libraries( ${PROJECT_NAME} LINK_PUBLIC 
+target_link_libraries( ${APP_NAME} LINK_PUBLIC 
 comm_engine 
 storage_engine 
 vision_engine 
