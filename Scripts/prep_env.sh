@@ -26,12 +26,14 @@ git clone https://github.com/eclipse/paho.mqtt.c
 cd paho.mqtt.c && mkdir -p build
 cd build && cmake ..
 make -j4 && make install
+cd ../..
 
 echo "##########   Preparing FANN  ###########"
 git clone https://github.com/libfann/fann.git
 cd ./fann && mkdir build
 cd build && cmake ..
 make install
+cd ../../
 
 echo "##########   Preparing libjson-rpc-cpp ###########"
 
@@ -43,6 +45,7 @@ cd libjson-rpc-cpp/build
 cmake .. && make
 sudo make install
 sudo ldconfig      
+cd ../..
 
 echo "##########   Preparing log4c ###########"
 
@@ -52,6 +55,7 @@ cd log4c-1.2.3/
 ./configure --prefix=/usr/local
 make
 make install
+cd ..
 
 echo "##########   Preparing sqlite3 ###########"
 sudo apt-get -y install libsqlite3-dev
@@ -60,7 +64,7 @@ git clone https://github.com/aminroosta/sqlite_modern_cpp
 cd sqlite_modern_cpp
 ./configure
 make install
-
+cd ..
 
 echo "##########   Preparing opencv ###########"
 
@@ -76,7 +80,7 @@ if [ -d "opencv" && -d "opencv_contrib" ]; then
 cd opencv
 mkdir release
 cd release
-cmake -D OPENCV_EXTRA_MODULES_PATH=/home/tf/test/opencv_contrib/modules -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+cmake -D OPENCV_EXTRA_MODULES_PATH=/home/tf/mgr/opencv_contrib/modules -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
 make -j5
 sudo make install
 
@@ -85,7 +89,13 @@ else
 fi
 #git clone https://github.com/ferot/dms.git
 
-
+echo "##########   Preparing QT ###########"
+sudo apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev
+git clone git://code.qt.io/qt/qt5.git
+cd qt5
+./configure -developer-build -opensource -nomake examples -nomake tests
+make -j4
+make install
 
 if test -d "dms";
 then
