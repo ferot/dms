@@ -29,7 +29,7 @@ class Window : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit Window(QWidget *parent = nullptr);
+    explicit Window(int camID, QWidget *parent = nullptr);
     ~Window(){
     	cv::destroyAllWindows();
     };
@@ -45,6 +45,7 @@ private:
 
     keyReceiver* m_keyFilter;
 
+    void createWindows(int camID);
 
 signals:
     void sig_notifyAppQuit();

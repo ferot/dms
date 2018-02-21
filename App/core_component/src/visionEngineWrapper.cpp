@@ -266,3 +266,11 @@ void VisionEngineWrapper::slot_keyHandler(int keyCode) {
 
 	}
 }
+
+/**
+ * Gets CAM ID associated by dev node.
+ * @return
+ */
+const int VisionEngineWrapper::getCamID(){
+	return m_visionEngine->getCamId();
+}

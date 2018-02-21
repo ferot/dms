@@ -5,9 +5,11 @@
  * @param parent
  */
 
-static void onMouse( int event, int x, int y, int, void* winName);
+std::string modelWinName = "MODEL_DEBUG";
+std::string debugWinName = "DEBUG_WINDOW";
 
-Window::Window(QWidget *parent) :
+
+Window::Window(int camID, QWidget *parent) :
 		QMainWindow(parent) {
 	setFixedSize(320, 320);
 
@@ -28,15 +30,7 @@ Window::Window(QWidget *parent) :
 	m_buttonStartTrack->setToolTip("Starts tracking");
 	m_buttonStartTrack->setCheckable(true);
 
-	cv::setMouseCallback("DEBUG_WINDOW", onMouse, (void *)("DEBUG_WINDOW"));
-	cv::setMouseCallback("DEBUG_WINDOW", onMouse, (void *)("MODEL_DEBUG"));
-
-	cv::namedWindow("DEBUG_WINDOW");
-	cv::namedWindow("MODEL_DEBUG");
-
-	cv::moveWindow("MODEL_DEBUG", 10, 500);
-	cv::moveWindow("DEBUG_WINDOW", 400, 20);
-
+	createWindows(camID);
 
 	connect(m_button, SIGNAL(clicked(bool)), this,
 			SLOT(slot_debugWindowClicked(bool)));
@@ -44,6 +38,35 @@ Window::Window(QWidget *parent) :
 	connect(m_buttonStartTrack, SIGNAL(clicked(bool)), this,
 			SLOT(slot_modelDebugWindowClicked(bool)));
 
+
+}
+
+/**
+ * Helper callback function. Manages drag/drop debug windows
+ *
+ * @param event
+ * @param x
+ * @param y
+ * @param
+ * @param winName
+ */
+static void onMouse( int event, int x, int y, int, void* winName)
+{
+    if( event != cv::EVENT_LBUTTONDOWN )
+        return;
+    cv::moveWindow((const char*)(winName), x, y);
+
+}
+
+/**
+ * Creates named windows and sets their callbacks.
+ */
+void Window::createWindows(int camID){
+	modelWinName+="_CAM_" + std::to_string(camID);
+	debugWinName+="_CAM_" + std::to_string(camID);
+
+	cv::setMouseCallback(debugWinName, onMouse, (void *)(debugWinName.c_str()));
+	cv::setMouseCallback(modelWinName, onMouse, (void *)(modelWinName.c_str()));
 
 }
 
@@ -78,10 +101,10 @@ void Window::slot_switchTrackerClicked(bool checked) {
 
 void Window::slot_updateDebugWindow(cv::Mat frame) {
 if (m_debWinEnabled) {
-	cv::imshow("DEBUG_WINDOW", frame);
+	cv::imshow(debugWinName, frame);
 
 } else {
-	cv::destroyWindow("DEBUG_WINDOW");
+	cv::destroyWindow(debugWinName);
 }
 
 }
@@ -110,10 +133,10 @@ void Window::slot_updateModelDebugWindow(cv::Point2d point) {
 //			cv::Scalar(0, 0, 0), thickness, lineType);
 
 	if (m_modelDebWinEnabled) {
-		cv::imshow("MODEL_DEBUG", image);
+		cv::imshow(modelWinName, image);
 
 	} else {
-		cv::destroyWindow("MODEL_DEBUG");
+		cv::destroyWindow(modelWinName);
 	}
 
 }
@@ -139,12 +162,4 @@ bool keyReceiver::eventFilter(QObject* obj, QEvent* event) {
 		return QObject::eventFilter(obj, event);
 	}
 	return false;
-}
-
-static void onMouse( int event, int x, int y, int, void* winName)
-{
-    if( event != cv::EVENT_LBUTTONDOWN )
-        return;
-    cv::moveWindow((const char*)(winName), x, y);
-
 }

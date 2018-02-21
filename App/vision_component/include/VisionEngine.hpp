@@ -60,7 +60,7 @@ public:
 	bool openVideo(std::string streamSource);
 	const bool& getVidOpened() const;
 	t_imgResPair getActualImgRes();
-	const int& getCamId() const;
+	const int& getCamId();
 
 	TrcEnRc addTracker(std::string trackerType, int id);
 	TrcEnRc startAllTrackers();

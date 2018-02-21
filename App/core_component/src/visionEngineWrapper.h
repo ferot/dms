@@ -44,6 +44,8 @@ private:
 	void verifyTargetStateFn(t_bBox& tr);
 public:
 	t_bBox track();
+	const int getCamID();
+
 	explicit VisionEngineWrapper();
 	~VisionEngineWrapper();signals:
 	void sig_notifyDebugWindow(cv::Mat);

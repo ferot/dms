@@ -52,8 +52,9 @@ int main(int argc, char **argv) {
 
 	QApplication app(argc, argv);
 	Threader threader;
-	Window mainWindow;
 	VisionEngineWrapper visionEngine;
+	Window mainWindow(visionEngine.getCamID());
+
 
 	threader.runInThread(&visionEngine);
 

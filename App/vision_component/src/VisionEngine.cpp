@@ -11,6 +11,11 @@
 
 VisionEngine* VisionEngine::m_instance = nullptr;
 
+/* Maximum nr of devices expected to be connected */
+const int maxDevCount = 3;
+
+std::string buildVidSource(std::string camID);
+
 /*
  * Returns instance of engine if it already exists.
  * In other case creates new one, with provided (or default) params.
@@ -37,10 +42,6 @@ VisionEngine* VisionEngine::getInstance(string streamSource, int streamWidth,
 VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int streamHeight) {
     m_vidOpened = false;
 
-	if (streamSource.empty()) {
-		streamSource = "/dev/video0";
-	}
-
 	config = Config::getInstance();
 
 	if (m_vidStrHei && m_vidStrWid) {
@@ -51,8 +52,13 @@ VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int stream
 		m_vidStrHei = stod(config->getValue("Video", "height"));
 	}
 
-	m_camId = stoi(config->getValue("Video", "cam_id"));
-	LOGMSG_ARG(LOG_TRACE, "CAM_ID set to %d", m_camId);
+	std::string camID = config->getValue("Video", "cam_id");
+
+	if (streamSource.empty()) {
+		streamSource = buildVidSource(camID);
+	}
+
+	m_camId = std::stoi(camID);
 
 	if (openVideo(streamSource)) {
 		video.set(CV_CAP_PROP_FRAME_WIDTH, m_vidStrWid);
@@ -60,21 +66,33 @@ VisionEngine::VisionEngine(std::string streamSource, int streamWidth, int stream
 		LOGMSG_ARG(LOG4C_PRIORITY_ERROR, "Setting resolution to %s",
 				(std::to_string(m_vidStrWid) + "x" + std::to_string(m_vidStrHei)).c_str());
 		m_vidOpened = true;
+	} else {
+		LOGMSG(LOG_ERROR, "Couldn't open any video device! Aborting...");
+		abort();
 	}
+
+	LOGMSG_ARG(LOG_TRACE, "CAM_ID set to %d", m_camId);
+
 }
 
 /**
  * Tries to open specified dev node as opencv video handler.
  * If fails attempts to get next devnode as fallback.
  * In case none of the nodes is working false is returned, otherwise true.
+ * NOTE : modifies m_camId - used in communication mode
  *
  * @param streamSource
  * @return boolean true if successfull, false on failure
  */
 bool VisionEngine::openVideo(std::string streamSource){
-	std::string fallback_dev = "/dev/video1";
+	int attemptCount = 0;
+	bool openedFlag = video.open(streamSource);
 
-	bool openedFlag = video.open(streamSource) ? true : video.open(fallback_dev);
+	while(openedFlag != true || attemptCount + 1 > maxDevCount){
+		std::string fallback_dev = buildVidSource(std::to_string(++m_camId));
+		openedFlag = video.open(fallback_dev);
+		attemptCount++;
+	}
 
 	if (!openedFlag) {
 		LOGMSG_ARG(LOG_ERROR, "Couldn't open video source %s",
@@ -181,6 +199,16 @@ const bool& VisionEngine::getVidOpened() const{
     return m_vidOpened;
 }
 
-const int& VisionEngine::getCamId() const{
+const int& VisionEngine::getCamId(){
 	return m_camId;
+}
+
+/**
+ * Creates video dev node path based on provided camID string
+ * @param camID
+ * @return string with path to video devnode
+ */
+std::string buildVidSource(std::string camID){
+	return std::string("/dev/video") + camID;
+
 }
