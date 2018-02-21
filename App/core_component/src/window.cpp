@@ -4,6 +4,9 @@
  * Sets up all widgets and connects appropriate internal signals/slots
  * @param parent
  */
+
+static void onMouse( int event, int x, int y, int, void* winName);
+
 Window::Window(QWidget *parent) :
 		QMainWindow(parent) {
 	setFixedSize(320, 320);
@@ -24,6 +27,15 @@ Window::Window(QWidget *parent) :
 	m_buttonStartTrack->setGeometry(10, 50, 150, 30);
 	m_buttonStartTrack->setToolTip("Starts tracking");
 	m_buttonStartTrack->setCheckable(true);
+
+	cv::setMouseCallback("DEBUG_WINDOW", onMouse, (void *)("DEBUG_WINDOW"));
+	cv::setMouseCallback("DEBUG_WINDOW", onMouse, (void *)("MODEL_DEBUG"));
+
+	cv::namedWindow("DEBUG_WINDOW");
+	cv::namedWindow("MODEL_DEBUG");
+
+	cv::moveWindow("MODEL_DEBUG", 10, 500);
+	cv::moveWindow("DEBUG_WINDOW", 400, 20);
 
 
 	connect(m_button, SIGNAL(clicked(bool)), this,
@@ -65,13 +77,12 @@ void Window::slot_switchTrackerClicked(bool checked) {
 }
 
 void Window::slot_updateDebugWindow(cv::Mat frame) {
-	if (m_debWinEnabled) {
-		cv::imshow("DEBUG_WINDOW", frame);
-		cv::moveWindow("DEBUG_WINDOW", 400, 20);
+if (m_debWinEnabled) {
+	cv::imshow("DEBUG_WINDOW", frame);
 
-	} else {
-		cv::destroyWindow("DEBUG_WINDOW");
-	}
+} else {
+	cv::destroyWindow("DEBUG_WINDOW");
+}
 
 }
 
@@ -100,7 +111,6 @@ void Window::slot_updateModelDebugWindow(cv::Point2d point) {
 
 	if (m_modelDebWinEnabled) {
 		cv::imshow("MODEL_DEBUG", image);
-		cv::moveWindow("MODEL_DEBUG", 10, 500);
 
 	} else {
 		cv::destroyWindow("MODEL_DEBUG");
@@ -129,4 +139,12 @@ bool keyReceiver::eventFilter(QObject* obj, QEvent* event) {
 		return QObject::eventFilter(obj, event);
 	}
 	return false;
+}
+
+static void onMouse( int event, int x, int y, int, void* winName)
+{
+    if( event != cv::EVENT_LBUTTONDOWN )
+        return;
+    cv::moveWindow((const char*)(winName), x, y);
+
 }
