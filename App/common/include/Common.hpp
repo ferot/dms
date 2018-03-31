@@ -8,7 +8,7 @@
 #ifndef COMMON_HPP_
 #define COMMON_HPP_
 #include <string.h>
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/lexical_cast.hpp>

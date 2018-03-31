@@ -8,7 +8,7 @@
 #ifndef CONFIG_HPP_
 #define CONFIG_HPP_
 
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 #include <mutex>
 #include <fstream>
 #include "logger.h"
