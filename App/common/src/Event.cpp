@@ -9,7 +9,7 @@
 Event::Event(eventType type, std::string params) : m_type(type) {
 	m_uuid = boost::uuids::random_generator()();
 	setParamUUID();
-	Json::Reader reader;
+	Json::CharReaderBuilder reader;
 	reader.parse(params, m_params);
 }
 
@@ -18,7 +18,7 @@ std::string Event::getEventId() const {
 }
 
 std::string Event::getEventString() const {
-	Json::FastWriter writer;
+	Json::StreamWriterBuilder writer;
 	std::string value = writer.write(m_params);
 
 	return value;
@@ -37,7 +37,7 @@ void Event::setType(eventType type) {
 }
 
 void Event::setParam(std::string param) {
-	Json::Reader reader;
+	Json::CharReaderBuilder reader;
 	reader.parse(param, m_params);
 }
 

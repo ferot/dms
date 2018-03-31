@@ -16,7 +16,7 @@
 CommonRC CoordsRcvdCmd::execute(std::string params) {
 	std::string value;
 	Json::Value root;
-	Json::Reader reader;
+	Json::CharReaderBuilder reader;
 
 	reader.parse(params.c_str(), root);
 

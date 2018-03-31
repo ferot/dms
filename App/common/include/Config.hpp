@@ -8,7 +8,7 @@
 #ifndef CONFIG_HPP_
 #define CONFIG_HPP_
 
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 #include <mutex>
 #include <fstream>
 #include "logger.h"
@@ -29,8 +29,8 @@ private:
 	std::ifstream m_read_file_handler;
 	std::ofstream m_write_file_handler;
 
-	Json::Reader m_reader;
-	Json::StyledStreamWriter m_writer;
+	Json::CharReaderBuilder m_reader;
+	Json::StreamWriterBuilder m_writer;
 
 public:
 	Config(Config const&) = delete;

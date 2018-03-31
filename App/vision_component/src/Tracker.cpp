@@ -44,7 +44,7 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 
 	t_eventPtr trackEvent(new Event(COMMUNICATION_EVENT));
 	Json::Value eventParam;
-	Json::FastWriter fastWriter;
+	Json::StreamWriterBuilder fastWriter;
 
 	auto &param = eventParam["payload"];
 	param["width"] = std::to_string(static_cast<int>(bbox.width));
@@ -55,7 +55,7 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 	param["cam_id"] = VisionEngine::getInstance()->getCamId();
 
 
-	trackEvent->setParam(fastWriter.write(eventParam));
+	trackEvent->setParam(Json::writeString(fastWriter, eventParam));
 
 	return trackEvent;
 }
