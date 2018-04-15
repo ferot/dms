@@ -5,8 +5,8 @@
  *      Author: tf
  */
 #include "Config.hpp"
-#include <json/reader.h>
-#include <json/writer.h>
+#include <jsoncpp/json/reader.h>
+#include <jsoncpp/json/writer.h>
 
 Config* Config::m_instance = nullptr;
 
