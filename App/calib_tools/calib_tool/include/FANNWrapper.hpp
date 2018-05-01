@@ -9,6 +9,7 @@
 #include "DataSet.hpp"
 #include "logger.h"
 #include <QMessageBox>
+#include "Config.hpp"
 
 #include <ios>
 #include <iostream>
@@ -65,8 +66,6 @@ public:
 
     FANNWrapper( Ui::CalibTool* ui = nullptr, std::string outFile = "trainedNet.net") :
         outputFilename(outFile),
-        num_input(2),
-        num_output(1),
         num_layers(3), //this includes in and out layers. Thus cannot be less than 2!
         num_neurons_hidden(3),
         desired_error(0.001f),
@@ -75,6 +74,9 @@ public:
         learning_rate(0.7f),
         UI(ui)
     {
+    	num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
+    	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
+
 
         net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
@@ -160,6 +162,21 @@ public:
         inputFilename = outFile;
     }
 
+	unsigned int getNumInput() const {
+		return num_input;
+	}
+
+	void setNumInput(unsigned int numInput) {
+		num_input = numInput;
+	}
+
+	unsigned int getNumOutput() const {
+		return num_output;
+	}
+
+	void setNumOutput(unsigned int numOutput) {
+		num_output = numOutput;
+	}
 };
 
 
