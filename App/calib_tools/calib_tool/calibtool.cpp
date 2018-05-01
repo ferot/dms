@@ -1,8 +1,10 @@
-#include "calibtool.h"
-#include "ui_calibtool.h"
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <fstream>
+
+#include "calibtool.h"
+#include "ui_calibtool.h"
 #include "logger.h"
 
 /**
@@ -87,11 +89,35 @@ void CalibTool::saveToFile() {
                     file.errorString());
             return;
         }
-        m_dataSet.setPayload(ui->textEdit->toPlainText());
+        m_dataSet.setPayload(ui->textEdit->toPlainText().toUtf8().constData());
+
         QDataStream out(&file);
         out.setVersion(QDataStream::Qt_4_9);
         out << m_dataSet;
+
+        saveFANNDataSetRaw(m_dataSet);
+
     }
+}
+
+/**
+ * Saves in raw text file train data set in FANN suitable form.
+ * @param data - Data set to extract values
+ */
+void CalibTool::saveFANNDataSetRaw(DataSet& data) {
+
+	std::string payload = data.getPayload().toUtf8().constData();
+	std::ofstream output(data.getFilePath().toUtf8().constData());
+	output
+			<< std::to_string(data.getCount()) + std::string(" ")
+					+ std::to_string(this->m_fann->getNumInput())
+					+ std::string(" ")
+					+ std::to_string(this->m_fann->getNumOutput())
+					+ std::string("\n");
+
+	output << payload;
+
+	output.close();
 }
 
 /**

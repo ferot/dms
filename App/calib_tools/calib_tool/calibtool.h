@@ -33,6 +33,7 @@ private:
 
 	std::string formVector();
 	void saveToFile();
+	void saveFANNDataSetRaw(DataSet&);
 	void loadFromFile();
 
 public:
