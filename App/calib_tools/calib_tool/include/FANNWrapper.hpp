@@ -74,6 +74,8 @@ public:
         learning_rate(0.7f),
         UI(ui)
     {
+
+    	inputFilename = "train_data.dat";
     	num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
     	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
@@ -106,7 +108,7 @@ public:
 //                    << "Desired Error: " << left << desired_error << right << endl;
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
-                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet()...", inputFilename.c_str());
+                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", inputFilename.c_str());
                 net.train_on_data(data, max_epochs,
                     epochs_between_reports, desired_error);
 

@@ -60,8 +60,12 @@ void ModelEngine::worker() {
 
 	t_bBox trackResult;
 
-	printCamDebug();
-
+//	printCamDebug();
+	fann_type * result = calculateResult(obtainInputVec());
+	LOGMSG_ARG(LOG_DEBUG, "ANN RESULT COORDS (X,Y) : %s",
+			std::string(
+					std::to_string(result[0])
+							+ std::to_string(result[1])).c_str());
 	if (m_modelWinEnabled) {
 		QThread::msleep(10); //this is unfortunately essential for now due to crash.
 		emit sig_notifyModelWindow(2, 2); //exemplary view trigger
@@ -94,6 +98,8 @@ const t_tup_thrstrs& ModelEngine::getCoords(int id) {
  * Attemts to load generated .net file from provided filepath.
  * @param filepath
  * @return CMN_RC_SUCCESS when struct is not empty
+ *
+ * Note:  This function may crash app when it fails!!
  */
 CommonRC ModelEngine::loadNetFile(std::string filepath) {
 	CommonRC ret = CMN_RC_ERROR;
@@ -108,6 +114,20 @@ CommonRC ModelEngine::loadNetFile(std::string filepath) {
  * @param input vector for network
  * @return result as (x,y) tuple
  */
-fann_type* ModelEngine::calculateResult(fann_type input){
-	return fann_run(m_ann, &input);
+fann_type* ModelEngine::calculateResult(t_ptr_fann_type input){
+	return fann_run(m_ann, input.get());
+}
+
+t_ptr_fann_type ModelEngine::obtainInputVec(){
+
+	std::shared_ptr<fann_type> input( new fann_type[9], []( fann_type *p ) { delete[] p; } );
+	int curr_index = 0;
+
+	for (int i = 0; i < cam_nrs; i++) {
+		auto& cam_vec = getCoords(i);
+		for(int j = 0; j < 3; j++){
+		input.get()[curr_index++] = std::stof(cam_vec[j]);
+		}
+	}
+	return input;
 }

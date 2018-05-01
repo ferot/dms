@@ -15,6 +15,7 @@
 
 typedef std::array<std::string, 3> t_tup_thrstrs;
 typedef struct fann t_fann_s;
+typedef std::shared_ptr<fann_type> t_ptr_fann_type;
 
 const int cam_nrs = 3;
 
@@ -74,7 +75,8 @@ public:
 	~ModelEngine();
 
 	CommonRC loadNetFile(std::string filepath);
-	fann_type* calculateResult(fann_type input);
+	fann_type* calculateResult(t_ptr_fann_type input);
+	t_ptr_fann_type obtainInputVec();
 
 	const t_tup_thrstrs& getCoords(int id);
 	void setCoords(int id, t_tup_thrstrs tuple);
