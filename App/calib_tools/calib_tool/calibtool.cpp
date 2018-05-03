@@ -200,5 +200,3 @@ void CalibTool::on_button_start_training_clicked()
 void CalibTool::on_button_save_res_File_clicked()
 {
 }
-
-

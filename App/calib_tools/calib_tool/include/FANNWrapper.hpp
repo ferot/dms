@@ -103,6 +103,7 @@ public:
             {
                 // Initialize and train the network with the data
                 net.init_weights(data);
+                setProgressBar(10);
 
 //                cout << "Max Epochs " << setw(8) << max_epochs << ". "
 //                    << "Desired Error: " << left << desired_error << right << endl;
@@ -112,7 +113,7 @@ public:
                 net.train_on_data(data, max_epochs,
                     epochs_between_reports, desired_error);
 
-                UI->progressBar->setValue(50);
+                setProgressBar(50);
                 printTextEdit(QString( "Finished training. Now Testing network..."), UI);
 
                 for (unsigned int i = 0; i < data.length_train_data(); ++i)
@@ -120,24 +121,38 @@ public:
                     // Run the network on the test data
                     fann_type *calc_out = net.run(data.get_input()[i]);
 
-                    QString strBffer =
-                            QString("\nTest(" + QString::number(data.get_input()[i][0]) +
-                            		" , " + QString::number(data.get_input()[i][1]) +
-                                    ") --> " + QString::number(*calc_out) +
-                            		"\nshould be : " + QString::number(data.get_output()[i][0])+
-                            		"\ndiff = " + QString::number(fann_abs(*calc_out - data.get_output()[i][0])));
-                    printTextEdit(strBffer, UI);
+				QString strBffer =
+						QString(
+								"\nTest("
+										+ QString::number(
+												data.get_input()[i][0]) + " , "
+										+ QString::number(
+												data.get_input()[i][1]) + " , "
+										+ QString::number(
+												data.get_input()[i][2])
+										+ ") --> " + QString::number(*calc_out)
+										+ "\nshould be : "
+										+ QString::number(
+												data.get_output()[i][0]) + ","
+										+ QString::number(
+												data.get_output()[i][1])
+										+ "\ndiff = "
+										+ QString::number(
+												fann_abs(
+														*calc_out
+																- data.get_output()[i][0])));
+				printTextEdit(strBffer, UI);
 
                 }
 
-                UI->progressBar->setValue(75);
+                setProgressBar(75);
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", outputFilename.c_str());
 
                 net.save(outputFilename);
                 unsigned int decimal_point = net.save_to_fixed(std::string("fixed") + outputFilename);
                 data.save_train_to_fixed(std::string("fixed") + inputFilename, decimal_point);
 
-                UI->progressBar->setValue(100);
+                setProgressBar(100);
 
                 printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
@@ -179,6 +194,11 @@ public:
 	void setNumOutput(unsigned int numOutput) {
 		num_output = numOutput;
 	}
+
+	void setProgressBar(int val){
+        UI->progressBar->setValue(val);
+	}
+
 };
 
 
