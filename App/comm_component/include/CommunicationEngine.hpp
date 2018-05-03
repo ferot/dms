@@ -78,7 +78,7 @@ private:
 public:
 
 	static CommunicationEngine* getInstance(
-			std::string client = "cam_",
+			std::string client = "",
 			std::string brokerAddress = "",
 			int port = 1883,
 			int timeout = 10000L,
@@ -97,6 +97,14 @@ public:
 	ComEnRc subscribe(std::string, eventType = eventType::DEFAULT_EVENT, t_commandPtr ptr = nullptr);
 	ComEnRc unsubscribe(std::string);
 	ComEnRc publish(std::string msg, std::string topic = "");
+
+	const std::string& getClientId() const {
+		return m_clientId;
+	}
+
+	void setClientId(const std::string& clientId) {
+		m_clientId = clientId;
+	}
 };
 
 #endif /* COMMUNICATIONENGINE_HPP_ */

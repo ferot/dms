@@ -52,7 +52,7 @@ t_eventPtr Tracker::prepareEvent(t_bBox bbox) {
 	param["x"] = std::to_string(static_cast<int>(bbox.x));
 	param["y"] = std::to_string(static_cast<int>(bbox.y));
 	param["mqtt_topic"] = CommunicationEngine::getInstance()->getTopic();
-	param["cam_id"] = VisionEngine::getInstance()->getCamId();
+	param["cam_id"] = CommunicationEngine::getInstance()->getClientId();
 
 
 	trackEvent->setParam(fastWriter.write(eventParam));

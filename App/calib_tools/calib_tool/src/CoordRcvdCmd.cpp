@@ -20,7 +20,7 @@ CommonRC CoordsRcvdCmd::execute(std::string params) {
 	reader.parse(params.c_str(), root);
 
 	auto &vals = root["payload"];
-	int id = vals["cam_id"].asInt();
+	int id = std::stoi(vals["cam_id"].asString());
 	t_tup_thrstrs tuple = {
 			vals["x"].asString(),
 			vals["y"].asString(),
