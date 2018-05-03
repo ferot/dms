@@ -161,7 +161,7 @@ ComEnRc CommunicationEngine::obtainMQTTcred() {
 	m_port = stoi(config->getValue("MQTT", "broker_port"));
 	mergeAddrPort(m_port);
 
-	m_clientId += config->getValue("Video", "cam_id");
+	m_clientId += config->getValue("MQTT", "client_id");
 
 	if (m_brokerAddress.empty() || m_port == 0) {
 		LOGMSG(LOG_ERROR, "Cannot get broker address from config file! Setting to default tcp://localhost...");
