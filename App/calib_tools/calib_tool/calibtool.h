@@ -29,9 +29,15 @@ private:
 	DataSet m_dataSet;
     std::shared_ptr<FANNWrapper> m_fann;
 
+    //Used for scaling FANN inputs in <0;1> range
+    float m_scaleFactorX, m_scaleFactorY;
+    std::map<int,float> m_scaleMap;
+
     void refreshValues();
 
 	std::string formVector();
+	std::string scaleInputVector(std::string, int);
+
 	void saveToFile();
 	void saveFANNDataSetRaw(DataSet&);
 	void loadFromFile();

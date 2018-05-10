@@ -8,6 +8,15 @@
 #include "logger.h"
 
 /**
+ * IDs for mapping scale factors for input
+ */
+enum scaleID{
+	X = 0,//!< X
+	Y,    //!< Y
+	SIZE  //!< SIZE
+};
+
+/**
  * Default destructor.
  * As param gets widget handle to parent object (essential for clean-up) when parent destroys
  * @param parent -handle for parent, owning this object
@@ -25,6 +34,13 @@ CalibTool::CalibTool(QWidget *parent) :
 
     labels = {labels_cam1, labels_cam2, labels_cam3};
 
+	m_scaleFactorX = std::stof(Config::getInstance()->getValue("Video", "width"));
+	m_scaleFactorY = std::stof(Config::getInstance()->getValue("Video", "height"));
+
+	m_scaleMap.insert(std::pair<int,float>(scaleID::X, m_scaleFactorX));
+	m_scaleMap.insert(std::pair<int,float>(scaleID::Y, m_scaleFactorY));
+	//Arbitrary assumed that detected face size couldn't be bigger than half of screen size
+	m_scaleMap.insert(std::pair<int,float>(scaleID::SIZE, m_scaleFactorX/2));
 
 }
 
@@ -60,9 +76,10 @@ void CalibTool::setLabelValues(t_tup_thrstrs tuple, int id) {
 std::string CalibTool::formVector() {
     std::string resultVector;
 
+    int idx = 0;
     for (auto lab : labels) {
         std::for_each(lab.begin(), lab.end(), [&](QLabel* label) {
-            resultVector.append(label->text().toStdString()+ " ");
+            resultVector.append(scaleInputVector(label->text().toStdString(), idx++) + " ");
         });
     }
 
@@ -74,6 +91,17 @@ std::string CalibTool::formVector() {
     return resultVector;
 }
 
+/**
+ * Converts raw input string value to float and scales it within factor mapped by id of input
+ * @param textVal - text representation of raw input
+ * @param id - used to map x/y coords or size scale factor
+ * @return result string with converted value
+ */
+inline std::string CalibTool::scaleInputVector(std::string textVal, int id){
+	float input = std::stof(textVal);
+	return std::to_string(input/m_scaleMap[id]);
+
+}
 /**
  * Saves dataset into file.
  * Uses interactive mode to choose file output.
