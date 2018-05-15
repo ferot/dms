@@ -84,6 +84,7 @@ std::string CalibTool::formVector() {
         });
     }
 
+    // X,Y values
     resultVector.append(
             "\n" + ui->spinBox->text().toStdString() + " "
                     + ui->spinBox_2->text().toStdString() + "\n");

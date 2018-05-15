@@ -24,6 +24,16 @@ enum State {
 };
 
 /**
+ * IDs for mapping scale factors for input from cameras
+ */
+enum scaleID{
+	X = 0,//!< X
+	Y,    //!< Y
+	SIZE  //!< SIZE
+};
+
+
+/**
  * Struct representing both real and camera-abstract coords
  */
 struct Coords{
@@ -66,6 +76,10 @@ private:
 	t_fann_s * m_ann;
 
 	bool m_modelWinEnabled;
+
+	//Used for scaling FANN inputs in <0;1> range
+    float m_scaleFactorX, m_scaleFactorY;
+    std::map<int,float> m_scaleMap;
 
 	void worker();
 

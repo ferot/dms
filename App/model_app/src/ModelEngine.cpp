@@ -46,6 +46,15 @@ ModelEngine::ModelEngine() :
 		LOGMSG(LOG_ERROR, "Couldn't load definition file!");
 	}
 
+
+	m_scaleFactorX = std::stof(Config::getInstance()->getValue("Video", "width"));
+	m_scaleFactorY = std::stof(Config::getInstance()->getValue("Video", "height"));
+
+	m_scaleMap.insert(std::pair<int,float>(scaleID::X, m_scaleFactorX));
+	m_scaleMap.insert(std::pair<int,float>(scaleID::Y, m_scaleFactorY));
+	//Arbitrary assumed that detected face size couldn't be bigger than half of screen size
+	m_scaleMap.insert(std::pair<int,float>(scaleID::SIZE, m_scaleFactorX/2));
+
 	rythm.start(0);
 }
 
@@ -125,8 +134,9 @@ t_ptr_fann_type ModelEngine::obtainInputVec(){
 
 	for (int i = 0; i < cam_nrs; i++) {
 		auto& cam_vec = getCoords(i);
-		for(int j = 0; j < 3; j++){
-		input.get()[curr_index++] = std::stof(cam_vec[j]);
+		for (int j = 0; j < 3; j++) {
+			float scaledVal = std::stof(cam_vec[j]) / m_scaleMap[j];
+			input.get()[curr_index++] = scaledVal;
 		}
 	}
 	return input;
