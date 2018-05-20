@@ -10,6 +10,7 @@
 #include "logger.h"
 #include <QMessageBox>
 #include "Config.hpp"
+#include "ParamSetGenerator.hpp"
 
 #include <ios>
 #include <iostream>
@@ -29,6 +30,9 @@ class FANNWrapper{
 
     FANN::neural_net net;
     FANN::training_data data;
+
+    FANN::activation_function_enum m_activationFun;
+    FANN::training_algorithm_enum m_trainingAlg;
 
     unsigned int num_input;
     unsigned int num_output;
@@ -88,12 +92,41 @@ public:
         net.set_activation_steepness_hidden(1.0);
         net.set_activation_steepness_output(1.0);
 
-        net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
-        net.set_activation_function_output(FANN::SIGMOID_SYMMETRIC_STEPWISE);
+        m_activationFun = FANN::SIGMOID_SYMMETRIC_STEPWISE;
+
+        net.set_activation_function_hidden(m_activationFun);
+        net.set_activation_function_output(m_activationFun);
 
 //        net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
         net.print_parameters();
     }
+
+    FANNWrapper( Ui::CalibTool* ui = nullptr, std::shared_ptr<ParamSetGenerator> paramGenerator) {
+    	UI = ui;
+    	auto & paramVec = paramGenerator->getSetVector();
+    	inputFilename = "train_data.dat";
+    	num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
+    	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
+
+
+        net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
+        LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
+
+        net.set_learning_rate(learning_rate);
+
+        net.set_activation_steepness_hidden(1.0);
+        net.set_activation_steepness_output(1.0);
+
+        m_activationFun = FANN::SIGMOID_SYMMETRIC_STEPWISE;
+
+        net.set_activation_function_hidden(m_activationFun);
+        net.set_activation_function_output(m_activationFun);
+
+//        net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
+        net.print_parameters();
+
+    }
+
 
     ~FANNWrapper(){
     }
