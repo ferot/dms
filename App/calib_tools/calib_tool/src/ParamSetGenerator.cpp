@@ -4,16 +4,22 @@
  *  Created on: May 20, 2018
  *      Author: tf
  */
-
+#include <time.h>
 #include "ParamSetGenerator.hpp"
+
+const int initialSetCount = 100;
 
 ParamSetGenerator::ParamSetGenerator(int setCount) :
 		m_lastID(0), m_setCount(setCount) {
+	srand (time(NULL));
+
+	m_setVector.reserve(initialSetCount);
 
 }
 
 /**
- * Returns subsequent single param vector essential for creation fann wrapper's net
+ * Returns subsequent single param vector essential for creation fann wrapper's net.
+ * Note : Increments counter
  * @return
  */
 const paramSet& ParamSetGenerator::getVector() const {
@@ -23,7 +29,13 @@ const paramSet& ParamSetGenerator::getVector() const {
 t_paramVec ParamSetGenerator::generateSet() {
 
 	std::for_each(m_setVector.begin(), m_setVector.end(), [](paramSet set){
-		set.
+		set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), true);
+		set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), false);
+		set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(rand() % 5));
+
+		set.max_epochs(rand() % 1000);
+		set.setNumNeuronsHidden(rand() % 1000);
+//		set.setLearningRate(ui->learnRate/100);
 	});
 
 }
@@ -52,12 +64,12 @@ void paramSet::setLearningRate(float learningRate) {
 	learning_rate = learningRate;
 }
 
-FANN::activation_function_enum paramSet::getActivationFun() const {
-	return m_activationFun;
+FANN::activation_function_enum paramSet::getActivationFun(bool hidden) const {
+	return hidden ? m_activationFunHidden : m_activationFunOutput;
 }
 
-void paramSet::setActivationFun(FANN::activation_function_enum activationFun) {
-	m_activationFun = activationFun;
+void paramSet::setActivationFun(FANN::activation_function_enum activationFun, bool hidden) {
+	hidden ? m_activationFunHidden = activationFun : m_activationFunOutput = activationFun;
 }
 
 FANN::training_algorithm_enum paramSet::getTrainingAlg() const {

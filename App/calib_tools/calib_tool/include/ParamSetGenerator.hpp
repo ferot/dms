@@ -15,14 +15,16 @@ typedef std::vector<paramSet> t_paramVec;
 
 struct paramSet {
     std::string outputFilename;
-    std::string inputFilename;
 
-    FANN::activation_function_enum m_activationFun;
+    FANN::activation_function_enum m_activationFunOutput;
+    FANN::activation_function_enum m_activationFunHidden;
     FANN::training_algorithm_enum m_trainingAlg;
+
     unsigned int num_input;
     unsigned int num_output;
     unsigned int num_layers;
     unsigned int num_neurons_hidden;
+
     float desired_error;
     unsigned int max_epochs;
     unsigned int epochs_between_reports;
@@ -34,8 +36,8 @@ struct paramSet {
 	void setEpochsBetweenReports(unsigned int epochsBetweenReports);
 	float getLearningRate() const;
 	void setLearningRate(float learningRate);
-	FANN::activation_function_enum getActivationFun() const;
-	void setActivationFun(FANN::activation_function_enum activationFun);
+	FANN::activation_function_enum getActivationFun(bool hidden) const;
+	void setActivationFun(FANN::activation_function_enum activationFun, bool hidden);
 	FANN::training_algorithm_enum getTrainingAlg() const;
 	void setTrainingAlg(FANN::training_algorithm_enum trainingAlg);
 	unsigned int getMaxEpochs() const;
