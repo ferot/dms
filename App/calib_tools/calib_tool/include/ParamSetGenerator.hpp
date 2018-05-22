@@ -14,6 +14,7 @@
 typedef std::vector<paramSet> t_paramVec;
 
 struct paramSet {
+
     std::string outputFilename;
 
     FANN::activation_function_enum m_activationFunOutput;
@@ -24,6 +25,9 @@ struct paramSet {
     unsigned int num_output;
     unsigned int num_layers;
     unsigned int num_neurons_hidden;
+
+    float activation_steepness_hidden;
+    float activation_steepness_output;
 
     float desired_error;
     unsigned int max_epochs;
@@ -52,6 +56,10 @@ struct paramSet {
 	void setNumOutput(unsigned int numOutput);
 	const std::string& getOutputFilename() const;
 	void setOutputFilename(const std::string& outputFilename);
+	float getActivationSteepnessHidden() const;
+	void setActivationSteepnessHidden(float activationSteepnessHidden);
+	float getActivationSteepnessOutput() const;
+	void setActivationSteepnessOutput(float activationSteepnessOutput);
 };
 
 class ParamSetGenerator {
@@ -59,6 +67,7 @@ public:
 
 	ParamSetGenerator(int setCount);
 	const paramSet& getVector() const;
+	std::string generateFilename();
 
 
 private:

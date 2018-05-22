@@ -33,11 +33,33 @@ t_paramVec ParamSetGenerator::generateSet() {
 		set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), false);
 		set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(rand() % 5));
 
-		set.max_epochs(rand() % 1000);
 		set.setNumNeuronsHidden(rand() % 1000);
+
+		set.max_epochs(rand() % 500000);
+		set.setEpochsBetweenReports(1000);
+//		set.setDesiredError(ui->desiredError);
 //		set.setLearningRate(ui->learnRate/100);
+//		set.setActivationSteepnessHidden();
+//		set.setActivationSteepnessOutput();
+//		set.setNumLayers(ui->numLayers);
+
+		set.setOutputFilename(generateFilename());
 	});
 
+}
+
+/**
+ * Generates unique filename for param set to be stored
+ * @return
+ */
+std::string ParamSetGenerator::generateFilename() {
+	char date[9];
+	time_t t = time(0);
+	struct tm *tm;
+
+	tm = gmtime(&t);
+	strftime(date, sizeof(date), "%H%M%S_", tm);
+	return std::string(date) + std::to_string(m_lastID);
 }
 
 float paramSet::getDesiredError() const {
@@ -122,6 +144,22 @@ void paramSet::setNumOutput(unsigned int numOutput) {
 
 const std::string& paramSet::getOutputFilename() const {
 	return outputFilename;
+}
+
+float paramSet::getActivationSteepnessHidden() const {
+	return activation_steepness_hidden;
+}
+
+void paramSet::setActivationSteepnessHidden(float activationSteepnessHidden) {
+	activation_steepness_hidden = activationSteepnessHidden;
+}
+
+float paramSet::getActivationSteepnessOutput() const {
+	return activation_steepness_output;
+}
+
+void paramSet::setActivationSteepnessOutput(float activationSteepnessOutput) {
+	activation_steepness_output = activationSteepnessOutput;
 }
 
 void paramSet::setOutputFilename(const std::string& outputFilename) {
