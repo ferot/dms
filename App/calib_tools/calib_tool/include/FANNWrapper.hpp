@@ -6,6 +6,7 @@
 #include "floatfann.h"
 //C++ porting of FANN
 #include "fann_cpp.h"
+
 #include "DataSet.hpp"
 #include "logger.h"
 #include <QMessageBox>
@@ -101,9 +102,9 @@ public:
         net.print_parameters();
     }
 
-    FANNWrapper( Ui::CalibTool* ui = nullptr, std::shared_ptr<ParamSetGenerator> paramGenerator) {
+    FANNWrapper(std::shared_ptr<ParamSetGenerator> paramGenerator, Ui::CalibTool* ui = nullptr) {
     	UI = ui;
-    	auto & paramVec = paramGenerator->getSetVector();
+//    	auto & paramVec = paramGenerator->getSetVector();
     	inputFilename = "train_data.dat";
     	num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
     	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
