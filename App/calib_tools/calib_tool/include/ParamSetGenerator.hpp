@@ -14,6 +14,10 @@
 #include "Common.hpp"
 #include "ParamSet.hpp"
 
+namespace Ui {
+class CalibTool;
+}
+
 typedef std::vector<paramSet> t_paramVec;
 
 class ParamSetGenerator {
@@ -26,6 +30,7 @@ public:
 
 
 private:
+    Ui::CalibTool* UI;
 
 	t_paramVec m_setVector;
 

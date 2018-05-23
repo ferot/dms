@@ -8,6 +8,9 @@
 #include "FANNWrapper.hpp"
 #include "DataSet.hpp"
 
+float getSpinboxFloat(QDoubleSpinBox * spinBox);
+int getSpinboxInt(QSpinBox * spinBox);
+
 namespace Ui {
 class CalibTool;
 }

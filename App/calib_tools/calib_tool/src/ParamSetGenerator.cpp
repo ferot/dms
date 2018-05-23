@@ -5,7 +5,9 @@
  *      Author: tf
  */
 #include <time.h>
+
 #include "ParamSetGenerator.hpp"
+#include "calibtool.h"
 
 const int initialSetCount = 100;
 
@@ -31,22 +33,29 @@ const paramSet& ParamSetGenerator::getVector() {
 
 }
 
+/**
+ * Creates single set according to params or range got from UI
+ */
 void ParamSetGenerator::generateSet() {
 
 	std::for_each(m_setVector.begin(), m_setVector.end(), [this](paramSet set){
+
+		//Rand
 		set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), true);
 		set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), false);
 		set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(rand() % 5));
 
-		set.setNumNeuronsHidden(rand() % 1000);
-
-		set.setMaxEpochs(rand() % 500000);
+		// Arbitrary
+		set.setMaxEpochs(rand() % 500000 + 100000);
 		set.setEpochsBetweenReports(1000);
-//		set.setDesiredError(ui->desiredError);
-//		set.setLearningRate(ui->learnRate/100);
-//		set.setActivationSteepnessHidden();
-//		set.setActivationSteepnessOutput();
-//		set.setNumLayers(ui->numLayers);
+
+		//UI
+		set.setNumNeuronsHidden(getSpinboxInt(UI->spinBox_numneur_max));
+		set.setDesiredError(getSpinboxFloat(UI->doubleSpinBox_desired_error));
+		set.setLearningRate(getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
+		set.setActivationSteepnessHidden(getSpinboxFloat(UI->doubleSpinBox_funhidsteep_max));
+		set.setActivationSteepnessOutput(getSpinboxFloat(UI->doubleSpinBox_funoutpsteep_max));
+		set.setNumLayers(getSpinboxInt(UI->spinBox_numlay_max));
 
 		set.setOutputFilename(generateFilename());
 	});

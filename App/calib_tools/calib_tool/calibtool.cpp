@@ -230,3 +230,17 @@ void CalibTool::on_button_start_training_clicked()
 void CalibTool::on_button_save_res_File_clicked()
 {
 }
+
+/**
+ * Helper functions
+ * Convert UI QT types into basic
+ */
+
+
+float getSpinboxFloat(QDoubleSpinBox * spinBox){
+	return (std::stof(std::string(spinBox->text().toStdString())));
+}
+
+int getSpinboxInt(QSpinBox * spinBox){
+	return (std::stoi(std::string(spinBox->text().toStdString())));
+}

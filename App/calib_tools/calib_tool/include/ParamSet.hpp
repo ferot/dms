@@ -14,6 +14,7 @@
 
 struct paramSet {
 
+private:
 	// describes general name for output paramSet but also may be used
 	// for naming generated network, therefore no extension is assigned
     std::string outputFilename;
@@ -35,6 +36,7 @@ struct paramSet {
     unsigned int epochs_between_reports;
     float learning_rate;
 
+public:
 	float getDesiredError() const;
 	void setDesiredError(float desiredError);
 	unsigned int getEpochsBetweenReports() const;
