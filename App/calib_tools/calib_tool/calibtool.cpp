@@ -42,6 +42,8 @@ CalibTool::CalibTool(QWidget *parent) :
 	//Arbitrary assumed that detected face size couldn't be bigger than half of screen size
 	m_scaleMap.insert(std::pair<int,float>(scaleID::SIZE, m_scaleFactorX/2));
 
+	m_setGenerator = std::make_shared<ParamSetGenerator>(ParamSetGenerator(ui));
+
 }
 
 /**
@@ -224,7 +226,8 @@ void CalibTool::on_saveToFileButton_clicked() {
 
 void CalibTool::on_button_start_training_clicked()
 {
-	m_fann->trainNet();
+//	m_fann->trainNet();
+	m_setGenerator->generateSet();
 }
 
 void CalibTool::on_button_save_res_File_clicked()
@@ -242,5 +245,5 @@ float getSpinboxFloat(QDoubleSpinBox * spinBox){
 }
 
 int getSpinboxInt(QSpinBox * spinBox){
-	return (std::stoi(std::string(spinBox->text().toStdString())));
+    return (std::stoi(std::string(spinBox->text().toStdString())));
 }

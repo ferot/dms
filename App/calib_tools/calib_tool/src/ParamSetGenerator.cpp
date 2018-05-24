@@ -9,14 +9,13 @@
 #include "ParamSetGenerator.hpp"
 #include "calibtool.h"
 
-const int initialSetCount = 100;
+const int initialSetCount = 1000;
 
-ParamSetGenerator::ParamSetGenerator(int setCount) :
-		m_lastID(0), m_setCount(setCount) {
+ParamSetGenerator::ParamSetGenerator(Ui::CalibTool* ui) :
+		UI(ui), m_lastID(0), m_setCount(0) {
 	srand (time(NULL));
 
-	m_setVector.reserve(initialSetCount);
-
+	// Avoid wasteful reallocations for vector elements when choosing different set sizes.
 }
 
 /**
@@ -29,7 +28,7 @@ const paramSet& ParamSetGenerator::getVector() {
 		m_lastID = 0;
 	}
 
-	return m_setVector[m_lastID];
+	return m_setVector->at(m_lastID);
 
 }
 
@@ -37,8 +36,13 @@ const paramSet& ParamSetGenerator::getVector() {
  * Creates single set according to params or range got from UI
  */
 void ParamSetGenerator::generateSet() {
+	m_setVector = std::make_shared<std::vector<paramSet>>(std::vector<paramSet>(m_setCount));
 
-	std::for_each(m_setVector.begin(), m_setVector.end(), [this](paramSet set){
+	m_setVector->reserve(initialSetCount);
+
+	m_setCount = getSpinboxInt(UI->spinBox);
+
+	std::for_each(m_setVector->begin(), m_setVector->end(), [this](paramSet set){
 
 		//Rand
 		set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), true);

@@ -102,7 +102,7 @@ public:
         net.print_parameters();
     }
 
-    FANNWrapper(std::shared_ptr<paramSet> paramSet, Ui::CalibTool* ui = nullptr) {
+    FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {
     	UI = ui;
 //    	auto & paramVec = paramGenerator->getSetVector();
     	inputFilename = "train_data.dat";
@@ -113,15 +113,15 @@ public:
         net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
-        net.set_learning_rate(paramSet->getLearningRate());
+        net.set_learning_rate(paramSet.getLearningRate());
 
-        net.set_activation_steepness_hidden(paramSet->getActivationSteepnessHidden());
-        net.set_activation_steepness_output(paramSet->getActivationSteepnessOutput());
+        net.set_activation_steepness_hidden(paramSet.getActivationSteepnessHidden());
+        net.set_activation_steepness_output(paramSet.getActivationSteepnessOutput());
 
-        net.set_activation_function_hidden(paramSet->getActivationFun(true));
-        net.set_activation_function_output(paramSet->getActivationFun(false));
+        net.set_activation_function_hidden(paramSet.getActivationFun(true));
+        net.set_activation_function_output(paramSet.getActivationFun(false));
 
-        net.set_training_algorithm(paramSet->getTrainingAlg());
+        net.set_training_algorithm(paramSet.getTrainingAlg());
         net.print_parameters();
 
     }

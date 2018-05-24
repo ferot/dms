@@ -7,6 +7,7 @@
 #include "ui_calibtool.h"
 #include "FANNWrapper.hpp"
 #include "DataSet.hpp"
+#include "ParamSetGenerator.hpp"
 
 float getSpinboxFloat(QDoubleSpinBox * spinBox);
 int getSpinboxInt(QSpinBox * spinBox);
@@ -31,6 +32,7 @@ private:
 
 	DataSet m_dataSet;
     std::shared_ptr<FANNWrapper> m_fann;
+    std::shared_ptr<ParamSetGenerator> m_setGenerator;
 
     //Used for scaling FANN inputs in <0;1> range
     float m_scaleFactorX, m_scaleFactorY;

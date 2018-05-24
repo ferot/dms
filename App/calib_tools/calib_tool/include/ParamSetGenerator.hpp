@@ -18,21 +18,22 @@ namespace Ui {
 class CalibTool;
 }
 
-typedef std::vector<paramSet> t_paramVec;
+typedef std::shared_ptr<std::vector<paramSet>> t_p_paramVec;
 
 class ParamSetGenerator {
 public:
 
-	ParamSetGenerator(int setCount);
+	ParamSetGenerator(Ui::CalibTool* ui);
 	const paramSet& getVector();
 	std::string generateFilename();
     void incrementID();
+	void generateSet();
 
 
 private:
     Ui::CalibTool* UI;
 
-	t_paramVec m_setVector;
+	t_p_paramVec m_setVector;
 
 	// Id of last managed(created) set
 	// this is managed ONLY by ParamGenerator !
@@ -41,7 +42,6 @@ private:
 	// describes nr of sets of params, also determines step in generating values.
 	int m_setCount;
 
-	void generateSet();
 
 	CommonRC generateSetName();
 	CommonRC saveSetToFile(std::string name, int id);
