@@ -26,7 +26,7 @@ CalibTool::CalibTool(QWidget *parent) :
     ui->setupUi(this);
 
 	std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
-    m_fann = std::make_shared<FANNWrapper>(ui, annFilePath);
+//    m_fann = std::make_shared<FANNWrapper>(ui, annFilePath);
 
     labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
@@ -226,8 +226,10 @@ void CalibTool::on_saveToFileButton_clicked() {
 
 void CalibTool::on_button_start_training_clicked()
 {
-//	m_fann->trainNet();
 	m_setGenerator->generateSet();
+    m_fann = std::make_shared<FANNWrapper>(m_setGenerator->getVector(), ui);
+    m_fann->trainNet();
+
 }
 
 void CalibTool::on_button_save_res_File_clicked()
@@ -239,11 +241,10 @@ void CalibTool::on_button_save_res_File_clicked()
  * Convert UI QT types into basic
  */
 
-
 float getSpinboxFloat(QDoubleSpinBox * spinBox){
-	return (std::stof(std::string(spinBox->text().toStdString())));
+	return spinBox->value();
 }
 
 int getSpinboxInt(QSpinBox * spinBox){
-    return (std::stoi(std::string(spinBox->text().toStdString())));
+	return spinBox->value();
 }

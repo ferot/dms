@@ -24,7 +24,7 @@ class ParamSetGenerator {
 public:
 
 	ParamSetGenerator(Ui::CalibTool* ui);
-	const paramSet& getVector();
+	paramSet& getVector();
 	std::string generateFilename();
     void incrementID();
 	void generateSet();

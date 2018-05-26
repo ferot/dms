@@ -104,13 +104,14 @@ public:
 
     FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {
     	UI = ui;
-//    	auto & paramVec = paramGenerator->getSetVector();
+
     	inputFilename = "train_data.dat";
+    	outputFilename = paramSet.getOutputFilename() + ".net";
     	num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
     	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
 
-        net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
+        net.create_standard(paramSet.getNumLayers(), num_input, paramSet.getNumNeuronsHidden(), num_output);
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
         net.set_learning_rate(paramSet.getLearningRate());
