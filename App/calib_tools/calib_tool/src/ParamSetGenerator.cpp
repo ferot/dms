@@ -85,3 +85,10 @@ void ParamSetGenerator::incrementID(){
 	m_lastID++;
 }
 
+int ParamSetGenerator::getLastID() {
+	return m_lastID;
+}
+
+bool ParamSetGenerator::isLastID() {
+	return ((m_lastID + 1) == m_setCount);
+}

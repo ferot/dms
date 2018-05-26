@@ -38,6 +38,10 @@ private:
     float m_scaleFactorX, m_scaleFactorY;
     std::map<int,float> m_scaleMap;
 
+    bool m_processStarted;
+    bool m_processCancelled;
+
+
     void refreshValues();
 
 	std::string formVector();
@@ -64,6 +68,7 @@ private slots:
     void on_button_start_training_clicked();
 
     void on_button_save_res_File_clicked();
+    void on_button_cancel_training_clicked();
 
 private:
 	Ui::CalibTool *ui;
