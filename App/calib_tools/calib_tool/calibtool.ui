@@ -32,8 +32,8 @@
          <rect>
           <x>20</x>
           <y>30</y>
-          <width>501</width>
-          <height>211</height>
+          <width>781</width>
+          <height>231</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
@@ -219,8 +219,8 @@
          <rect>
           <x>20</x>
           <y>280</y>
-          <width>556</width>
-          <height>207</height>
+          <width>781</width>
+          <height>351</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -363,26 +363,66 @@
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QSpinBox" name="spinBox_numneur_max"/>
+          <widget class="QSpinBox" name="spinBox_numneur_max">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="displayIntegerBase">
+            <number>10</number>
+           </property>
+          </widget>
          </item>
          <item row="3" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funhidsteep_max">
+           <property name="decimals">
+            <number>4</number>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox_numneur_min"/>
+          <widget class="QSpinBox" name="spinBox_numneur_min">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>1</number>
+           </property>
+          </widget>
          </item>
          <item row="6" column="2">
           <widget class="QSpinBox" name="step_spinBox_7"/>
          </item>
          <item row="1" column="1">
-          <widget class="QSpinBox" name="spinBox_numlay_min"/>
+          <widget class="QSpinBox" name="spinBox_numlay_min">
+           <property name="minimum">
+            <number>3</number>
+           </property>
+           <property name="value">
+            <number>3</number>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QSpinBox" name="spinBox_numlay_max"/>
+          <widget class="QSpinBox" name="spinBox_numlay_max">
+           <property name="minimum">
+            <number>3</number>
+           </property>
+          </widget>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_9">
@@ -393,8 +433,14 @@
          </item>
          <item row="4" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funoutpsteep_max">
+           <property name="decimals">
+            <number>4</number>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -428,8 +474,14 @@
          </item>
          <item row="3" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funhidsteep_min">
+           <property name="decimals">
+            <number>4</number>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -442,8 +494,14 @@
          </item>
          <item row="4" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBox__funoutpsteep_min">
+           <property name="decimals">
+            <number>4</number>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -484,6 +542,15 @@
          </item>
          <item row="5" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_learnrate_min">
+           <property name="decimals">
+            <number>7</number>
+           </property>
+           <property name="minimum">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -494,6 +561,9 @@
          </item>
          <item row="5" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_learnrate_max">
+           <property name="decimals">
+            <number>4</number>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
            </property>
@@ -531,7 +601,14 @@
           </widget>
          </item>
          <item row="7" column="2">
-          <widget class="QSpinBox" name="spinBox_setCount"/>
+          <widget class="QSpinBox" name="spinBox_setCount">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>1000000</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
