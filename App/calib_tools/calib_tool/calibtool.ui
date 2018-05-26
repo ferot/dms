@@ -391,6 +391,9 @@
            </property>
           </widget>
          </item>
+         <item row="6" column="2">
+          <widget class="QSpinBox" name="step_spinBox_7"/>
+         </item>
          <item row="2" column="1">
           <widget class="QSpinBox" name="spinBox_numneur_min">
            <property name="minimum">
@@ -403,9 +406,6 @@
             <number>1</number>
            </property>
           </widget>
-         </item>
-         <item row="6" column="2">
-          <widget class="QSpinBox" name="step_spinBox_7"/>
          </item>
          <item row="1" column="1">
           <widget class="QSpinBox" name="spinBox_numlay_min">
@@ -431,6 +431,13 @@
            </property>
           </widget>
          </item>
+         <item row="14" column="0" colspan="3">
+          <widget class="QProgressBar" name="progressBar">
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funoutpsteep_max">
            <property name="decimals">
@@ -448,20 +455,6 @@
           <widget class="QLabel" name="label_13">
            <property name="text">
             <string>max</string>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="0" colspan="3">
-          <widget class="QProgressBar" name="progressBar">
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="2">
-          <widget class="QPushButton" name="button_start_training">
-           <property name="text">
-            <string>start training</string>
            </property>
           </widget>
          </item>
@@ -607,6 +600,20 @@
            </property>
            <property name="maximum">
             <number>1000000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QPushButton" name="button_start_training">
+           <property name="text">
+            <string>start training</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="2">
+          <widget class="QPushButton" name="button_cancel_training">
+           <property name="text">
+            <string>cancel training</string>
            </property>
           </widget>
          </item>

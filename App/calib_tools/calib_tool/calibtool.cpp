@@ -11,9 +11,9 @@
  * IDs for mapping scale factors for input
  */
 enum scaleID{
-	X = 0,//!< X
-	Y,    //!< Y
-	SIZE  //!< SIZE
+    X = 0,//!< X
+    Y,    //!< Y
+    SIZE  //!< SIZE
 };
 
 /**
@@ -25,7 +25,7 @@ CalibTool::CalibTool(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::CalibTool) {
     ui->setupUi(this);
 
-	std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
+    std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
 //    m_fann = std::make_shared<FANNWrapper>(ui, annFilePath);
 
     labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
@@ -34,16 +34,17 @@ CalibTool::CalibTool(QWidget *parent) :
 
     labels = {labels_cam1, labels_cam2, labels_cam3};
 
-	m_scaleFactorX = std::stof(Config::getInstance()->getValue("Video", "width"));
-	m_scaleFactorY = std::stof(Config::getInstance()->getValue("Video", "height"));
+    m_scaleFactorX = std::stof(Config::getInstance()->getValue("Video", "width"));
+    m_scaleFactorY = std::stof(Config::getInstance()->getValue("Video", "height"));
 
-	m_scaleMap.insert(std::pair<int,float>(scaleID::X, m_scaleFactorX));
-	m_scaleMap.insert(std::pair<int,float>(scaleID::Y, m_scaleFactorY));
-	//Arbitrary assumed that detected face size couldn't be bigger than half of screen size
-	m_scaleMap.insert(std::pair<int,float>(scaleID::SIZE, m_scaleFactorX/2));
+    m_scaleMap.insert(std::pair<int,float>(scaleID::X, m_scaleFactorX));
+    m_scaleMap.insert(std::pair<int,float>(scaleID::Y, m_scaleFactorY));
+    //Arbitrary assumed that detected face size couldn't be bigger than half of screen size
+    m_scaleMap.insert(std::pair<int,float>(scaleID::SIZE, m_scaleFactorX/2));
 
-	m_setGenerator = std::make_shared<ParamSetGenerator>(ParamSetGenerator(ui));
-
+    m_setGenerator = std::make_shared<ParamSetGenerator>(ParamSetGenerator(ui));
+    m_processStarted = false;
+    m_processCancelled = false;
 }
 
 /**
@@ -102,8 +103,8 @@ std::string CalibTool::formVector() {
  * @return result string with converted value
  */
 inline std::string CalibTool::scaleInputVector(std::string textVal, int id){
-	float input = std::stof(textVal);
-	return std::to_string(input/m_scaleMap[id]);
+    float input = std::stof(textVal);
+    return std::to_string(input/m_scaleMap[id]);
 
 }
 /**
@@ -139,18 +140,18 @@ void CalibTool::saveToFile() {
  */
 void CalibTool::saveFANNDataSetRaw(DataSet& data) {
 
-	std::string payload = data.getPayload().toUtf8().constData();
-	std::ofstream output(data.getFilePath().toUtf8().constData());
-	output
-			<< std::to_string(data.getCount()) + std::string(" ")
-					+ std::to_string(this->m_fann->getNumInput())
-					+ std::string(" ")
-					+ std::to_string(this->m_fann->getNumOutput())
-					+ std::string("\n");
+    std::string payload = data.getPayload().toUtf8().constData();
+    std::ofstream output(data.getFilePath().toUtf8().constData());
+    output
+            << std::to_string(data.getCount()) + std::string(" ")
+                    + std::to_string(this->m_fann->getNumInput())
+                    + std::string(" ")
+                    + std::to_string(this->m_fann->getNumOutput())
+                    + std::string("\n");
 
-	output << payload;
+    output << payload;
 
-	output.close();
+    output.close();
 }
 
 /**
@@ -192,7 +193,7 @@ void CalibTool::loadFromFile() {
             QMessageBox::information(this, tr("No data in file"),
                     tr("The dataset you are attempting to open contains no data."));
         } else {
-        	ui->progressBar->setValue(0);
+            ui->progressBar->setValue(0);
             ui->textEdit->setText(m_dataSet.getPayload());
             m_fann->setInputFile(fileName.toStdString());
         }
@@ -224,16 +225,30 @@ void CalibTool::on_saveToFileButton_clicked() {
     saveToFile();
 }
 
-void CalibTool::on_button_start_training_clicked()
-{
-	m_setGenerator->generateSet();
-    m_fann = std::make_shared<FANNWrapper>(m_setGenerator->getVector(), ui);
-    m_fann->trainNet();
+void CalibTool::on_button_start_training_clicked() {
+    m_processCancelled = false;
 
+    if (!m_processStarted) {
+        m_setGenerator->generateSet();
+        m_processStarted = true;
+
+        do {
+            m_fann = std::make_shared<FANNWrapper>(m_setGenerator->getVector(),
+                    ui);
+            m_fann->trainNet();
+        } while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
+    }
+    m_processStarted = false;
 }
 
 void CalibTool::on_button_save_res_File_clicked()
 {
+}
+
+void CalibTool::on_button_cancel_training_clicked()
+{
+    m_processCancelled = true;
+    m_processStarted = false;
 }
 
 /**
@@ -242,9 +257,10 @@ void CalibTool::on_button_save_res_File_clicked()
  */
 
 float getSpinboxFloat(QDoubleSpinBox * spinBox){
-	return spinBox->value();
+    return spinBox->value();
 }
 
 int getSpinboxInt(QSpinBox * spinBox){
-	return spinBox->value();
+    return spinBox->value();
 }
+
