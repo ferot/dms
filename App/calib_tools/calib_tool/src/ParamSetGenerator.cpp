@@ -5,6 +5,7 @@
  *      Author: tf
  */
 #include <time.h>
+#include <random>
 
 #include "ParamSetGenerator.hpp"
 #include "calibtool.h"
@@ -13,7 +14,6 @@ const int initialSetCount = 1000;
 
 ParamSetGenerator::ParamSetGenerator(Ui::CalibTool* ui) :
 		UI(ui), m_lastID(0), m_setCount(0) {
-	srand (time(NULL));
 }
 
 /**
@@ -36,34 +36,53 @@ paramSet& ParamSetGenerator::getVector() {
  */
 void ParamSetGenerator::generateSet() {
 
+	std::random_device rd; // obtain a random number from hardware
+	std::mt19937 eng(rd()); // seed the generator
+
 	m_setCount = getSpinboxInt(UI->spinBox_setCount);
 	m_setVector = std::make_shared<std::vector<paramSet>>(
 			std::vector<paramSet>(m_setCount, paramSet()));
 
 	std::for_each(m_setVector->begin(), m_setVector->end(),
-			[this](paramSet &set) {
+			[this, &eng](paramSet &set) {
 
 				//Rand
-				set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), true);
-				set.setActivationFun(static_cast<FANN::activation_function_enum>(rand() % 16), false);
-				set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(rand() % 5));
+				std::uniform_int_distribution<> distr(FANN::LINEAR, FANN::COS_SYMMETRIC);// define the range
+
+				set.setActivationFun(static_cast<FANN::activation_function_enum>(distr(eng)), true);
+				set.setActivationFun(static_cast<FANN::activation_function_enum>(distr(eng)), false);
+
+				distr = std::uniform_int_distribution<>(FANN::TRAIN_INCREMENTAL, FANN::TRAIN_SARPROP);
+				set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(distr(eng)));
 
 				// Arbitrary
-				set.setMaxEpochs(rand() % 500000 + 100000);
+				distr = std::uniform_int_distribution<>(100000, 500000);
+
+				set.setMaxEpochs(distr(eng));
 				set.setEpochsBetweenReports(1000);
+				set.setDesiredError(getSpinboxFloat(UI->doubleSpinBox_desired_error));
 
 				//UI
-				set.setNumNeuronsHidden(getSpinboxInt(UI->spinBox_numneur_max));
-				set.setDesiredError(getSpinboxFloat(UI->doubleSpinBox_desired_error));
-				set.setLearningRate(getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
-				set.setActivationSteepnessHidden(getSpinboxFloat(UI->doubleSpinBox_funhidsteep_max));
-				set.setActivationSteepnessOutput(getSpinboxFloat(UI->doubleSpinBox_funoutpsteep_max));
-				set.setNumLayers(getSpinboxInt(UI->spinBox_numlay_max));
+
+				distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numneur_min), getSpinboxInt(UI->spinBox_numneur_max));
+				set.setNumNeuronsHidden(distr(eng));
+
+				std::uniform_real_distribution<> distr_real(getSpinboxFloat(UI->doubleSpinBox_learnrate_min), getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
+				set.setLearningRate(distr_real(eng));
+
+				distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox_funhidsteep_min), getSpinboxFloat(UI->doubleSpinBox_funhidsteep_max));
+				set.setActivationSteepnessHidden(distr_real(eng));
+
+				distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox__funoutpsteep_min), getSpinboxFloat(UI->doubleSpinBox_funoutpsteep_max));
+				set.setActivationSteepnessOutput(distr_real(eng));
+
+				distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numlay_max), getSpinboxInt(UI->spinBox_numlay_min));
+				set.setNumLayers(distr(eng));
 
 				set.setOutputFilename(generateFilename());
-                m_lastID++;
+				m_lastID++;
 			});
-    // Finished generation let's now allow to get it from the beginning
+	// Finished generation let's now allow to get it from the beginning
 	m_lastID = 0;
 }
 
