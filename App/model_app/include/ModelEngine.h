@@ -51,9 +51,7 @@ struct Coords{
 	}
 
 	void setRow(t_tup_thrstrs tuple, int id){
-		for(int i = 0; i<cam_nrs; i++){
-			cam_coords[id][i] = tuple[i];
-		}
+            cam_coords[id]= tuple;
 	}
 
 	const t_tup_thrstrs& getRow(int id){
