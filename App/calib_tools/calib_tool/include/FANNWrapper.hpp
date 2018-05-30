@@ -62,10 +62,9 @@ class FANNWrapper{
      * @param str - QString to be added
      * @param UI - handle to ui. used to refer textedit component
      */
-    static void printTextEdit(QString str, Ui::CalibTool* UI){
-        QString buffer = UI->text_edit_output->toPlainText() + str;
-        UI->text_edit_output->setText(buffer+ QString("\n"));
-    }
+	static void printTextEdit(QString str, Ui::CalibTool* UI) {
+		UI->text_edit_output->insertPlainText(str + QString("\n"));
+	}
 
 public:
 

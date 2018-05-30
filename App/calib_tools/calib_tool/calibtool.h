@@ -24,6 +24,7 @@ class CalibTool: public QMainWindow {
 	Q_OBJECT
 
 private:
+
 	t_v_qlabel labels_cam1;
 	t_v_qlabel labels_cam2;
 	t_v_qlabel labels_cam3;

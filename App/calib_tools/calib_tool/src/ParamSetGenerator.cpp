@@ -75,7 +75,7 @@ void ParamSetGenerator::generateSet() {
 				distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox__funoutpsteep_min), getSpinboxFloat(UI->doubleSpinBox_funoutpsteep_max));
 				set.setActivationSteepnessOutput(distr_real(eng));
 
-				distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numlay_max), getSpinboxInt(UI->spinBox_numlay_min));
+                distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numlay_min), getSpinboxInt(UI->spinBox_numlay_max));
 				set.setNumLayers(distr(eng));
 
 				set.setOutputFilename(generateFilename());
