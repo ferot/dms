@@ -109,5 +109,5 @@ int ParamSetGenerator::getLastID() {
 }
 
 bool ParamSetGenerator::isLastID() {
-	return ((m_lastID + 1) == m_setCount);
+    return ((getLastID() + 1) > m_setCount);
 }
