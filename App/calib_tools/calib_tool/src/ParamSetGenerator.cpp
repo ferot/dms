@@ -22,12 +22,11 @@ ParamSetGenerator::ParamSetGenerator(Ui::CalibTool* ui) :
  * @return
  */
 paramSet& ParamSetGenerator::getVector() {
-	if (m_lastID > m_setCount) {
+    if (m_lastID > m_setCount) {
 		m_lastID = 0;
 	}
 
 	return m_setVector->at(m_lastID++);
-
 }
 
 /**
@@ -43,8 +42,8 @@ void ParamSetGenerator::generateSet() {
 	m_setVector = std::make_shared<std::vector<paramSet>>(
 			std::vector<paramSet>(m_setCount, paramSet()));
 
-	std::for_each(m_setVector->begin(), m_setVector->end(),
-			[this, &eng](paramSet &set) {
+    std::for_each(m_setVector->begin(), m_setVector->end(),
+            [this, &eng](paramSet &set) {
 
 				//Rand
 				std::uniform_int_distribution<> distr(FANN::LINEAR, FANN::COS_SYMMETRIC);// define the range
@@ -80,7 +79,7 @@ void ParamSetGenerator::generateSet() {
 				set.setNumLayers(distr(eng));
 
 				set.setOutputFilename(generateFilename());
-				m_lastID++;
+                incrementID();
 			});
 	// Finished generation let's now allow to get it from the beginning
 	m_lastID = 0;
@@ -104,7 +103,7 @@ void ParamSetGenerator::incrementID(){
 	m_lastID++;
 }
 
-int ParamSetGenerator::getLastID() {
+int ParamSetGenerator::getLastID() const{
 	return m_lastID;
 }
 

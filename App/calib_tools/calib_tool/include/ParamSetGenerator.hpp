@@ -28,7 +28,7 @@ public:
 	std::string generateFilename();
     void incrementID();
 	void generateSet();
-	int getLastID();
+    int getLastID() const;
 	bool isLastID();
 
 

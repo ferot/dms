@@ -26,7 +26,6 @@ CalibTool::CalibTool(QWidget *parent) :
     ui->setupUi(this);
 
     std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
-//    m_fann = std::make_shared<FANNWrapper>(ui, annFilePath);
 
     labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
@@ -237,8 +236,8 @@ void CalibTool::on_button_start_training_clicked() {
                     ui);
             m_fann->trainNet();
         } while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
+        m_processStarted = false;
     }
-    m_processStarted = false;
 }
 
 void CalibTool::on_button_save_res_File_clicked()
