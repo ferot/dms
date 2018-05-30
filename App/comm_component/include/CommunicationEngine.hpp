@@ -30,9 +30,8 @@ extern "C" {
 enum ComEnRc {
 	COMM_ENG_SUCCESS, COMM_ENG_ERROR
 };
-
-typedef std::map<std::string, std::pair<eventType, t_commandPtr>> t_mapTopicEvtCmd;
 typedef std::pair<eventType, t_commandPtr> t_p_evtTypeCmd;
+typedef std::map<std::string, t_p_evtTypeCmd> t_mapTopicEvtCmd;
 /**
  * Class responsible for Communicating with MQTT broker.
  */
