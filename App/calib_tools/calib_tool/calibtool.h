@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QLabel>
 
+#include "Event.hpp"
+#include "DispatchEngine.hpp"
 #include "ui_calibtool.h"
 #include "FANNWrapper.hpp"
 #include "DataSet.hpp"
@@ -16,6 +18,32 @@ namespace Ui {
 class CalibTool;
 }
 
+struct TrainJob {
+private:
+	std::shared_ptr<FANNWrapper> m_fann;
+	std::thread m_thrHandle;
+	int id;
+
+public:
+
+	void setThrHandle(std::thread thr) {
+		m_thrHandle = std::move(thr);
+	}
+
+	void run() {
+		m_fann->trainNet();
+		t_eventPtr event = std::make_shared<Event>(
+				eventType::JOB_FINISHED_EVENT, std::to_string(id));
+
+		DispatchEngine::getInstance()->enqueueEvent(event);
+	}
+
+	TrainJob(const TrainJob&) = delete;
+	TrainJob(std::shared_ptr<FANNWrapper> ptr, int _id) :
+			m_fann(std::move(ptr)), id(_id) {
+	}
+
+};
 
 typedef std::vector<QLabel*> t_v_qlabel;
 typedef std::array<std::string, 3> t_tup_thrstrs;
@@ -35,6 +63,8 @@ private:
     std::shared_ptr<FANNWrapper> m_fann;
     std::shared_ptr<ParamSetGenerator> m_setGenerator;
 
+    std::map<int, std::shared_ptr<TrainJob>> m_jobs;
+
     //Used for scaling FANN inputs in <0;1> range
     float m_scaleFactorX, m_scaleFactorY;
     std::map<int,float> m_scaleMap;
@@ -52,11 +82,16 @@ private:
 	void saveFANNDataSetRaw(DataSet&);
 	void loadFromFile();
 
+	void scheduleJobs();
+
+
 public:
 	explicit CalibTool(QWidget *parent = 0);
 	~CalibTool();
 
+	void setProgressBar(int val);
 	void setLabelValues(t_tup_thrstrs tuple, int id);
+	void removeJob(int id);
 
 private slots:
 

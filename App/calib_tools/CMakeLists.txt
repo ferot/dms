@@ -40,5 +40,6 @@ comm_engine
 dispatch_engine 
 Qt5::Widgets
 log4c
-fann)
+fann
+pthread)
 
