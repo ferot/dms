@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <fstream>
+#include <future>
 
 #include "calibtool.h"
 #include "ui_calibtool.h"
@@ -192,11 +193,15 @@ void CalibTool::loadFromFile() {
             QMessageBox::information(this, tr("No data in file"),
                     tr("The dataset you are attempting to open contains no data."));
         } else {
-            ui->progressBar->setValue(0);
+			setProgressBar(0);
             ui->textEdit->setText(m_dataSet.getPayload());
             m_fann->setInputFile(fileName.toStdString());
         }
     }
+}
+
+void CalibTool::setProgressBar(int val) {
+	ui->progressBar->setValue(val);
 }
 
 /**
@@ -225,19 +230,37 @@ void CalibTool::on_saveToFileButton_clicked() {
 }
 
 void CalibTool::on_button_start_training_clicked() {
-    m_processCancelled = false;
+	m_processCancelled = false;
 
-    if (!m_processStarted) {
-        m_setGenerator->generateSet();
-        m_processStarted = true;
+	if (!m_processStarted) {
+		m_setGenerator->generateSet();
+		m_processStarted = true;
 
-        do {
-            m_fann = std::make_shared<FANNWrapper>(m_setGenerator->getVector(),
-                    ui);
-            m_fann->trainNet();
-        } while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
-        m_processStarted = false;
-    }
+		int id = 0;
+
+		do {
+			std::shared_ptr<FANNWrapper> ptr = std::make_shared<FANNWrapper>(
+					m_setGenerator->getVector(), ui);
+
+			m_jobs.insert(
+					std::pair<int, std::shared_ptr<TrainJob>>(id,
+							std::make_shared<TrainJob>(ptr, id)));
+			id++;
+
+		} while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
+
+		scheduleJobs();
+		m_processStarted = false;
+	}
+}
+
+void CalibTool::scheduleJobs() {
+	for (auto it : m_jobs) {
+		std::packaged_task<void(void)> task([&]() {
+			it.second->run();
+		});
+		it.second->setThrHandle(std::thread(std::move(task)));
+	}
 }
 
 void CalibTool::on_button_save_res_File_clicked()
@@ -261,5 +284,9 @@ float getSpinboxFloat(QDoubleSpinBox * spinBox){
 
 int getSpinboxInt(QSpinBox * spinBox){
     return spinBox->value();
+}
+
+void CalibTool::removeJob(int id) {
+	m_jobs.erase(id);
 }
 
