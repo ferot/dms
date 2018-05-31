@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>871</width>
-    <height>780</height>
+    <width>891</width>
+    <height>820</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -619,6 +619,32 @@
          </item>
         </layout>
        </widget>
+       <widget class="QLabel" name="job_processed_text">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>650</y>
+          <width>111</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>processed jobs :</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="job_processed_val">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>650</y>
+          <width>41</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -629,7 +655,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>871</width>
+     <width>891</width>
      <height>22</height>
     </rect>
    </property>
