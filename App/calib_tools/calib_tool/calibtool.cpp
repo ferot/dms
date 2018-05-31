@@ -27,6 +27,7 @@ CalibTool::CalibTool(QWidget *parent) :
     ui->setupUi(this);
 
     std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
+    m_fann = std::make_shared<FANNWrapper>(ui, annFilePath);
 
     labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
