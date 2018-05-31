@@ -38,11 +38,13 @@ public:
 		DispatchEngine::getInstance()->enqueueEvent(event);
 	}
 
-	TrainJob(const TrainJob&) = delete;
 	TrainJob(std::shared_ptr<FANNWrapper> ptr, int _id) :
 			m_fann(std::move(ptr)), id(_id) {
 	}
 
+	~TrainJob() {
+		m_thrHandle.join();
+	}
 };
 
 typedef std::vector<QLabel*> t_v_qlabel;
