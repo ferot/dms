@@ -15,19 +15,15 @@
 CommonRC TrainJobFinishedCmd::execute(std::string params) {
 
 	int id = std::stoi(params);
-
+	static int progress;
 
 	std::lock_guard<std::mutex> lockGuard(m_ctInstance->m_jobMutex);
 
-	m_ctInstance->removeJob(id);
-	progress+=10;
 	m_ctInstance->setProgressBar(progress);
+	m_ctInstance->notifyProcessedJob();
 
-	//TODO : increase progress bar
-	//TODO : check if job vector is empty. ->if so remove it  and set flags to allow new jobs
-//	m_ctInstance->setLabelValues(tuple, id);
-
-
+	m_ctInstance->removeJob(id);
+	//TODO : if last item -> set flags, zero everything
 	return CMN_RC_SUCCESS;
 }
 
