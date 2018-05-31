@@ -13,16 +13,12 @@
  * @return
  */
 CommonRC TrainJobFinishedCmd::execute(std::string params) {
-	std::string value;
-	Json::Value root;
-	Json::Reader reader;
 
-	reader.parse(params.c_str(), root);
+	int id = std::stoi(params);
 
-//	auto &vals = root["payload"];
-//	int id = std::stoi(vals["job_id"].asInt());
-	int id = 0; //TODO get it from payload
-	static int progress = 0;
+
+	std::lock_guard<std::mutex> lockGuard(m_ctInstance->m_jobMutex);
+
 	m_ctInstance->removeJob(id);
 	progress+=10;
 	m_ctInstance->setProgressBar(progress);

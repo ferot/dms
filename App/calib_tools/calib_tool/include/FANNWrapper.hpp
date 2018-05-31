@@ -98,7 +98,7 @@ public:
         net.set_activation_function_output(m_activationFun);
 
 //        net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
-        net.print_parameters();
+//        net.print_parameters();
     }
 
     FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {

@@ -49,6 +49,7 @@ public:
 
 typedef std::vector<QLabel*> t_v_qlabel;
 typedef std::array<std::string, 3> t_tup_thrstrs;
+typedef std::map<int, std::shared_ptr<TrainJob>> t_map_idJob;
 
 class CalibTool: public QMainWindow {
 	Q_OBJECT
@@ -65,7 +66,7 @@ private:
     std::shared_ptr<FANNWrapper> m_fann;
     std::shared_ptr<ParamSetGenerator> m_setGenerator;
 
-    std::map<int, std::shared_ptr<TrainJob>> m_jobs;
+    t_map_idJob m_jobs;
 
     //Used for scaling FANN inputs in <0;1> range
     float m_scaleFactorX, m_scaleFactorY;
@@ -74,6 +75,7 @@ private:
     bool m_processStarted;
     bool m_processCancelled;
 
+    int m_jobCount;
 
     void refreshValues();
 
@@ -88,12 +90,17 @@ private:
 
 
 public:
+    std::mutex m_jobMutex;
+
 	explicit CalibTool(QWidget *parent = 0);
 	~CalibTool();
 
 	void setProgressBar(int val);
 	void setLabelValues(t_tup_thrstrs tuple, int id);
 	void removeJob(int id);
+	void notifyProcessedJob();
+
+	t_map_idJob getJobMap();
 
 private slots:
 

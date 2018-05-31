@@ -46,6 +46,8 @@ CalibTool::CalibTool(QWidget *parent) :
     m_setGenerator = std::make_shared<ParamSetGenerator>(ParamSetGenerator(ui));
     m_processStarted = false;
     m_processCancelled = false;
+
+    m_jobCount = 0;
 }
 
 /**
@@ -291,3 +293,10 @@ void CalibTool::removeJob(int id) {
 	m_jobs.erase(id);
 }
 
+void CalibTool::notifyProcessedJob() {
+	ui->job_processed_val->setText(QString::number(++m_jobCount));
+}
+
+t_map_idJob CalibTool::getJobMap(){
+	return m_jobs;
+}
