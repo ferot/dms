@@ -1,6 +1,8 @@
 #ifndef CALIBTOOL_H
 #define CALIBTOOL_H
 
+#include <future>
+
 #include <QMainWindow>
 #include <QLabel>
 
@@ -21,29 +23,23 @@ class CalibTool;
 struct TrainJob {
 private:
 	std::shared_ptr<FANNWrapper> m_fann;
-	std::thread m_thrHandle;
 	int id;
 
 public:
+    void run() {
+        LOGMSG_ARG(LOG_DEBUG, "EXECUTING THR WITH ID = %d", id);
+        m_fann->trainNet();
+        t_eventPtr event = std::make_shared<Event>(
+                eventType::JOB_FINISHED_EVENT, std::to_string(id));
 
-	void setThrHandle(std::thread thr) {
-		m_thrHandle = std::move(thr);
-	}
-
-	void run() {
-		m_fann->trainNet();
-		t_eventPtr event = std::make_shared<Event>(
-				eventType::JOB_FINISHED_EVENT, std::to_string(id));
-
-		DispatchEngine::getInstance()->enqueueEvent(event);
-	}
+        DispatchEngine::getInstance()->enqueueEvent(event);
+    }
 
 	TrainJob(std::shared_ptr<FANNWrapper> ptr, int _id) :
-			m_fann(std::move(ptr)), id(_id) {
+			m_fann((ptr)), id(_id) {
 	}
 
 	~TrainJob() {
-		m_thrHandle.join();
 	}
 };
 
@@ -96,9 +92,10 @@ public:
 	~CalibTool();
 
 	void setProgressBar(int val);
+    void setJobCountLabel(int val);
 	void setLabelValues(t_tup_thrstrs tuple, int id);
 	void removeJob(int id);
-	void notifyProcessedJob();
+    void notifyProcessedJob(int id);
 
 	t_map_idJob getJobMap();
 

@@ -204,7 +204,11 @@ void CalibTool::loadFromFile() {
 }
 
 void CalibTool::setProgressBar(int val) {
-	ui->progressBar->setValue(val);
+    ui->progressBar->setValue(val);
+}
+
+void CalibTool::setJobCountLabel(int val) {
+    ui->job_processed_val->setText(QString::number(val));
 }
 
 /**
@@ -238,6 +242,7 @@ void CalibTool::on_button_start_training_clicked() {
 	if (!m_processStarted) {
 		m_setGenerator->generateSet();
 		m_processStarted = true;
+        setProgressBar(20);
 
 		int id = 0;
 
@@ -246,24 +251,31 @@ void CalibTool::on_button_start_training_clicked() {
 					m_setGenerator->getVector(), ui);
 
 			m_jobs.insert(
-					std::pair<int, std::shared_ptr<TrainJob>>(id,
+                    std::pair<int, std::shared_ptr<TrainJob>>(id,
 							std::make_shared<TrainJob>(ptr, id)));
+			LOGMSG_ARG(LOG_DEBUG, "INSERTING JOB WITH ID = %d", id);
+
 			id++;
+
 
 		} while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
 
-		scheduleJobs();
-		m_processStarted = false;
-	}
+        setProgressBar(30);
+        scheduleJobs();
+        setProgressBar(50);
+
+        m_processStarted = false;
+    }
 }
 
 void CalibTool::scheduleJobs() {
-	for (auto it : m_jobs) {
-		std::packaged_task<void(void)> task([&]() {
-			it.second->run();
-		});
-		it.second->setThrHandle(std::thread(std::move(task)));
-	}
+    for (auto it : m_jobs) {
+        std::thread thr(&TrainJob::run, it.second);
+
+        if (thr.joinable()) {
+            thr.detach();
+        }
+    }
 }
 
 void CalibTool::on_button_save_res_File_clicked()
@@ -274,6 +286,10 @@ void CalibTool::on_button_cancel_training_clicked()
 {
     m_processCancelled = true;
     m_processStarted = false;
+    m_jobCount = 0;
+
+    setJobCountLabel(0);
+    setProgressBar(0);
 }
 
 /**
@@ -293,8 +309,16 @@ void CalibTool::removeJob(int id) {
 	m_jobs.erase(id);
 }
 
-void CalibTool::notifyProcessedJob() {
-	ui->job_processed_val->setText(QString::number(++m_jobCount));
+void CalibTool::notifyProcessedJob(int id) {
+	// update UI
+    setJobCountLabel(++m_jobCount);
+
+    // update internal state
+	removeJob(id);
+	if (m_jobs.empty()) {
+		setProgressBar(100);
+		LOGMSG(LOG_TRACE, "Job map empty");
+	}
 }
 
 t_map_idJob CalibTool::getJobMap(){

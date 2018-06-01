@@ -15,15 +15,11 @@
 CommonRC TrainJobFinishedCmd::execute(std::string params) {
 
 	int id = std::stoi(params);
-	static int progress;
+	LOGMSG_ARG(LOG_DEBUG, "RECEIVED EVT with ID = %d", id);
 
 	std::lock_guard<std::mutex> lockGuard(m_ctInstance->m_jobMutex);
+	m_ctInstance->notifyProcessedJob(id);
 
-	m_ctInstance->setProgressBar(progress);
-	m_ctInstance->notifyProcessedJob();
-
-	m_ctInstance->removeJob(id);
-	//TODO : if last item -> set flags, zero everything
 	return CMN_RC_SUCCESS;
 }
 

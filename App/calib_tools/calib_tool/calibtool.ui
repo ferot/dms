@@ -613,7 +613,7 @@
          <item row="13" column="2">
           <widget class="QPushButton" name="button_cancel_training">
            <property name="text">
-            <string>cancel training</string>
+            <string>reset/cancel training</string>
            </property>
           </widget>
          </item>
