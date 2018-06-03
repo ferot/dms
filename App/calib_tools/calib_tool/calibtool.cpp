@@ -85,7 +85,7 @@ std::string CalibTool::formVector() {
     int idx = 0;
     for (auto lab : labels) {
         std::for_each(lab.begin(), lab.end(), [&](QLabel* label) {
-            resultVector.append(scaleInputVector(label->text().toStdString(), idx%3) + " ");
+            resultVector.append(label->text().toStdString()+ " ");
             idx++;
         });
     }
