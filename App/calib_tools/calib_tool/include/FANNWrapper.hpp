@@ -162,7 +162,7 @@ public:
 												data.get_input()[i][1]) + " , "
 										+ QString::number(
 												data.get_input()[i][2])
-										+ ") --> " + QString::number(*calc_out)
+										+ ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
 										+ "\nshould be : "
 										+ QString::number(
 												data.get_output()[i][0]) + ","
