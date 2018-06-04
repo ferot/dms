@@ -51,8 +51,8 @@ class FANNWrapper{
          float desired_error, unsigned int epochs, void *user_data)
      {
 
-        Ui::CalibTool* UI = static_cast<Ui::CalibTool*>(user_data);
-        printTextEdit(QString("Current EPOCH | MSE:\t") + QString::number(epochs) + " | " + QString::number(net.get_MSE()), UI);
+//        Ui::CalibTool* UI = static_cast<Ui::CalibTool*>(user_data);
+//        printTextEdit(QString("Current EPOCH | MSE:\t") + QString::number(epochs) + " | " + QString::number(net.get_MSE()), UI);
 
          return 0;
      }
@@ -146,7 +146,7 @@ public:
                     epochs_between_reports, desired_error);
 
 //                setProgressBar(50);
-                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
+//                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
 
                 for (unsigned int i = 0; i < data.length_train_data(); ++i)
                 {
@@ -173,7 +173,7 @@ public:
 												fann_abs(
 														*calc_out
 																- data.get_output()[i][0])));
-				printTextEdit(strBffer, UI);
+//				printTextEdit(strBffer, UI);
 
                 }
 
@@ -186,7 +186,7 @@ public:
 
 //                setProgressBar(100);
 
-                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
+//                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
 		} else {
 			LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
