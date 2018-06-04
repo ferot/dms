@@ -44,6 +44,7 @@ ModelEngine::ModelEngine() :
 	std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
 	if(loadNetFile(annFilePath) == CMN_RC_ERROR){
 		LOGMSG(LOG_ERROR, "Couldn't load definition file!");
+        abort();
 	}
 
 
@@ -70,10 +71,13 @@ void ModelEngine::worker() {
 	t_bBox trackResult;
 
 //	printCamDebug();
-	fann_type * result = calculateResult(obtainInputVec());
-	LOGMSG_ARG(LOG_DEBUG, "ANN RESULT COORDS (X,Y) : %s",
+
+    t_ptr_fann_type input = obtainInputVec();
+    fann_type * result = calculateResult(input);
+
+    LOGMSG_ARG(LOG_DEBUG, "ANN RESULT COORDS (X,Y) : %s",
 			std::string(
-					std::to_string(result[0])
+                    std::to_string(result[0]) + " , "
 							+ std::to_string(result[1])).c_str());
 	if (m_modelWinEnabled) {
 		QThread::msleep(10); //this is unfortunately essential for now due to crash.
@@ -124,19 +128,23 @@ CommonRC ModelEngine::loadNetFile(std::string filepath) {
  * @return result as (x,y) tuple
  */
 fann_type* ModelEngine::calculateResult(t_ptr_fann_type input){
-	return fann_run(m_ann, input.get());
+    fann_scale_input(m_ann, input.get());
+    fann_type* result = fann_run(m_ann, input.get());
+    fann_descale_output(m_ann, result);
+
+    return result;
 }
 
 t_ptr_fann_type ModelEngine::obtainInputVec(){
 
-	std::shared_ptr<fann_type> input( new fann_type[9], []( fann_type *p ) { delete[] p; } );
+    t_ptr_fann_type input( new fann_type[9], []( fann_type *p ) { delete[] p; } );
 	int curr_index = 0;
 
 	for (int i = 0; i < cam_nrs; i++) {
 		auto& cam_vec = getCoords(i);
 		for (int j = 0; j < 3; j++) {
-			float scaledVal = std::stof(cam_vec[j]) / m_scaleMap[j];
-			input.get()[curr_index++] = scaledVal;
+//			float scaledVal = std::stof(cam_vec[j]) / m_scaleMap[j];
+            input.get()[curr_index++] = std::stof(cam_vec[j]);
 		}
 	}
 	return input;

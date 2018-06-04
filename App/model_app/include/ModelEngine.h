@@ -4,8 +4,9 @@
 #include <QObject>
 #include <QTimer>
 
-#include "floatfann.h"
-#include "fann_cpp.h"
+//#include "floatfann.h"
+//#include "fann_cpp.h"
+#include "fann.h"
 
 #include "CommunicationEngine.hpp"
 #include "CommEvent.hpp"

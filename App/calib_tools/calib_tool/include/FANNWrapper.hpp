@@ -135,7 +135,7 @@ public:
             {
                 // Initialize and train the network with the data
                 net.init_weights(data);
-                setProgressBar(10);
+//                setProgressBar(10);
 
 //                cout << "Max Epochs " << setw(8) << max_epochs << ". "
 //                    << "Desired Error: " << left << desired_error << right << endl;
@@ -145,7 +145,7 @@ public:
                 net.train_on_data(data, max_epochs,
                     epochs_between_reports, desired_error);
 
-                setProgressBar(50);
+//                setProgressBar(50);
                 printTextEdit(QString( "Finished training. Now Testing network..."), UI);
 
                 for (unsigned int i = 0; i < data.length_train_data(); ++i)
@@ -177,14 +177,14 @@ public:
 
                 }
 
-                setProgressBar(75);
+//                setProgressBar(75);
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", outputFilename.c_str());
 
                 net.save(outputFilename);
                 unsigned int decimal_point = net.save_to_fixed(std::string("fixed") + outputFilename);
                 data.save_train_to_fixed(std::string("fixed") + inputFilename, decimal_point);
 
-                setProgressBar(100);
+//                setProgressBar(100);
 
                 printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 

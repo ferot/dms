@@ -204,7 +204,7 @@ void CalibTool::loadFromFile() {
 }
 
 void CalibTool::setProgressBar(int val) {
-    ui->progressBar->setValue(val);
+//    ui->progressBar->setValue(val);
 }
 
 void CalibTool::setJobCountLabel(int val) {
