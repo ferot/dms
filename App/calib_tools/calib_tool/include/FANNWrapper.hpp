@@ -118,8 +118,14 @@ public:
         net.set_activation_steepness_hidden(paramSet.getActivationSteepnessHidden());
         net.set_activation_steepness_output(paramSet.getActivationSteepnessOutput());
 
-        net.set_activation_function_hidden(paramSet.getActivationFun(true));
-        net.set_activation_function_output(paramSet.getActivationFun(false));
+        int act = paramSet.getActivationFun(true);
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+
+        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
+
+        act = paramSet.getActivationFun(false);
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
+        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
         net.set_training_algorithm(paramSet.getTrainingAlg());
         net.print_parameters();
@@ -142,6 +148,7 @@ public:
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", inputFilename.c_str());
+
                 net.train_on_data(data, max_epochs,
                     epochs_between_reports, desired_error);
 

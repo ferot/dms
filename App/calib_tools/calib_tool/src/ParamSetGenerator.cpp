@@ -57,7 +57,7 @@ void ParamSetGenerator::generateSet() {
 				// Arbitrary
 				distr = std::uniform_int_distribution<>(100000, 500000);
 
-				set.setMaxEpochs(distr(eng));
+                set.setMaxEpochs(500000);
 				set.setEpochsBetweenReports(1000);
 				set.setDesiredError(getSpinboxFloat(UI->doubleSpinBox_desired_error));
 
