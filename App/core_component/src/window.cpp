@@ -101,10 +101,10 @@ void Window::slot_switchTrackerClicked(bool checked) {
 
 void Window::slot_updateDebugWindow(cv::Mat frame) {
 if (m_debWinEnabled) {
-	cv::imshow(debugWinName, frame);
+//	cv::imshow(debugWinName, frame);
 
 } else {
-	cv::destroyWindow(debugWinName);
+//	cv::destroyWindow(debugWinName);
 }
 
 }
@@ -133,10 +133,10 @@ void Window::slot_updateModelDebugWindow(cv::Point2d point) {
 //			cv::Scalar(0, 0, 0), thickness, lineType);
 
 	if (m_modelDebWinEnabled) {
-		cv::imshow(modelWinName, image);
+//		cv::imshow(modelWinName, image);
 
 	} else {
-		cv::destroyWindow(modelWinName);
+//		cv::destroyWindow(modelWinName);
 	}
 
 }
