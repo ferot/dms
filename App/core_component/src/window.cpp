@@ -1,4 +1,5 @@
 #include "window.h"
+
 /**
  * Constructor of app's window.
  * Sets up all widgets and connects appropriate internal signals/slots
@@ -29,9 +30,10 @@ Window::Window(int camID, QWidget *parent) :
 	m_buttonStartTrack->setGeometry(10, 50, 150, 30);
 	m_buttonStartTrack->setToolTip("Starts tracking");
 	m_buttonStartTrack->setCheckable(true);
-
+	
+#ifndef __arm__
 	createWindows(camID);
-
+#endif
 	connect(m_button, SIGNAL(clicked(bool)), this,
 			SLOT(slot_debugWindowClicked(bool)));
 
@@ -41,6 +43,7 @@ Window::Window(int camID, QWidget *parent) :
 
 }
 
+#ifndef __arm__
 /**
  * Helper callback function. Manages drag/drop debug windows
  *
@@ -69,6 +72,7 @@ void Window::createWindows(int camID){
 	cv::setMouseCallback(modelWinName, onMouse, (void *)(modelWinName.c_str()));
 
 }
+#endif
 
 /*** SLOTS ***/
 
