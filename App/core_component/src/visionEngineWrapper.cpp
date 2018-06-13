@@ -191,7 +191,7 @@ void VisionEngineWrapper::worker() {
 		}
 		//		// Display FPS on frame
 		cv::putText(g_frame, "FPS : " + std::to_string(int(fps)),
-				cv::Point(100, 50), cv::FONT_HERSHEY_SIMPLEX, 0.75,
+                cv::Point(0, 50), cv::FONT_HERSHEY_SIMPLEX, 0.75,
 				cv::Scalar(50, 170, 50), 2);
 		emit sig_notifyDebugWindow(g_frame);
 	}
