@@ -3,6 +3,7 @@
 #include <QtConcurrent/qtconcurrentrun.h>
 
 #include <future>
+#include <math.h>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
@@ -12,6 +13,7 @@
 #include "CoordRcvdCmd.hpp"
 
 cv::Mat g_frame;
+fann_type input[9]={0};
 
 
 ModelEngine::~ModelEngine(){
@@ -68,21 +70,21 @@ void ModelEngine::slot_modelWindowButtonClicked(bool){
  */
 void ModelEngine::worker() {
 
-	t_bBox trackResult;
-
-//	printCamDebug();
+        printCamDebug();
 
     auto input = obtainInputVec();
     fann_type * result = calculateResult(input);
 
+    float x =((result[0]));
+    float y = ((result[1]));
     LOGMSG_ARG(LOG_DEBUG, "ANN RESULT COORDS (X,Y) : %s",
-			std::string(
-                    std::to_string(result[0]) + " , "
-							+ std::to_string(result[1])).c_str());
-	if (m_modelWinEnabled) {
-		QThread::msleep(10); //this is unfortunately essential for now due to crash.
-		emit sig_notifyModelWindow(2, 2); //exemplary view trigger
-	}
+               std::string(
+                   std::to_string(x) + " , "
+                   + std::to_string(y)).c_str());
+    if (m_modelWinEnabled) {
+        QThread::msleep(10); //this is unfortunately essential for now due to crash.
+        emit sig_notifyModelWindow(x, y);
+    }
 }
 
 void ModelEngine::printCamDebug(){
@@ -145,5 +147,5 @@ std::array<float, 9> ModelEngine::obtainInputVec(){
             input[curr_index++] = std::stof(cam_vec[j]);
 		}
 	}
-	return input;
+    return input;
 }

@@ -53,6 +53,8 @@ class FANNWrapper{
 
 //        Ui::CalibTool* UI = static_cast<Ui::CalibTool*>(user_data);
 //        printTextEdit(QString("Current EPOCH | MSE:\t") + QString::number(epochs) + " | " + QString::number(net.get_MSE()), UI);
+//QString strBuffer = QString(("Current EPOCH | MSE:\t") + QString::number(epochs) + " | " + QString::number(net.get_MSE()));
+//                LOGMSG_ARG(LOG_DEBUG, "%s", strBuffer.toStdString.c_str());
 
          return 0;
      }
@@ -110,24 +112,24 @@ public:
     	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
 
-        net.create_standard(paramSet.getNumLayers(), num_input, paramSet.getNumNeuronsHidden(), num_output);
+        net.create_standard(4, 9, 5, 5, 2);
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
-        net.set_learning_rate(paramSet.getLearningRate());
+//        net.set_learning_rate(0.7);
 
-        net.set_activation_steepness_hidden(paramSet.getActivationSteepnessHidden());
-        net.set_activation_steepness_output(paramSet.getActivationSteepnessOutput());
+        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
+        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
 
-        int act = paramSet.getActivationFun(true);
-        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+//        int act = paramSet.getActivationFun(true);
+//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
 
-        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
+//        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
 
-        act = paramSet.getActivationFun(false);
-        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
-        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
+//        act = paramSet.getActivationFun(false);
+//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
+//        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
-        net.set_training_algorithm(paramSet.getTrainingAlg());
+        net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
         net.print_parameters();
 
     }
@@ -140,7 +142,7 @@ public:
          if (data.read_train_from_file(inputFilename))
             {
                 // Initialize and train the network with the data
-                net.init_weights(data);
+//                net.init_weights(data);
 //                setProgressBar(10);
 
 //                cout << "Max Epochs " << setw(8) << max_epochs << ". "
@@ -149,38 +151,56 @@ public:
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", inputFilename.c_str());
 
-                net.train_on_data(data, max_epochs,
-                    epochs_between_reports, desired_error);
+                net.set_scaling_params(data, -1, 1, -1, 1);
+                net.scale_train(data);
+                net.train_on_data(data, 5000,
+                    1000, 0.001);
 
 //                setProgressBar(50);
 //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
 
-                for (unsigned int i = 0; i < data.length_train_data(); ++i)
+                for (unsigned int i = 0; i < data.length_train_data(); i++)
                 {
                     // Run the network on the test data
+                    net.reset_MSE();
                     fann_type *calc_out = net.run(data.get_input()[i]);
+                    net.descale_output(calc_out);
+//                    net.descale_input(data.get_input()[i]);
 
-				QString strBffer =
-						QString(
-								"\nTest("
-										+ QString::number(
-												data.get_input()[i][0]) + " , "
-										+ QString::number(
-												data.get_input()[i][1]) + " , "
-										+ QString::number(
-												data.get_input()[i][2])
-										+ ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
-										+ "\nshould be : "
-										+ QString::number(
-												data.get_output()[i][0]) + ","
-										+ QString::number(
-												data.get_output()[i][1])
-										+ "\ndiff = "
-										+ QString::number(
-												fann_abs(
-														*calc_out
-																- data.get_output()[i][0])));
+                    QString strBffer =
+                            QString(
+                                "\nTest("
+                                + QString::number(
+                                    data.get_input()[i][0]) + " , "
+                            + QString::number(
+                                data.get_input()[i][1]) + " , "
+                            + QString::number(
+                                data.get_input()[i][2])
+                            + QString::number(
+                                data.get_input()[i][3]) + " , "
+                            + QString::number(
+                                data.get_input()[i][4]) + " , "
+                            + QString::number(
+                                data.get_input()[i][5])
+                            + QString::number(
+                                data.get_input()[i][6]) + " , "
+                            + QString::number(
+                                data.get_input()[i][7]) + " , "
+                            + QString::number(
+                                data.get_input()[i][8])
+                            + ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
+                            + "\nshould be : "
+                            + QString::number(
+                                data.get_output()[i][0]) + ","
+                            + QString::number(
+                                data.get_output()[i][1])
+                            + "\ndiff = "
+                            + QString::number(
+                                fann_abs(-
+                                    calc_out[0]
+                                - data.get_output()[i][0])));
 //				printTextEdit(strBffer, UI);
+                LOGMSG_ARG(LOG_DEBUG, "%s", strBffer.toStdString().c_str());
 
                 }
 
