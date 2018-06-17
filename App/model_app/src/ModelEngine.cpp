@@ -72,7 +72,7 @@ void ModelEngine::worker() {
 
 //	printCamDebug();
 
-    t_ptr_fann_type input = obtainInputVec();
+    auto input = obtainInputVec();
     fann_type * result = calculateResult(input);
 
     LOGMSG_ARG(LOG_DEBUG, "ANN RESULT COORDS (X,Y) : %s",
@@ -127,24 +127,22 @@ CommonRC ModelEngine::loadNetFile(std::string filepath) {
  * @param input vector for network
  * @return result as (x,y) tuple
  */
-fann_type* ModelEngine::calculateResult(t_ptr_fann_type input){
-    fann_scale_input(m_ann, input.get());
-    fann_type* result = fann_run(m_ann, input.get());
+fann_type* ModelEngine::calculateResult(std::array<float, 9> input){
+    fann_scale_input(m_ann, input.data());
+    fann_type* result = fann_run(m_ann, input.data());
     fann_descale_output(m_ann, result);
 
     return result;
 }
 
-t_ptr_fann_type ModelEngine::obtainInputVec(){
-
-    t_ptr_fann_type input( new fann_type[9], []( fann_type *p ) { delete[] p; } );
-	int curr_index = 0;
+std::array<float, 9> ModelEngine::obtainInputVec(){
+    std::array<float, 9> input;
+      int curr_index = 0;
 
 	for (int i = 0; i < cam_nrs; i++) {
 		auto& cam_vec = getCoords(i);
 		for (int j = 0; j < 3; j++) {
-//			float scaledVal = std::stof(cam_vec[j]) / m_scaleMap[j];
-            input.get()[curr_index++] = std::stof(cam_vec[j]);
+            input[curr_index++] = std::stof(cam_vec[j]);
 		}
 	}
 	return input;

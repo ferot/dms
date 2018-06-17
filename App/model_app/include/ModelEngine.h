@@ -88,8 +88,8 @@ public:
 	~ModelEngine();
 
 	CommonRC loadNetFile(std::string filepath);
-	fann_type* calculateResult(t_ptr_fann_type input);
-	t_ptr_fann_type obtainInputVec();
+    fann_type* calculateResult(std::array<float,9> input);
+    std::array<float,9> obtainInputVec();
 
 	const t_tup_thrstrs& getCoords(int id);
 	void setCoords(int id, t_tup_thrstrs tuple);
