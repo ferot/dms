@@ -83,7 +83,7 @@ void ModelEngine::worker() {
                    + std::to_string(y)).c_str());
     if (m_modelWinEnabled) {
         QThread::msleep(10); //this is unfortunately essential for now due to crash.
-        emit sig_notifyModelWindow(x, y);
+        emit sig_notifyModelWindow(std::round(x), std::round(y));
     }
 }
 
