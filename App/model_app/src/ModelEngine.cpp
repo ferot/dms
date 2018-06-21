@@ -12,10 +12,6 @@
 #include "ModelEngine.h"
 #include "CoordRcvdCmd.hpp"
 
-cv::Mat g_frame;
-fann_type input[9]={0};
-
-
 ModelEngine::~ModelEngine(){
 	fann_destroy(m_ann);
 	rythm.stop();
@@ -25,6 +21,7 @@ ModelEngine::ModelEngine() :
 		rythm(this) {
 	ce = CommunicationEngine::getInstance("model_app");
 	de = DispatchEngine::getInstance();
+	se = StorageEngine::getInstance("");
 
 	ce->connect();
 	std::string topicName = Config::getInstance()->getValue("MQTT", "topic_name");
@@ -70,21 +67,34 @@ void ModelEngine::slot_modelWindowButtonClicked(bool){
  */
 void ModelEngine::worker() {
 
-        printCamDebug();
+	printCamDebug();
 
-    auto input = obtainInputVec();
-    fann_type * result = calculateResult(input);
+	auto input = obtainInputVec();
+	fann_type * result = calculateResult(input);
 
-    float x =((result[0]));
-    float y = ((result[1]));
-    LOGMSG_ARG(LOG_DEBUG, "ANN RESULT COORDS (X,Y) : %s",
-               std::string(
-                   std::to_string(x) + " , "
-                   + std::to_string(y)).c_str());
-    if (m_modelWinEnabled) {
-        QThread::msleep(10); //this is unfortunately essential for now due to crash.
-        emit sig_notifyModelWindow(std::round(x), std::round(y));
-    }
+	int x = std::round(result[0]);
+	int y = std::round(result[1]);
+
+	LOGMSG_ARG(LOG_TRACE, "ANN RESULT COORDS (X,Y) : %s",
+			std::string(
+					std::to_string(result[0]) + " , "
+							+ std::to_string(result[1])).c_str());
+
+	performDatabaseStatement(x, y);
+
+	if (m_modelWinEnabled) {
+		QThread::msleep(10); //this is unfortunately essential for now due to crash.
+		emit sig_notifyModelWindow(std::round(x), std::round(y));
+	}
+}
+
+void ModelEngine::performDatabaseStatement(int x, int y, int id) {
+	std::shared_ptr < database > db = se->getDBHandle();
+
+	*db << "insert into events (timestamp, objectid, position) values (?,?,?);"
+			<< se->generateDateTime() << id
+			<< std::string(
+					"(" + std::to_string(x) + "," + std::to_string(y) + ")");
 }
 
 void ModelEngine::printCamDebug(){

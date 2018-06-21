@@ -40,6 +40,9 @@ StorageEngine::StorageEngine(string db_file) {
 	} else {
 		m_db_filename = db_file;
 	}
+
+	m_db = std::make_unique<database>(m_db_filename);
+	create_table();
 }
 
 /*
@@ -52,7 +55,7 @@ StorageEngine::~StorageEngine() {
  * Returns SQLite expected date string format "YYYY-MM-DD HH:MM:SS"
  * Date is based on local time.
  */
-const char * generateDateTime() {
+const char * StorageEngine::generateDateTime() {
 	time_t rawtime;
 	struct tm *currentTime;
 	time(&rawtime);
@@ -68,18 +71,34 @@ const char * generateDateTime() {
  * Creates sqlite3 tables if not existing.
  */
 void StorageEngine::create_table() {
-	database db(m_db_filename);
 	LOGMSG_ARG(LOG_TRACE, "Creating table with filename : %s", m_db_filename.c_str());
 	try {
-		db << "create table if not exists events ("
+		*m_db << "create table if not exists events ("
 				"   _id integer primary key autoincrement not null,"
 				"   timestamp date,"
-				"   nodename text,"
-				"   objectid int"
+				"   objectid int,"
+				"   position text"
 				");";
+
 	} catch (exception& e) {
 		LOGMSG_ARG(LOG_ERROR,
 				"Exception %s when trying to create database tables !",
+				e.what());
+	}
+}
+
+/*
+ * Performs SQL statement
+ */
+void StorageEngine::performStatement(std::string statement) {
+	try {
+		*m_db << statement.c_str();
+//				<< "insert into events (timestamp, objectid, position) values (?,?,?);"
+//				<< generateDateTime() << 0 << u"(0,1)";
+
+	} catch (exception& e) {
+		LOGMSG_ARG(LOG_ERROR,
+				"Exception %s when trying to perform statement !",
 				e.what());
 	}
 }

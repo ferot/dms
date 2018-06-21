@@ -33,14 +33,19 @@ private:
 
 	StorageEngine(string file = "");
 	~StorageEngine();
+	void create_table();
 
 	string m_db_filename;
 	Config* config;
+
+	std::shared_ptr<database> m_db;
 public:
 	static StorageEngine* getInstance(string file = "");
+    const char * generateDateTime();
+    void performStatement(std::string statement);
 
 	std::string getDbFilename();
-	void create_table();
+	std::shared_ptr<database> getDBHandle() { return m_db; };
 };
 
 #endif /* STORAGEENGINE_HPP_ */

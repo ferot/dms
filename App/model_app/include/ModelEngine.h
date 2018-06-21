@@ -13,6 +13,7 @@
 #include "Config.hpp"
 #include "DispatchEngine.hpp"
 #include "VisionEngine.hpp"
+#include "StorageEngine.hpp"
 
 typedef std::array<std::string, 3> t_tup_thrstrs;
 typedef struct fann t_fann_s;
@@ -70,6 +71,7 @@ private:
 	QTimer rythm;
 	CommunicationEngine *ce;
 	DispatchEngine *de;
+	StorageEngine *se;
 
 	Coords m_coords;
 	t_fann_s * m_ann;
@@ -81,6 +83,7 @@ private:
     std::map<int,float> m_scaleMap;
 
 	void worker();
+	void performDatabaseStatement(int x, int y, int id = 0);
 
 public:
 
