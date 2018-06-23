@@ -165,7 +165,6 @@ public:
                     net.reset_MSE();
                     fann_type *calc_out = net.run(data.get_input()[i]);
                     net.descale_output(calc_out);
-//                    net.descale_input(data.get_input()[i]);
 
                     QString strBffer =
                             QString(
@@ -194,11 +193,13 @@ public:
                                 data.get_output()[i][0]) + ","
                             + QString::number(
                                 data.get_output()[i][1])
-                            + "\ndiff = "
+                            + "\ndiff = ("
                             + QString::number(
-                                fann_abs(-
-                                    calc_out[0]
-                                - data.get_output()[i][0])));
+                                fann_abs( calc_out[0] - data.get_output()[i][0]))
+                            + " , "
+                            + QString::number(
+                                fann_abs( calc_out[1] - data.get_output()[i][1])) + ")"
+                            );
 //				printTextEdit(strBffer, UI);
                 LOGMSG_ARG(LOG_DEBUG, "%s", strBffer.toStdString().c_str());
 
