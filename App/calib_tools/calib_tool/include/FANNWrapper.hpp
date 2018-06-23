@@ -208,8 +208,6 @@ public:
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", outputFilename.c_str());
 
                 net.save(outputFilename);
-                unsigned int decimal_point = net.save_to_fixed(std::string("fixed") + outputFilename);
-                data.save_train_to_fixed(std::string("fixed") + inputFilename, decimal_point);
 
 //                setProgressBar(100);
 
