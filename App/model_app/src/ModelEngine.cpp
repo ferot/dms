@@ -89,12 +89,18 @@ void ModelEngine::worker() {
 }
 
 void ModelEngine::performDatabaseStatement(int x, int y, int id) {
-	std::shared_ptr < database > db = se->getDBHandle();
+    std::shared_ptr<database> db = se->getDBHandle();
+    try {
+        *db << "insert into events (timestamp, objectid, position) values (?,?,?);"
+            << se->generateDateTime() << id
+            << std::string(
+                   "(" + std::to_string(x) + "," + std::to_string(y) + ")");
 
-	*db << "insert into events (timestamp, objectid, position) values (?,?,?);"
-			<< se->generateDateTime() << id
-			<< std::string(
-					"(" + std::to_string(x) + "," + std::to_string(y) + ")");
+    } catch (exception& e) {
+        LOGMSG_ARG(LOG_ERROR,
+                   "Exception %s when trying to perform statement !",
+                   e.what());
+    }
 }
 
 void ModelEngine::printCamDebug(){

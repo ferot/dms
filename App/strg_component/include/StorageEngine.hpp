@@ -42,10 +42,9 @@ private:
 public:
 	static StorageEngine* getInstance(string file = "");
     const char * generateDateTime();
-    void performStatement(std::string statement);
 
 	std::string getDbFilename();
-	std::shared_ptr<database> getDBHandle() { return m_db; };
+    std::shared_ptr<database> getDBHandle() { return m_db; }
 };
 
 #endif /* STORAGEENGINE_HPP_ */

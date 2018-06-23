@@ -88,22 +88,6 @@ void StorageEngine::create_table() {
 }
 
 /*
- * Performs SQL statement
- */
-void StorageEngine::performStatement(std::string statement) {
-	try {
-		*m_db << statement.c_str();
-//				<< "insert into events (timestamp, objectid, position) values (?,?,?);"
-//				<< generateDateTime() << 0 << u"(0,1)";
-
-	} catch (exception& e) {
-		LOGMSG_ARG(LOG_ERROR,
-				"Exception %s when trying to perform statement !",
-				e.what());
-	}
-}
-
-/*
  * Returns database's full path with filename
  */
 std::string StorageEngine::getDbFilename() {
