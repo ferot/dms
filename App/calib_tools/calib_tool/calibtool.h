@@ -58,6 +58,8 @@ private:
 
 	std::vector<t_v_qlabel> labels;
 
+    std::string m_netDir;
+    std::string m_dataSetDir;
 	DataSet m_dataSet;
     std::shared_ptr<FANNWrapper> m_fann;
     std::shared_ptr<ParamSetGenerator> m_setGenerator;

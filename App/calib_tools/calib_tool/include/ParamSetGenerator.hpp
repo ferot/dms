@@ -31,7 +31,6 @@ public:
     int getLastID() const;
 	bool isLastID();
 
-
 private:
     Ui::CalibTool* UI;
 
@@ -43,7 +42,6 @@ private:
 
 	// describes nr of sets of params, also determines step in generating values.
 	int m_setCount;
-
 
 	CommonRC generateSetName();
 	CommonRC saveSetToFile(std::string name, int id);

@@ -4,10 +4,11 @@
 #include <fstream>
 #include <future>
 
+#include "Common.hpp"
 #include "calibtool.h"
 #include "ui_calibtool.h"
 #include "logger.h"
-
+std::string generateDateString();
 /**
  * IDs for mapping scale factors for input
  */
@@ -25,11 +26,16 @@ enum scaleID{
 CalibTool::CalibTool(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::CalibTool) {
     ui->setupUi(this);
+    m_netDir = "nets" ;
+    m_dataSetDir = "datasets";
+
+    createDirectory(m_netDir);
+    createDirectory(m_dataSetDir);
 
     std::string annFilePath = Config::getInstance()->getValue("ANN", "net");
     m_fann = std::make_shared<FANNWrapper>(ui, annFilePath);
 
-    labels_cam1 = { {ui->label_c1_x_v}, {ui->label_c1_y_v}, {ui->label_c1_s_v}};
+    labels_cam1 = {ui->label_c1_x_v, ui->label_c1_y_v, ui->label_c1_s_v};
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
     labels_cam3 = {ui->label_c3_x_v, ui->label_c3_y_v, ui->label_c3_s_v};
 
@@ -139,22 +145,27 @@ void CalibTool::saveToFile() {
 
 /**
  * Saves in raw text file train data set in FANN suitable form.
+ * Directory tree : datasets/<date_dir>/dataset.dat
  * @param data - Data set to extract values
  */
 void CalibTool::saveFANNDataSetRaw(DataSet& data) {
+    if (createDirectory(m_dataSetDir + "/" + generateDateString()) == CMN_RC_SUCCESS) {
+        std::string payload = data.getPayload().toUtf8().constData();
 
-    std::string payload = data.getPayload().toUtf8().constData();
-    std::ofstream output(data.getFilePath().toUtf8().constData());
-    output
-            << std::to_string(data.getCount()) + std::string(" ")
-                    + std::to_string(this->m_fann->getNumInput())
-                    + std::string(" ")
-                    + std::to_string(this->m_fann->getNumOutput())
-                    + std::string("\n");
+        std::ofstream output((QString::fromStdString(m_dataSetDir) + "/" +
+                              QString::fromStdString(generateDateString()) + "/" +
+                              data.getFilePath()).toUtf8().constData());
+        output
+                << std::to_string(data.getCount()) + std::string(" ")
+                   + std::to_string(this->m_fann->getNumInput())
+                   + std::string(" ")
+                   + std::to_string(this->m_fann->getNumOutput())
+                   + std::string("\n");
 
-    output << payload;
+        output << payload;
 
-    output.close();
+        output.close();
+    }
 }
 
 /**

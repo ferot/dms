@@ -90,12 +90,10 @@ void ParamSetGenerator::generateSet() {
  * @return
  */
 std::string ParamSetGenerator::generateFilename() {
-	char date[9];
-	time_t t = time(0);
-	struct tm *tm;
+    const size_t size = 9;
+    char date[size];
 
-	tm = gmtime(&t);
-	strftime(date, sizeof(date), "%H%M%S_", tm);
+    generateTimestamp("%H%M%S_", date, size);
 	return std::string(date) + std::to_string(m_lastID);
 }
 
