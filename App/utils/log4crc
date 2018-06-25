@@ -15,9 +15,9 @@
         <category name="fann" priority="trace" appender="myrollingfileappender"/>
 
 
-	<rollingpolicy name="myrollingpolicy" type="sizewin" maxsize="1024" maxnum="10" />
+	<rollingpolicy name="myrollingpolicy" type="sizewin" maxsize="4096" maxnum="1000" />
 
-	<appender name="myrollingfileappender" type="rollingfile" logdir="." prefix="myprefix" layout="dated" rollingpolicy="myrollingpolicy" />
+	<appender name="myrollingfileappender" type="rollingfile" logdir="reports" prefix="training_report" layout="none" rollingpolicy="myrollingpolicy" />
 	
 	<appender name="stdout" type="stream" layout="dated"/>
 	<appender name="stderr" type="stream" layout="dated"/>
