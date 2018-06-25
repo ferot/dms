@@ -54,7 +54,7 @@ class FANNWrapper{
     {
         std::string output = std::string(("Current EPOCH | MSE:\t") + std::to_string(epochs) + " | " + std::to_string(net.get_MSE()));
 
-        LOGMSG_F_ARG(LOG_NOTICE, "%s", output.c_str());
+        LOGMSG_F_ARG(LOG_NOTICE, "%s\n", output.c_str());
         return 0;
     }
 
@@ -149,7 +149,7 @@ public:
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (inputDir + inputFilename).c_str());
-
+                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR DATASET : %s ]\n\n", (inputDir + inputFilename).c_str());
                 net.set_scaling_params(data, -1, 1, -1, 1);
                 net.scale_train(data);
                 net.train_on_data(data, 5000,
@@ -164,43 +164,10 @@ public:
                     fann_type *calc_out = net.run(data.get_input()[i]);
                     net.descale_output(calc_out);
 
-                    QString strBffer =
-                            QString(
-                                "\nTest("
-                                + QString::number(
-                                    data.get_input()[i][0]) + " , "
-                            + QString::number(
-                                data.get_input()[i][1]) + " , "
-                            + QString::number(
-                                data.get_input()[i][2])
-                            + QString::number(
-                                data.get_input()[i][3]) + " , "
-                            + QString::number(
-                                data.get_input()[i][4]) + " , "
-                            + QString::number(
-                                data.get_input()[i][5])
-                            + QString::number(
-                                data.get_input()[i][6]) + " , "
-                            + QString::number(
-                                data.get_input()[i][7]) + " , "
-                            + QString::number(
-                                data.get_input()[i][8])
-                            + ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
-                            + "\nshould be : "
-                            + QString::number(
-                                data.get_output()[i][0]) + ","
-                            + QString::number(
-                                data.get_output()[i][1])
-                            + "\ndiff = ("
-                            + QString::number(
-                                fann_abs( calc_out[0] - data.get_output()[i][0]))
-                            + " , "
-                            + QString::number(
-                                fann_abs( calc_out[1] - data.get_output()[i][1])) + ")"
-                            );
-                    LOGMSG_F_ARG(LOG_NOTICE, "%s", strBffer.toStdString().c_str());
-                    LOGMSG_ARG(LOG_DEBUG, "%s", strBffer.toStdString().c_str());
+                    std::string report_step = generateReport(data, calc_out, i);
 
+                    LOGMSG_F_ARG(LOG_NOTICE, "%s\n", report_step.c_str());
+                    LOGMSG_ARG(LOG_DEBUG, "%s", report_step.c_str());
                 }
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (outputDir + outputFilename).c_str());
@@ -251,6 +218,46 @@ public:
 	void setProgressBar(int val){
         UI->progressBar->setValue(val);
 	}
+
+    std::string generateReport(FANN::training_data data, fann_type* calc_out, int i) {
+
+        QString strBffer =
+                QString(
+                    "\nTest("
+                    + QString::number(
+                        data.get_input()[i][0]) + " , "
+                + QString::number(
+                    data.get_input()[i][1]) + " , "
+                + QString::number(
+                    data.get_input()[i][2]) + " , "
+                + QString::number(
+                    data.get_input()[i][3]) + " , "
+                + QString::number(
+                    data.get_input()[i][4]) + " , "
+                + QString::number(
+                    data.get_input()[i][5]) + " , "
+                + QString::number(
+                    data.get_input()[i][6]) + " , "
+                + QString::number(
+                    data.get_input()[i][7]) + " , "
+                + QString::number(
+                    data.get_input()[i][8])
+                + ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
+                + "\nshould be : "
+                + QString::number(
+                    data.get_output()[i][0]) + ","
+                + QString::number(
+                    data.get_output()[i][1])
+                + "\ndiff = ("
+                + QString::number(
+                    fann_abs( calc_out[0] - data.get_output()[i][0]))
+                + " , "
+                + QString::number(
+                    fann_abs( calc_out[1] - data.get_output()[i][1])) + ")"
+                );
+        return strBffer.toStdString();
+    }
+
 
 };
 
