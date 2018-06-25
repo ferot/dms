@@ -58,15 +58,6 @@ class FANNWrapper{
         return 0;
     }
 
-    /**
-     * @brief printTextEdit - Helper function to show FANN output in calib_tool console.
-     * @param str - QString to be added
-     * @param UI - handle to ui. used to refer textedit component
-     */
-	static void printTextEdit(QString str, Ui::CalibTool* UI) {
-		UI->text_edit_output->insertPlainText(str + QString("\n"));
-	}
-
 public:
 
     FANNWrapper( Ui::CalibTool* ui = nullptr, std::string outFile = "trainedNet.net") :
@@ -105,7 +96,7 @@ public:
     FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {
     	UI = ui;
 
-    	inputFilename = "train_data.dat";
+        inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp) and to implement in a way to 'recognize' it.
         inputDir = "datasets/" + generateDateString() + "/";
 
     	outputFilename = paramSet.getOutputFilename() + ".net";
@@ -135,7 +126,6 @@ public:
 
         net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
         net.print_parameters();
-
     }
 
 
@@ -220,29 +210,12 @@ public:
 	}
 
     std::string generateReport(FANN::training_data data, fann_type* calc_out, int i) {
+        QString strBffer = "\nTest(";
 
-        QString strBffer =
-                QString(
-                    "\nTest("
-                    + QString::number(
-                        data.get_input()[i][0]) + " , "
-                + QString::number(
-                    data.get_input()[i][1]) + " , "
-                + QString::number(
-                    data.get_input()[i][2]) + " , "
-                + QString::number(
-                    data.get_input()[i][3]) + " , "
-                + QString::number(
-                    data.get_input()[i][4]) + " , "
-                + QString::number(
-                    data.get_input()[i][5]) + " , "
-                + QString::number(
-                    data.get_input()[i][6]) + " , "
-                + QString::number(
-                    data.get_input()[i][7]) + " , "
-                + QString::number(
-                    data.get_input()[i][8])
-                + ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
+        for(unsigned int idx = 0; idx < num_input; idx++) {
+            strBffer += QString(QString::number(data.get_input()[i][idx]) + " , ");
+        }
+        strBffer += ") --> " + QString::number(calc_out[0]) + ", " + QString::number(calc_out[1])
                 + "\nshould be : "
                 + QString::number(
                     data.get_output()[i][0]) + ","
@@ -253,11 +226,9 @@ public:
                     fann_abs( calc_out[0] - data.get_output()[i][0]))
                 + " , "
                 + QString::number(
-                    fann_abs( calc_out[1] - data.get_output()[i][1])) + ")"
-                );
+                    fann_abs( calc_out[1] - data.get_output()[i][1])) + ")";
         return strBffer.toStdString();
     }
-
 
 };
 
