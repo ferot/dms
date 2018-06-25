@@ -215,7 +215,7 @@ void CalibTool::loadFromFile() {
 }
 
 void CalibTool::setProgressBar(int val) {
-//    ui->progressBar->setValue(val);
+    ui->progressBar->setValue(val);
 }
 
 void CalibTool::setJobCountLabel(int val) {
@@ -249,6 +249,8 @@ void CalibTool::on_saveToFileButton_clicked() {
 
 void CalibTool::on_button_start_training_clicked() {
 	m_processCancelled = false;
+    setProgressBar(20);
+    printConsole("Generating datasets...\n");
 
 	if (!m_processStarted) {
 		m_setGenerator->generateSet();
@@ -260,6 +262,7 @@ void CalibTool::on_button_start_training_clicked() {
 		do {
 			std::shared_ptr<FANNWrapper> ptr = std::make_shared<FANNWrapper>(
 					m_setGenerator->getVector(), ui);
+            printConsole("Spawning job with id = " + std::to_string(id));
 
 			m_jobs.insert(
                     std::pair<int, std::shared_ptr<TrainJob>>(id,
@@ -327,9 +330,17 @@ void CalibTool::notifyProcessedJob(int id) {
     // update internal state
 	removeJob(id);
 	if (m_jobs.empty()) {
-		setProgressBar(100);
-		LOGMSG(LOG_TRACE, "Job map empty");
+        LOGMSG(LOG_TRACE, "Job map empty");
 	}
+}
+
+
+/**
+ * @brief printTextEdit - Helper function to print into calib_tool training section's console.
+ * @param str - QString to be added
+ */
+void CalibTool::printConsole(std::string str) {
+    ui->text_edit_output->insertPlainText(QString::fromStdString(str) + QString("\n"));
 }
 
 t_map_idJob CalibTool::getJobMap(){

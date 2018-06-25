@@ -76,6 +76,7 @@ private:
     int m_jobCount;
 
     void refreshValues();
+    void printConsole(std::string str);
 
 	std::string formVector();
 	std::string scaleInputVector(std::string, int);
