@@ -28,11 +28,14 @@ class FANNWrapper{
 
     std::string outputFilename;
     std::string inputFilename;
+    std::string verifInputFilename;
     std::string outputDir;
     std::string inputDir;
 
     FANN::neural_net net;
     FANN::training_data data;
+    FANN::training_data data_verif;
+
 
     FANN::activation_function_enum m_activationFun;
     FANN::training_algorithm_enum m_trainingAlg;
@@ -96,7 +99,8 @@ public:
     FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {
     	UI = ui;
 
-        inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp) and to implement in a way to 'recognize' it.
+        inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp?) and to implement in a way to 'recognize' it.
+        verifInputFilename = "verif_data.dat";
         inputDir = "datasets/" + generateDateString() + "/";
 
     	outputFilename = paramSet.getOutputFilename() + ".net";
@@ -146,18 +150,20 @@ public:
                     1000, 0.001);
 
 //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
+                if (data_verif.read_train_from_file(inputDir + verifInputFilename)){
 
-                for (unsigned int i = 0; i < data.length_train_data(); i++)
-                {
-                    // Run the network on the test data
-                    net.reset_MSE();
-                    fann_type *calc_out = net.run(data.get_input()[i]);
-                    net.descale_output(calc_out);
+                    for (unsigned int i = 0; i < data.length_train_data(); i++)
+                    {
+                        // Run the network on the test data
+                        net.reset_MSE();
+                        fann_type *calc_out = net.run(data.get_input()[i]);
+                        net.descale_output(calc_out);
 
-                    std::string report_step = generateReport(data, calc_out, i);
+                        std::string report_step = generateReport(data, calc_out, i);
 
-                    LOGMSG_F_ARG(LOG_NOTICE, "%s\n", report_step.c_str());
-                    LOGMSG_ARG(LOG_DEBUG, "%s", report_step.c_str());
+                        LOGMSG_F_ARG(LOG_NOTICE, "%s\n", report_step.c_str());
+                        LOGMSG_ARG(LOG_DEBUG, "%s", report_step.c_str());
+                    }
                 }
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (outputDir + outputFilename).c_str());
