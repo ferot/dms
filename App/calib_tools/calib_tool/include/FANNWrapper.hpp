@@ -143,7 +143,9 @@ public:
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (inputDir + inputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n\n", (inputDir + inputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n\n", (outputDir + outputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (inputDir + inputFilename).c_str());
+
                 net.set_scaling_params(data, -1, 1, -1, 1);
                 net.scale_train(data);
                 net.train_on_data(data, 5000,
