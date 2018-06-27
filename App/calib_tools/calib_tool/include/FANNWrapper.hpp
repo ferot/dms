@@ -31,6 +31,7 @@ class FANNWrapper{
     std::string verifInputFilename;
     std::string outputDir;
     std::string inputDir;
+    std::string verifInputDir;
 
     FANN::neural_net net;
     FANN::training_data data;
@@ -74,9 +75,9 @@ public:
         UI(ui)
     {
 
-    	inputFilename = "train_data.dat";
-    	num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
-    	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
+        inputFilename = "train_data.dat";
+        num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
+        num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
 
         net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
@@ -97,18 +98,20 @@ public:
     }
 
     FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {
-    	UI = ui;
+        UI = ui;
 
         inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp?) and to implement in a way to 'recognize' it.
         verifInputFilename = "verif_data.dat";
-        inputDir = "datasets/" + generateDateString() + "/";
 
-    	outputFilename = paramSet.getOutputFilename() + ".net";
+        inputDir = getDataSetExisting(inputFilename);
+        verifInputDir = getDataSetExisting(verifInputFilename);
+
+        outputFilename = paramSet.getOutputFilename() + ".net";
         outputDir = "nets/" + generateDateString() + "/";
         createDirectory(outputDir);
 
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
-    	num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
+        num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
 
         net.create_standard(4, 9, 5, 5, 2);
@@ -143,8 +146,8 @@ public:
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (inputDir + inputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n\n", (outputDir + outputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (inputDir + inputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (inputDir + inputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (outputDir + outputFilename).c_str());
 
                 net.set_scaling_params(data, -1, 1, -1, 1);
                 net.scale_train(data);
@@ -152,8 +155,8 @@ public:
                     1000, 0.001);
 
 //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
-                if (data_verif.read_train_from_file(inputDir + verifInputFilename)){
-                    LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (inputDir + verifInputFilename).c_str());
+                if (data_verif.read_train_from_file(verifInputDir + verifInputFilename)){
+                    LOGMSG_F_ARG(LOG_NOTICE, "\n[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (verifInputDir + verifInputFilename).c_str());
 
                     for (unsigned int i = 0; i < data_verif.length_train_data(); i++)
                     {
@@ -175,9 +178,9 @@ public:
 
 //                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
-		} else {
-			LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
-		}
+        } else {
+            LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
+        }
     }
 
     /**
@@ -198,25 +201,25 @@ public:
         inputFilename = outFile;
     }
 
-	unsigned int getNumInput() const {
-		return num_input;
-	}
+    unsigned int getNumInput() const {
+        return num_input;
+    }
 
-	void setNumInput(unsigned int numInput) {
-		num_input = numInput;
-	}
+    void setNumInput(unsigned int numInput) {
+        num_input = numInput;
+    }
 
-	unsigned int getNumOutput() const {
-		return num_output;
-	}
+    unsigned int getNumOutput() const {
+        return num_output;
+    }
 
-	void setNumOutput(unsigned int numOutput) {
-		num_output = numOutput;
-	}
+    void setNumOutput(unsigned int numOutput) {
+        num_output = numOutput;
+    }
 
-	void setProgressBar(int val){
+    void setProgressBar(int val){
         UI->progressBar->setValue(val);
-	}
+    }
 
     std::string generateReport(FANN::training_data data, fann_type* calc_out, int i) {
         QString strBffer = "\nTest(";
@@ -237,6 +240,24 @@ public:
                 + QString::number(
                     fann_abs( calc_out[1] - data.get_output()[i][1])) + ")";
         return strBffer.toStdString();
+    }
+
+    /**
+     * @brief checkForDataSetExisting - checks if in dir for current day exist dataset file
+     * if not returns path to default fallback dir with datasets(this should be assured by user!!!).
+     * @return
+     */
+    std::string getDataSetExisting(std::string nameToCompare) {
+        std::string defaultPath = "datasets/";
+        std::string pathToCheck = defaultPath + generateDateString() + "/";
+        auto vec = listdir(pathToCheck);
+
+        for (auto i : vec) {
+            if (i == nameToCompare) {
+                return pathToCheck;
+            }
+        }
+        return defaultPath;
     }
 
 };

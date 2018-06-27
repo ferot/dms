@@ -8,6 +8,8 @@
 #ifndef COMMON_HPP_
 #define COMMON_HPP_
 
+#include <stdio.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <jsoncpp/json/json.h>
@@ -92,4 +94,28 @@ inline std::string generateDateString() {
     generateTimestamp("%Y_%m_%d", date, size);
     return std::string(date);
 }
+
+/**
+ * @brief listdir lists files in provided dir.
+ * Note : DOES NOT make it recursive!
+ * Doesn't allow for wildcards!
+ * @param path
+ * @return vector of strings with files in dir
+ */
+inline std::vector<std::string> listdir(std::string path) {
+    std::vector<std::string> container;
+    struct dirent *entry;
+    DIR *dp;
+
+    dp = opendir(path.c_str());
+    if (dp == NULL) {
+        perror("opendir: Path does not exist or could not be read.");
+    }
+    while ((entry = readdir(dp)))
+        container.push_back(std::string(entry->d_name));
+
+    closedir(dp);
+    return container;
+}
+
 #endif /* COMMON_HPP_ */
