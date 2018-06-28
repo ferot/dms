@@ -13,6 +13,7 @@
 //FANN REPORT OUTPUTS
 #define FANN_CATEGORY_NAME "fann"
 #define LOGMSG_F_ARG(priority, msg, args) mylog_cat(FANN_CATEGORY_NAME, priority, msg, args)
+#define LOGMSG_F(priority, msg) mylog_cat(FANN_CATEGORY_NAME, priority, msg)
 
 #ifndef WITHOUT_LOG4C
 #define LOG_ERROR LOG4C_PRIORITY_ERROR
