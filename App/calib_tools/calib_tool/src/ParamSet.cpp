@@ -32,10 +32,20 @@ void paramSet::setLearningRate(float learningRate) {
 	learning_rate = learningRate;
 }
 
+/**
+ * @brief paramSet::getActivationFun
+ * @param hidden boolean determining if should return hidden activation func, otherwise output's
+ * @return activation func enum
+ */
 FANN::activation_function_enum paramSet::getActivationFun(bool hidden) const {
 	return hidden ? m_activationFunHidden : m_activationFunOutput;
 }
 
+/**
+ * @brief paramSet::setActivationFun - sets activation func members
+ * @param activationFun - value to be set
+ * @param hidden - flag determining which type of activation func should be set (hidden when true, output otherwise).
+ */
 void paramSet::setActivationFun(FANN::activation_function_enum activationFun, bool hidden) {
 	hidden ? m_activationFunHidden = activationFun : m_activationFunOutput = activationFun;
 }
