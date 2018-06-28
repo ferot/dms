@@ -114,25 +114,35 @@ public:
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
-        net.create_standard(4, 9, 5, 5, 2);
+        if (paramSet.getNumLayers() == 2) {
+        net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
+        } else {
+            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
+
+        }
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
-//        net.set_learning_rate(0.7);
+        net.set_learning_rate(paramSet.getLearningRate());
 
-        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
-        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
+//        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
+//        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
 
-//        int act = paramSet.getActivationFun(true);
-//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+        int act = paramSet.getActivationFun(true);
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
 
-//        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
+        act = paramSet.getActivationFun(false);
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
+        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
-//        act = paramSet.getActivationFun(false);
-//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
-//        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
+//        net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
+        act = paramSet.getTrainingAlg();
+        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
 
-        net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
         netParams = netParamsToString(paramSet);
+        net.print_parameters();
+
     }
 
 
@@ -146,9 +156,10 @@ public:
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (inputDir + inputFilename).c_str());
+                LOGMSG_F(LOG_NOTICE,"\n---------------------------------------------------------------------\n");
                 LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (inputDir + inputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", netParams.c_str());
                 LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (outputDir + outputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", netParams.c_str());
 
                 net.set_scaling_params(data, -1, 1, -1, 1);
                 net.scale_train(data);
@@ -174,6 +185,7 @@ public:
                 }
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (outputDir + outputFilename).c_str());
+                LOGMSG_F(LOG_NOTICE,"\n---------------------------------------------------------------------\n");
 
                 net.save(outputDir + outputFilename);
 
