@@ -23,7 +23,7 @@ namespace Ui {
 class CalibTool;
 }
 
-class FANNWrapper{
+class FANNWrapper {
 
 
     std::string outputFilename;
@@ -32,6 +32,7 @@ class FANNWrapper{
     std::string outputDir;
     std::string inputDir;
     std::string verifInputDir;
+    std::string netParams;
 
     FANN::neural_net net;
     FANN::training_data data;
@@ -113,7 +114,6 @@ public:
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
-
         net.create_standard(4, 9, 5, 5, 2);
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
@@ -132,7 +132,7 @@ public:
 //        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
         net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
-        net.print_parameters();
+        netParams = netParamsToString(paramSet);
     }
 
 
@@ -147,6 +147,7 @@ public:
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (inputDir + inputFilename).c_str());
                 LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (inputDir + inputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", netParams.c_str());
                 LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (outputDir + outputFilename).c_str());
 
                 net.set_scaling_params(data, -1, 1, -1, 1);
@@ -260,7 +261,26 @@ public:
         return defaultPath;
     }
 
-};
+    /**
+    * @brief netParamsToString converts FANN net into string form appropriate for reporting etc.
+    * Uses FANN's net structure and paramSet's values to fill basic params
+    * @param paramSet - handle for paramSet used to initialize net
+    * @return string with params
+    */
+    std::string netParamsToString(paramSet& paramSet) {
+        std::string params;
+        params += "\nnum_input : " + std::to_string(net.get_num_input()) +
+                "\nnum_output : " + std::to_string(net.get_num_output()) +
+                "\nnum_neu_hid : " + std::to_string(paramSet.getNumNeuronsHidden()) +
+                "\nnum_lay : " + std::to_string(net.get_num_layers()) +
+                "\nactiv_fun_steep_hid : " + std::to_string(paramSet.getActivationSteepnessHidden()) +
+                "\nactiv_fun_steep_out : " + std::to_string(paramSet.getActivationSteepnessOutput()) +
+                "\nlearn_rate : " + std::to_string(net.get_learning_rate()) +
+                "\ntrain_alg : " + std::to_string(paramSet.getTrainingAlg()) +
+                "\nmax_epochs : " + std::to_string(paramSet.getMaxEpochs()) + "\n\n";
 
+        return params;
+    }
+};
 
 #endif // FANNWRAPER_HPP
