@@ -12,7 +12,7 @@
 #include "ModelEngine.h"
 #include "CoordRcvdCmd.hpp"
 #include "stateobject.hpp"
-
+#include "Grid.h"
 
 ModelEngine* ModelEngine::m_instance = nullptr;
 
@@ -57,6 +57,8 @@ ModelEngine::ModelEngine() :
         abort();
 	}
 
+    m_imageBuffer = cv::Mat(600, 600, CV_8UC3, cv::Scalar(200, 200, 200));
+    m_grid = make_shared<Grid>(m_imageBuffer, 5, 5);
 
 	m_scaleFactorX = std::stof(Config::getInstance()->getValue("Video", "width"));
 	m_scaleFactorY = std::stof(Config::getInstance()->getValue("Video", "height"));
@@ -95,7 +97,7 @@ void ModelEngine::worker() {
 
 	if (m_modelWinEnabled) {
 		QThread::msleep(10); //this is unfortunately essential for now due to crash.
-        emit sig_notifyModelWindow(StateObject(t_p_coords(std::round(x), std::round(y))));
+        emit sig_notifyModelWindow(StateObject(m_grid, t_p_coords(std::round(x), std::round(y))));
 	}
 }
 

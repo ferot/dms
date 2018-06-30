@@ -15,13 +15,16 @@
 #include "VisionEngine.hpp"
 #include "StorageEngine.hpp"
 #include "stateobject.hpp"
+#include "Grid.h"
+
+class StateObject;
+class Grid;
 
 typedef std::array<std::string, 3> t_tup_thrstrs;
 typedef struct fann t_fann_s;
 typedef std::shared_ptr<fann_type> t_ptr_fann_type;
 typedef std::pair<int,int> t_p_coords;
-
-class StateObject;
+typedef std::shared_ptr<Grid> t_ptr_grid;
 
 const int cam_nrs = 3;
 
@@ -78,7 +81,11 @@ private:
 	DispatchEngine *de;
 	StorageEngine *se;
 
-	Coords m_coords;
+    t_ptr_grid m_grid;
+    cv::Mat m_imageBuffer;
+
+    Coords m_coords;
+
 	t_fann_s * m_ann;
 
 	bool m_modelWinEnabled;

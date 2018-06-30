@@ -1,9 +1,12 @@
 #ifndef HEATMAP_HPP
 #define HEATMAP_HPP
 #include "stateobject.hpp"
+#include "ModelEngine.h"
 
 typedef std::array<std::array<int, 9>,9> t_array2D;
+typedef std::pair<int,int> t_p_coords;
 
+class StateObject;
 /**
  * @brief The HeatMap class responsible for depicting 'condensation' of object in area
  */
@@ -15,8 +18,9 @@ private:
 
     int getDatabaseCount(t_p_coords coords = t_p_coords(-667,-667));
 public:
+    HeatMap(){}
 
-    HeatMap(std::shared_ptr<StateObject> state);
+    HeatMap(std::shared_ptr<StateObject>state);
     void update();
 
 };

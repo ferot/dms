@@ -7,6 +7,12 @@ HeatMap::HeatMap(std::shared_ptr<StateObject> state)  : m_state(state){
 //    m_dimy = state->dimY;
 }
 
+//HeatMap::HeatMap(){
+////    m_dimx = state->dimX;
+////    m_dimy = state->dimY;
+//}
+
+
 /**
  * @brief StateObject::getDatabaseCount - performs sqlite db query for :
  * -specified coords

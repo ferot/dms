@@ -34,6 +34,7 @@ public:
     	cv::destroyAllWindows();
     };
 private:
+    cv::Mat m_imageBuffer;
     bool m_debWinEnabled;
     bool m_modelDebWinEnabled;
 
@@ -47,19 +48,8 @@ private:
 
     keyReceiver* m_keyFilter;
 
-    int m_grid_h_dim;
-    int m_grid_w_dim;
-
-    int m_step_x;
-    int m_step_y;
-
     void setModelWinRes(const int& w, const int& h);
-    void setGridDim(const int& w_dim, const int& h_dim);
-    void updateStep();
-    t_p_coords convertCoordsToGridAbstract(t_p_coords coords);
-
-    void drawGrid(cv::Mat & image, const int&, const int&);
-    void drawAdditionalInfo(cv::Mat & image, t_p_coords coords);
+    void drawAdditionalInfo(cv::Mat & image, StateObject state);
 
 signals:
     void sig_notifyAppQuit();

@@ -5,7 +5,7 @@
 #include "ModelEngine.h"
 #include "Grid.h"
 
-typedef std::pair<int,int> t_p_coords;
+//typedef std::pair<int,int> t_p_coords;
 
 /**
  * @brief The StateObject class - represents state of the system (all essential infos, heatmap, etc)
@@ -13,10 +13,12 @@ typedef std::pair<int,int> t_p_coords;
 class StateObject
 {
 private:
-    t_p_coords m_coords;
     std::shared_ptr<Grid> m_grid;
+    t_p_coords m_coords;
+
 public:
-    StateObject(t_p_coords coords);
+    StateObject(std::shared_ptr<Grid> grid, t_p_coords coords);
+    std::shared_ptr<Grid> getGridHandle() { return m_grid; }
     t_p_coords getCoords();
 };
 
