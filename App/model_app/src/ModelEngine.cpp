@@ -13,6 +13,16 @@
 #include "CoordRcvdCmd.hpp"
 #include "stateobject.hpp"
 
+
+ModelEngine* ModelEngine::m_instance = nullptr;
+
+ModelEngine* ModelEngine::getInstance() {
+    if (!m_instance) {
+        m_instance = new ModelEngine();
+    }
+    return m_instance;
+}
+
 ModelEngine::~ModelEngine(){
 	fann_destroy(m_ann);
 	rythm.stop();

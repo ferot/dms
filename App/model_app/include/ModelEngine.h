@@ -71,6 +71,7 @@ struct Coords{
 class ModelEngine: public QObject {
 	Q_OBJECT
 private:
+    static ModelEngine* m_instance;
 
 	QTimer rythm;
 	CommunicationEngine *ce;
@@ -90,6 +91,7 @@ private:
 	void performDatabaseStatement(int x, int y, int id = 0);
 
 public:
+    ModelEngine* getInstance();
 
 	explicit ModelEngine();
 	~ModelEngine();
