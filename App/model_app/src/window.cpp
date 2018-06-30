@@ -59,7 +59,6 @@ void Window::slot_updateModelWindow(StateObject state) {
 
 	if (m_modelDebWinEnabled) {
 		cv::imshow("MODEL_DEBUG", image);
-
 		cv::moveWindow("MODEL_DEBUG", 10, 500);
 
 	} else {

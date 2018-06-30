@@ -2,6 +2,9 @@
 #define STATEOBJECT_HPP
 #include <utility>
 
+#include "ModelEngine.h"
+#include "Grid.h"
+
 typedef std::pair<int,int> t_p_coords;
 
 /**
@@ -11,6 +14,7 @@ class StateObject
 {
 private:
     t_p_coords m_coords;
+    std::shared_ptr<Grid> m_grid;
 public:
     StateObject(t_p_coords coords);
     t_p_coords getCoords();
