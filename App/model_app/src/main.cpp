@@ -23,7 +23,6 @@
 #include "threader.h"
 
 #include "ModelEngine.h"
-
 using namespace std;
 
 int main(int argc, char **argv) {

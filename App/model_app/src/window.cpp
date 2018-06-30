@@ -1,5 +1,6 @@
 #include "window.h"
 #include "Common.hpp"
+
 /**
  * Constructor of app's window.
  * Sets up all widgets and connects appropriate internal signals/slots
@@ -45,15 +46,15 @@ void Window::slot_modelWindowClicked(bool checked) {
  * @param x - real x coord
  * @param y - real y coord
  */
-void Window::slot_updateModelWindow(int x, int y) {
-
-	int result_x = m_step_x*x + m_step_x/2;
-	int result_y = m_step_y*y + m_step_y/2;
-
+void Window::slot_updateModelWindow(StateObject state) {
+    t_p_coords gridCOords = convertCoordsToGridAbstract(state.getCoords());
 	//inversion of coords is essential to keep table-indexing
-	cv::Point resultPoint(result_y, result_x);
+    cv::Point resultPoint(gridCOords.first, gridCOords.second);
 
-	cv::Mat image = drawGrid(m_step_x, m_step_y);
+    cv::Mat image = cv::Mat(model_win_h, model_win_h, CV_8UC3, cv::Scalar(200, 200, 200));
+    // TODO : apply heatmap
+    drawGrid(image, m_step_x, m_step_y);
+    drawAdditionalInfo(image, state.getCoords());
 	cv::circle(image, resultPoint, 5, cv::Scalar(0, 0, 255), cv::FILLED, cv::LINE_4);
 
 	if (m_modelDebWinEnabled) {
@@ -67,15 +68,21 @@ void Window::slot_updateModelWindow(int x, int y) {
 
 }
 
+t_p_coords Window::convertCoordsToGridAbstract(t_p_coords coords){
+    int result_x = m_step_x*coords.first + m_step_x/2;
+    int result_y = m_step_y*coords.second + m_step_y/2;
+
+    return t_p_coords(result_x, result_y);
+}
+
 /**
- * Creates image and draws grid lines and additional info.
+ * Draws grid lines and additional info.
  * @param step_x
  * @param step_y
  * @return image with drawn grid.
  */
-cv::Mat Window::drawGrid(const int& step_x, const int& step_y){
-	cv::Mat image = cv::Mat(model_win_h, model_win_h, CV_8UC3, cv::Scalar(200, 200, 200));
-	int thickness = 2;
+void Window::drawGrid(cv::Mat & image, const int& step_x, const int& step_y){
+    int thickness = 2;
 	int lineType = cv::LINE_8;
 
 	for(int x = 0; x<m_grid_w_dim; x++){
@@ -88,16 +95,21 @@ cv::Mat Window::drawGrid(const int& step_x, const int& step_y){
 					cv::Scalar(0, 0, 0), thickness, lineType);
 		}
 	}
-
-	cv::putText(image, "(0,0)", cv::Point(5, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5,
-			cv::Scalar(50, 170, 50), 2);
-
-	std::string endCoords("(" + numToString(m_grid_w_dim-1) + "," + numToString(m_grid_h_dim-1)+ ")");
-	cv::putText(image, endCoords, cv::Point(model_win_h - 50, model_win_h - 10), cv::FONT_HERSHEY_SIMPLEX,
-			0.5, cv::Scalar(50, 170, 50), 2);
-
-	return image;
 }
+/**
+ * @brief Window::drawAdditionalInfo paints infor about actual coords, etc
+ * @param image
+ */
+void Window::drawAdditionalInfo(cv::Mat & image, t_p_coords coords){
+std::string coordString = "(" + std::to_string(coords.first) + "," + std::to_string(coords.second) + ")";
+    cv::putText(image, coordString , cv::Point(5, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5,
+                cv::Scalar(50, 170, 50), 2);
+
+    std::string endCoords("(" + numToString(m_grid_w_dim-1) + "," + numToString(m_grid_h_dim-1)+ ")");
+    cv::putText(image, endCoords, cv::Point(model_win_h - 50, model_win_h - 10), cv::FONT_HERSHEY_SIMPLEX,
+                0.5, cv::Scalar(50, 170, 50), 2);
+}
+
 
 /**
  * Sets position grid dimensions : (w_dim x h_dim).

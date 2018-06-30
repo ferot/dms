@@ -11,7 +11,7 @@
 #include <opencv2/core/ocl.hpp>
 
 #include "logger.h"
-
+#include "ModelEngine.h"
 /**
  * Class for filtering key events.
  */
@@ -56,8 +56,10 @@ private:
     void setModelWinRes(const int& w, const int& h);
     void setGridDim(const int& w_dim, const int& h_dim);
     void updateStep();
+    t_p_coords convertCoordsToGridAbstract(t_p_coords coords);
 
-    cv::Mat drawGrid(const int&, const int&);
+    void drawGrid(cv::Mat & image, const int&, const int&);
+    void drawAdditionalInfo(cv::Mat & image, t_p_coords coords);
 
 signals:
     void sig_notifyAppQuit();
@@ -67,7 +69,7 @@ signals:
     void sig_notifyKeyPressed(int);
 
 public slots:
-    void slot_updateModelWindow(int, int);
+    void slot_updateModelWindow(StateObject state);
 
     void slot_modelWindowClicked(bool checked);
 

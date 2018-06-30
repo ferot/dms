@@ -14,10 +14,14 @@
 #include "DispatchEngine.hpp"
 #include "VisionEngine.hpp"
 #include "StorageEngine.hpp"
+#include "stateobject.hpp"
 
 typedef std::array<std::string, 3> t_tup_thrstrs;
 typedef struct fann t_fann_s;
 typedef std::shared_ptr<fann_type> t_ptr_fann_type;
+typedef std::pair<int,int> t_p_coords;
+
+class StateObject;
 
 const int cam_nrs = 3;
 
@@ -99,7 +103,7 @@ public:
 	void printCamDebug();
 
 	signals:
-	void sig_notifyModelWindow(int x, int y);
+    void sig_notifyModelWindow(StateObject state);
 
 	public slots:
 	void slot_modelWindowButtonClicked(bool);

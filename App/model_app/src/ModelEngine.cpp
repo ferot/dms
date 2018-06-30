@@ -11,6 +11,7 @@
 
 #include "ModelEngine.h"
 #include "CoordRcvdCmd.hpp"
+#include "stateobject.hpp"
 
 ModelEngine::~ModelEngine(){
 	fann_destroy(m_ann);
@@ -84,7 +85,7 @@ void ModelEngine::worker() {
 
 	if (m_modelWinEnabled) {
 		QThread::msleep(10); //this is unfortunately essential for now due to crash.
-		emit sig_notifyModelWindow(std::round(x), std::round(y));
+        emit sig_notifyModelWindow(StateObject(t_p_coords(std::round(x), std::round(y))));
 	}
 }
 
