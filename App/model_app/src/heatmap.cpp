@@ -3,15 +3,9 @@
 #include "StorageEngine.hpp"
 
 HeatMap::HeatMap(std::shared_ptr<StateObject> state)  : m_state(state){
-//    m_dimx = state->dimX;
-//    m_dimy = state->dimY;
+    m_dimx = state->getGridHandle()->getGridDim().first;
+    m_dimy = state->getGridHandle()->getGridDim().second;
 }
-
-//HeatMap::HeatMap(){
-////    m_dimx = state->dimX;
-////    m_dimy = state->dimY;
-//}
-
 
 /**
  * @brief StateObject::getDatabaseCount - performs sqlite db query for :
@@ -54,4 +48,13 @@ void HeatMap::update() {
             m_factorArray[i][j] = getDatabaseCount(t_p_coords(i,j))/(overallSum + 1);
         }
     }
+}
+
+/**
+ * @brief HeatMap::getFactorArray - runs update to get newest values of factors
+ * @return factor array to apply on image
+ */
+t_array2D HeatMap::getFactorArray() {
+    update();
+    return m_factorArray;
 }
