@@ -17,6 +17,8 @@
 #include "stateobject.hpp"
 #include "Grid.h"
 
+const int cam_nrs = 3;
+
 class StateObject;
 class Grid;
 
@@ -26,7 +28,6 @@ typedef std::shared_ptr<fann_type> t_ptr_fann_type;
 typedef std::pair<int,int> t_p_coords;
 typedef std::shared_ptr<Grid> t_ptr_grid;
 
-const int cam_nrs = 3;
 
 enum State {
 	INIT_S, FIND_TRGT_S, INIT_TRCK_S, RUN_TRCK_S, VERIF_TRGT_S, STOP_S = 0xff

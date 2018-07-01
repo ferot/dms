@@ -8,7 +8,8 @@
 //typedef std::pair<int,int> t_p_coords;
 
 /**
- * @brief The StateObject class - represents state of the system (all essential infos, heatmap, etc)
+ * @brief The StateObject class - represents state of the system (all essential infos - coords
+ * heatmap, etc)
  */
 class StateObject
 {
