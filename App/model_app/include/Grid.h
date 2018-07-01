@@ -31,7 +31,7 @@ public:
     cv::Mat& draw();
     void setPointCoords(t_p_coords coords);
     void setGridDim(const int w_dim, const int h_dim);
-    void drawGrid(cv::Mat & image, const int&, const int&);
+    void drawGrid(const int&, const int&);
     cv::Mat &getImage();
 
     t_p_coords getGridDim();

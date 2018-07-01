@@ -15,7 +15,8 @@ cv::Mat& Grid::getImage() {
 }
 
 cv::Mat& Grid::draw(){
-    drawGrid(m_image, m_step_x, m_step_y);
+    drawHeatMap();
+    drawGrid(m_step_x, m_step_y);
     drawPoint();
 
     return m_image;
@@ -27,17 +28,17 @@ cv::Mat& Grid::draw(){
  * @param step_y
  * @return image with drawn grid.
  */
-void Grid::drawGrid(cv::Mat & image, const int& step_x, const int& step_y){
+void Grid::drawGrid(const int& step_x, const int& step_y){
     int thickness = 2;
     int lineType = cv::LINE_8;
 
     for(int x = 0; x<m_grid_w_dim; x++){
         for(int y=0; y<m_grid_h_dim; y++){
             //vertical
-            cv::line(image, cv::Point(step_x*x, 0), cv::Point(step_x*x, model_win_h),
+            cv::line(m_image, cv::Point(step_x*x, 0), cv::Point(step_x*x, model_win_h),
                      cv::Scalar(0, 0, 0), thickness, lineType);
             //horizontal
-            cv::line(image, cv::Point(0, step_y*y), cv::Point(model_win_h, step_y*y),
+            cv::line(m_image, cv::Point(0, step_y*y), cv::Point(model_win_h, step_y*y),
                      cv::Scalar(0, 0, 0), thickness, lineType);
         }
     }
