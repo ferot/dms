@@ -88,3 +88,32 @@ void Grid::setPointCoords(t_p_coords coords){
     m_resultPoint = coords;
 }
 
+
+void Grid::applyFactors() {
+    t_array2D& arr = m_hmap->getFactorArray();
+    cv::Size s = m_image.size();
+    int rows = s.height;
+    int cols = s.width;
+    int w_dim = getGridDim().first;
+    int h_dim = getGridDim().second;
+
+    int w_offset = rows/w_dim;
+    int h_offset = rows/h_dim;
+
+    //iterate over abstract grid
+    for(int x = 0; x < w_dim; x++) {
+        w_offset*=2;
+        for (int y = 0; y < h_dim; y++){
+            h_offset*=2;
+            //iterate over real image
+            for (int r = x+w_offset; r < m_image.rows; ++r)
+            {
+                for (int c = 0; c < m_image.cols; ++c)
+                {
+                    m_image.at<uint8_t>(r, c) = m_image.at<uint8_t>(r, c) * arr[x][y];
+                }
+            }
+        }
+    }
+
+}
