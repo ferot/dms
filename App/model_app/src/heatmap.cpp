@@ -39,6 +39,11 @@ int HeatMap::getDatabaseCount(t_p_coords coords) {
     return count;
 }
 
+/**
+ * @brief HeatMap::update - updates ratio factors for heatmap
+ * it's simply count on each (x,y) position divided to sum of all counts
+ * on all positions
+ */
 void HeatMap::update() {
     //TODO : get data from database (select + count)
     // generate array for applying factors
@@ -46,7 +51,7 @@ void HeatMap::update() {
     int overallSum = getDatabaseCount();
     for(int i = 0; i < m_dimx; i++) {
         for(int j = 0; i < m_dimy; i++) {
-            m_factorArray[i][j] = getDatabaseCount(t_p_coords(i,j))/overallSum;
+            m_factorArray[i][j] = getDatabaseCount(t_p_coords(i,j))/(overallSum + 1);
         }
     }
 }
