@@ -54,7 +54,7 @@ void HeatMap::update() {
  * @brief HeatMap::getFactorArray - runs update to get newest values of factors
  * @return factor array to apply on image
  */
-t_array2D HeatMap::getFactorArray() {
+t_array2D& HeatMap::getFactorArray() {
     update();
     return m_factorArray;
 }

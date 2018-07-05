@@ -22,7 +22,11 @@ private:
 
     void drawPoint();
     void drawHeatMap();
+
     t_p_coords convertCoordsToGridAbstract(t_p_coords coords);
+    void applyFactors();
+    cv::Scalar mapFreqToFactor(float freq);
+
     void updateStep();
 
 public:

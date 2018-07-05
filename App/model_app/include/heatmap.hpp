@@ -27,7 +27,7 @@ public:
     HeatMap(){}
 
     HeatMap(std::shared_ptr<StateObject>state);
-    t_array2D getFactorArray();
+    t_array2D& getFactorArray();
 
 };
 

@@ -52,7 +52,8 @@ t_p_coords Grid::convertCoordsToGridAbstract(t_p_coords coords){
 }
 
 void Grid::drawHeatMap() {
-
+    LOGMSG(LOG_TRACE, "Drawing heatmap");
+    applyFactors();
 }
 
 void Grid::drawPoint() {
@@ -88,32 +89,54 @@ void Grid::setPointCoords(t_p_coords coords){
     m_resultPoint = coords;
 }
 
+/**
+ * @brief mapFreqToFactor - creates color value for grid based on frequency
+ * @param freq - counted value of object appearance
+ * @return - cv::Scalar : 3-channel BGR value
+ */
+cv::Scalar Grid::mapFreqToFactor(float freq) {
+    if(freq > 0 && freq < 0.2) {
+        return cv::Scalar(static_cast<int>(255*(1-freq)), 0, 0); //COLD BLUE
+    } else if(freq >= 0.2 && freq < 0.4) {
+        return cv::Scalar(static_cast<int>(255*freq), static_cast<int>(255*freq), 0); //WARMER BLUE-GREEN
+    } else if(freq >= 0.4 && freq < 0.6) {
+        return cv::Scalar(0, static_cast<int>(255*freq), static_cast<int>(255*freq)); //GREENISH
+    } else if (freq >= 0.6 && freq < 0.8) {
+        return cv::Scalar(0, static_cast<int>(255*(1-freq)), static_cast<int>(255*freq)); //WARMER RED
+    } else {
+        return cv::Scalar(0, 0, 255); //RED
+    }
+}
 
+/**
+ * @brief Grid::applyFactors - based on counted factors of object appearance frequency,
+ * method generates color blocks and applies them on image to depict heatmap
+ */
 void Grid::applyFactors() {
-    t_array2D& arr = m_hmap->getFactorArray();
+    auto& arr = m_hmap->getFactorArray();
+
+    //Assumption for safety - grid has same dimensions!
     cv::Size s = m_image.size();
     int rows = s.height;
     int cols = s.width;
-    int w_dim = getGridDim().first;
-    int h_dim = getGridDim().second;
 
-    int w_offset = rows/w_dim;
-    int h_offset = rows/h_dim;
+    //steps for grid
+    int w_offset = rows/GRID_DIM_W;
+    int h_offset = cols/GRID_DIM_H;
+
+    //temp values of grid position (bsed on current w_offset iteration)
+    int x_off = 0;
+    int y_off = 0;
 
     //iterate over abstract grid
-    for(int x = 0; x < w_dim; x++) {
-        w_offset*=2;
-        for (int y = 0; y < h_dim; y++){
-            h_offset*=2;
-            //iterate over real image
-            for (int r = x+w_offset; r < m_image.rows; ++r)
-            {
-                for (int c = 0; c < m_image.cols; ++c)
-                {
-                    m_image.at<uint8_t>(r, c) = m_image.at<uint8_t>(r, c) * arr[x][y];
-                }
-            }
+    for(int x = 0; x < GRID_DIM_W; x++) {
+        for (int y = 0; y < GRID_DIM_H; y++, x_off += w_offset){
+            cv::Mat block(cv::Size(w_offset, h_offset), CV_8UC3, mapFreqToFactor(arr[x][y]));
+            block.copyTo(m_image(cv::Rect2d(x_off, y_off, block.rows, block.cols)));
         }
+        x_off = 0;
+        y_off += h_offset;
+
     }
 
 }
