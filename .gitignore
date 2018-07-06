@@ -21,3 +21,6 @@ bin
 *.includes
 *.pro*
 *Debug*
+
+*.pyc
+*workspace*xml
