@@ -114,8 +114,8 @@ public:
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
-        if (paramSet.getNumLayers() == 2) {
-        net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
+        if (paramSet.getNumLayers() == 4) {
+            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
         } else {
             net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
 
