@@ -45,8 +45,9 @@ void Grid::drawGrid(const int& step_x, const int& step_y){
 }
 
 t_p_coords Grid::convertCoordsToGridAbstract(t_p_coords coords){
-    int result_x = m_step_x*coords.first + m_step_x/2;
-    int result_y = m_step_y*coords.second + m_step_y/2;
+    //inversion of coords is essential to keep table-indexing !
+    int result_x = m_step_x*coords.second + m_step_x/2;
+    int result_y = m_step_y*coords.first + m_step_y/2;
 
     return t_p_coords(result_x, result_y);
 }
@@ -57,7 +58,7 @@ void Grid::drawHeatMap() {
 }
 
 void Grid::drawPoint() {
-    cv::circle(m_image, cv::Point(m_resultPoint.first, m_resultPoint.second), 5, cv::Scalar(0, 0, 255), cv::FILLED, cv::LINE_4);
+    cv::circle(m_image, cv::Point(m_resultPoint.first, m_resultPoint.second), 8, cv::Scalar(0, 0, 0), cv::FILLED, cv::LINE_8);
 }
 
 /**
@@ -95,7 +96,7 @@ void Grid::setPointCoords(t_p_coords coords){
  * @return - cv::Scalar : 3-channel BGR value
  */
 cv::Scalar Grid::mapFreqToFactor(float freq) {
-    if(freq > 0 && freq < 0.2) {
+    if(freq >= 0 && freq < 0.2) {
         return cv::Scalar(static_cast<int>(255*(1-freq)), 0, 0); //COLD BLUE
     } else if(freq >= 0.2 && freq < 0.4) {
         return cv::Scalar(static_cast<int>(255*freq), static_cast<int>(255*freq), 0); //WARMER BLUE-GREEN
@@ -138,5 +139,12 @@ void Grid::applyFactors() {
         y_off += h_offset;
 
     }
+}
 
+/**
+ * @brief Grid::setState - uses state param to update current point position and other features.
+ * @param obj
+ */
+void Grid::setState(StateObject obj) {
+    setPointCoords(convertCoordsToGridAbstract(obj.getCoords()));
 }

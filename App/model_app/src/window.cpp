@@ -45,11 +45,9 @@ void Window::slot_modelWindowClicked(bool checked) {
  * @param y - real y coord
  */
 void Window::slot_updateModelWindow(StateObject state) {
-//    t_p_coords gridCOords = convertCoordsToGridAbstract(state.getCoords());
-//	//inversion of coords is essential to keep table-indexing
-//    cv::Point resultPoint(gridCOords.first, gridCOords.second);
-
+    state.getGridHandle()->setState(state);
     cv::Mat& image = state.getGridHandle()->draw();
+
     drawAdditionalInfo(image, state);
 
 	if (m_modelDebWinEnabled) {
@@ -71,9 +69,9 @@ void Window::drawAdditionalInfo(cv::Mat & image, StateObject state){
     int grid_h_dim = state.getGridHandle()->getGridDim().second;
 
 
-    std::string coordString = "(" + std::to_string(coords.first) + "," + std::to_string(coords.second) + ")";
+    std::string coordString = "CURRENT POSITION : (" + std::to_string(coords.first) + "," + std::to_string(coords.second) + ")";
     cv::putText(image, coordString , cv::Point(5, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5,
-                cv::Scalar(50, 170, 50), 2);
+                cv::Scalar(255, 255, 255), 2);
 
     std::string endCoords("(" + numToString(grid_w_dim-1) + "," + numToString(grid_h_dim-1)+ ")");
     cv::putText(image, endCoords, cv::Point(model_win_h - 50, model_win_h - 10), cv::FONT_HERSHEY_SIMPLEX,

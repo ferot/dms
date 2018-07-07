@@ -85,19 +85,20 @@ void ModelEngine::worker() {
 	auto input = obtainInputVec();
 	fann_type * result = calculateResult(input);
 
-	int x = std::round(result[0]);
-	int y = std::round(result[1]);
+    int x = std::round(result[0]);
+    int y = std::round(result[1]);
 
 	LOGMSG_ARG(LOG_TRACE, "ANN RESULT COORDS (X,Y) : %s",
 			std::string(
 					std::to_string(result[0]) + " , "
 							+ std::to_string(result[1])).c_str());
 
-	performDatabaseStatement(x, y);
+    performDatabaseStatement(x, y);
 
 	if (m_modelWinEnabled) {
 		QThread::msleep(10); //this is unfortunately essential for now due to crash.
-        emit sig_notifyModelWindow(StateObject(m_grid, t_p_coords(std::round(x), std::round(y))));
+        StateObject state(m_grid, t_p_coords(std::round(x), std::round(y)));
+        emit sig_notifyModelWindow(state);
 	}
 }
 

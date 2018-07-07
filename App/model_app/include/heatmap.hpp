@@ -7,7 +7,7 @@
 #define GRID_DIM_W 5
 #define GRID_DIM_H 5
 
-typedef std::array<std::array<float, GRID_DIM_W>,GRID_DIM_H> t_array2D;
+typedef std::array<std::array<double, GRID_DIM_W>,GRID_DIM_H> t_array2D;
 typedef std::pair<int,int> t_p_coords;
 
 class StateObject;
@@ -16,15 +16,15 @@ class StateObject;
  */
 class HeatMap {
 private:
-    t_array2D m_factorArray;
+    static t_array2D m_factorArray;
     std::shared_ptr<StateObject> m_state;
     int m_dimy, m_dimx;
-
-    int getDatabaseCount(t_p_coords coords = t_p_coords(-667,-667));
+    long long int m_reloadCnt;
+    double getDatabaseCount(t_p_coords coords = t_p_coords(-667,-667));
     void update();
 
 public:
-    HeatMap(){}
+    HeatMap();
 
     HeatMap(std::shared_ptr<StateObject>state);
     t_array2D& getFactorArray();

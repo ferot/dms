@@ -2,9 +2,12 @@
 #define GRID_H
 #include <utility>
 #include "heatmap.hpp"
+#include "stateobject.hpp"
 
 typedef std::pair<int,int> t_p_coords;
 class HeatMap;
+class StateObject;
+
 class Grid
 {
 private:
@@ -33,6 +36,7 @@ public:
 
     Grid(cv::Mat & image, int dim_w, int dim_h);
     cv::Mat& draw();
+    void setState(StateObject obj);
     void setPointCoords(t_p_coords coords);
     void setGridDim(const int w_dim, const int h_dim);
     void drawGrid(const int&, const int&);
