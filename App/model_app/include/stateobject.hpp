@@ -18,6 +18,7 @@ private:
     t_p_coords m_coords;
 
 public:
+    StateObject(){}
     StateObject(std::shared_ptr<Grid> grid, t_p_coords coords);
     std::shared_ptr<Grid> getGridHandle() { return m_grid; }
     t_p_coords getCoords();

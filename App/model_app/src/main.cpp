@@ -22,6 +22,7 @@
 #include "Event.hpp"
 #include "threader.h"
 
+#include "stateobject.hpp"
 #include "ModelEngine.h"
 using namespace std;
 
@@ -46,6 +47,7 @@ int main(int argc, char **argv) {
 
 	qRegisterMetaType<cv::Mat>("cv::Mat");
 	qRegisterMetaType<cv::Point>("cv::Point");
+    qRegisterMetaType<StateObject>("StateObject");
 
 	QObject::connect(&mainWindow, &Window::sig_notifyModelWindow, &me,
 			&ModelEngine::slot_modelWindowButtonClicked);
