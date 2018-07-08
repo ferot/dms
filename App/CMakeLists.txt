@@ -9,4 +9,9 @@ add_subdirectory(common)
 add_subdirectory(calib_tools)
 add_subdirectory(model_app)
 
-
+#copy log4crc setting file to newly created dir
+exec_program("mkdir -p bin")
+exec_program("cp ${CMAKE_SOURCE_DIR}/App/utils/log4crc bin")
+exec_program("cp ${CMAKE_SOURCE_DIR}/App/utils/config.ini bin")
+exec_program("cp ${CMAKE_SOURCE_DIR}/App/utils/haar*.xml bin")
+exec_program("cp ${CMAKE_SOURCE_DIR}/Scripts/insert.sh bin")
