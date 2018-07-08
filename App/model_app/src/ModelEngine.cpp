@@ -68,6 +68,8 @@ ModelEngine::ModelEngine() :
 	//Arbitrary assumed that detected face size couldn't be bigger than half of screen size
 	m_scaleMap.insert(std::pair<int,float>(scaleID::SIZE, m_scaleFactorX/2));
 
+    m_modelWinEnabled = false;
+
 	rythm.start(0);
 }
 
