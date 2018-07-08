@@ -1,14 +1,22 @@
 #!/bin/bash
 #Script prepares environment to run multiple system nodes instances on single machine.
 #Prepares folders (if needed), changes configuration to avoid conflicts with other instances
-#Runs applications
+#Runs applicationsi
+#
+#USAGE: run ./run_2cams.sh path_to_<REPO>/<BUILD>/<BIN>
+# if run from bin catalogue this param may be avoided (script will assume it's triggered in that dir)
 set -x
 
 trap 'echo "killing apps..."; pkill cam_app; pkill calib_tool; pkill model_app' INT
 
-#this should be changed(if needed) or get as input param
-REPO_DIR="/home/tf/repos"
-REPO_BUILD_DIR=$REPO_DIR/"dms/build"
+if [ -z "$1" ]
+then
+	echo "[WARNING] No dir to build/bin provided, assuming it's triggered there!"
+	REPO_BUILD_DIR=`pwd`
+else
+	REPO_BUILD_DIR=$1
+fi
+
 DST_ENV_DIR="/home/tf/dms_run"
 
 FIRST_ENV_DIR=$DST_ENV_DIR/bin
@@ -46,12 +54,13 @@ mkdir -p $DST_ENV_DIR
 mkdir -p $FIRST_ENV_DIR
 mkdir -p $SECOND_ENV_DIR
 
-cp -rf $REPO_BUILD_DIR/bin/* $FIRST_ENV_DIR
-cp -rf $REPO_BUILD_DIR/bin/* $SECOND_ENV_DIR
+cp -rf $REPO_BUILD_DIR/* $FIRST_ENV_DIR
+cp -rf $REPO_BUILD_DIR/* $SECOND_ENV_DIR
 }
 
 
 create_dirs
+cd $DST_ENV_DIR
 change_config
 run_app
 ./model_app
