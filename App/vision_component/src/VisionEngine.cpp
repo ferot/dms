@@ -88,7 +88,7 @@ bool VisionEngine::openVideo(std::string streamSource){
 	int attemptCount = 0;
 	bool openedFlag = video.open(streamSource);
 
-	while(openedFlag != true || attemptCount + 1 > maxDevCount){
+    while(openedFlag != true && attemptCount < maxDevCount){
 		std::string fallback_dev = buildVidSource(std::to_string(++m_camId));
 		openedFlag = video.open(fallback_dev);
 		attemptCount++;
