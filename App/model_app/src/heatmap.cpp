@@ -2,8 +2,10 @@
 #include "ModelEngine.h"
 #include "StorageEngine.hpp"
 
-t_array2D HeatMap::m_factorArray = t_array2D{{}};
+//determines number of iterations which must proceed to trigger update
+#define UPDATE_FREQ 50
 
+t_array2D HeatMap::m_factorArray = t_array2D{{}};
 
 HeatMap::HeatMap() {
     m_dimx = GRID_DIM_W;
@@ -56,7 +58,7 @@ void HeatMap::update() {
 
     for(int i = 0; i < m_dimx; i++) {
         for(int j = 0; j < m_dimy; j++) {
-            m_factorArray[i][j] = static_cast<float>(getDatabaseCount(t_p_coords(i,j))/(overallSum + 1));
+            m_factorArray[i][j] = static_cast<double>(getDatabaseCount(t_p_coords(i,j))/(overallSum + 1));
         }
     }
 }
@@ -66,7 +68,7 @@ void HeatMap::update() {
  * @return factor array to apply on image
  */
 t_array2D& HeatMap::getFactorArray() {
-    if (m_reloadCnt % 50 == 0) {
+    if (m_reloadCnt % UPDATE_FREQ == 0) {
         update();
     }
     m_reloadCnt++;
