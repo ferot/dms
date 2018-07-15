@@ -149,23 +149,23 @@ void CalibTool::saveToFile() {
  * @param data - Data set to extract values
  */
 void CalibTool::saveFANNDataSetRaw(DataSet& data) {
-    if (createDirectory(m_dataSetDir + "/" + generateDateString()) == CMN_RC_SUCCESS) {
-        std::string payload = data.getPayload().toUtf8().constData();
 
-        std::ofstream output((QString::fromStdString(m_dataSetDir) + "/" +
-                              QString::fromStdString(generateDateString()) + "/" +
-                              data.getFilePath()).toUtf8().constData());
-        output
-                << std::to_string(data.getCount()) + std::string(" ")
-                   + std::to_string(this->m_fann->getNumInput())
-                   + std::string(" ")
-                   + std::to_string(this->m_fann->getNumOutput())
-                   + std::string("\n");
+    std::string payload = data.getPayload().toUtf8().constData();
+    std::ofstream output(data.getFilePath().toUtf8().constData());
+    std::ofstream output2("verif_data.dat");
 
-        output << payload;
+    output
+            << std::to_string(data.getCount()) + std::string(" ")
+                    + std::to_string(this->m_fann->getNumInput())
+                    + std::string(" ")
+                    + std::to_string(this->m_fann->getNumOutput())
+                    + std::string("\n");
 
-        output.close();
-    }
+    output << payload;
+    output2 << payload;
+
+    output2.close();
+    output.close();
 }
 
 /**
