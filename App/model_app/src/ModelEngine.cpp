@@ -14,6 +14,8 @@
 #include "stateobject.hpp"
 #include "Grid.h"
 
+fann_type input[9]={0};
+
 ModelEngine* ModelEngine::m_instance = nullptr;
 
 ModelEngine* ModelEngine::getInstance() {
