@@ -104,8 +104,11 @@ public:
         inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp?) and to implement in a way to 'recognize' it.
         verifInputFilename = "verif_data.dat";
 
-        inputDir = getDataSetExisting(inputFilename);
-        verifInputDir = getDataSetExisting(verifInputFilename);
+//        inputDir = getDataSetExisting(inputFilename);
+        inputDir = (inputFilename);
+
+//        verifInputDir = getDataSetExisting(verifInputFilename);
+        verifInputDir = (verifInputFilename);
 
         outputFilename = paramSet.getOutputFilename() + ".net";
         outputDir = "nets/" + generateDateString() + "/";
@@ -114,31 +117,35 @@ public:
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
-        if (paramSet.getNumLayers() == 4) {
-            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
-        } else {
-            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
+        net.create_standard(4, 9, 5, 5, 2);
 
-        }
+//        if (paramSet.getNumLayers() == 4) {
+//            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
+//        } else {
+//            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
+
+//        }
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
-        net.set_learning_rate(paramSet.getLearningRate());
+//        net.set_learning_rate(0.7);
+//        net.set_learning_rate(paramSet.getLearningRate());
 
-//        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
-//        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
 
-        int act = paramSet.getActivationFun(true);
-        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
-        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
+        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
+        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
 
-        act = paramSet.getActivationFun(false);
-        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
-        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
+//        int act = paramSet.getActivationFun(true);
+//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+//        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
 
-//        net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
-        act = paramSet.getTrainingAlg();
-        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
-        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
+//        act = paramSet.getActivationFun(false);
+//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
+//        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
+
+        net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
+//        act = paramSet.getTrainingAlg();
+//        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
+//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
 
         netParams = netParamsToString(paramSet);
         net.print_parameters();
@@ -150,7 +157,8 @@ public:
     }
 
     void trainNet(){
-         if (data.read_train_from_file(inputDir + inputFilename))
+//         if (data.read_train_from_file(inputDir + inputFilename))
+             if (data.read_train_from_file(inputDir ))
             {
                 // Initialize and train the network with the data
                 net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
@@ -167,7 +175,8 @@ public:
                     1000, 0.001);
 
 //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
-                if (data_verif.read_train_from_file(verifInputDir + verifInputFilename)){
+//                if (data_verif.read_train_from_file(verifInputDir + verifInputFilename)){
+                                if (data_verif.read_train_from_file(verifInputDir)){
                     LOGMSG_F_ARG(LOG_NOTICE, "\n[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (verifInputDir + verifInputFilename).c_str());
 
                     for (unsigned int i = 0; i < data_verif.length_train_data(); i++)
@@ -188,6 +197,8 @@ public:
                 LOGMSG_F(LOG_NOTICE,"\n---------------------------------------------------------------------\n");
 
                 net.save(outputDir + outputFilename);
+                //Demo purpose only
+                net.save(outputFilename);
 
 //                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
