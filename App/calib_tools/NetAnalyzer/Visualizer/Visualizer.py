@@ -13,9 +13,15 @@ class Visualizer(object):
             x_label = "neuron_nr"
             y_label = "MSE"
 
-            t = np.arange(0.0, 2.0, 0.01)
-            s = 1 + np.sin(2 * np.pi * t)
-            plot = plt.plot(t, s)
+            x = []
+            y = []
+            for agg in self._aggregates:
+                _y = agg.get_net().get_mse()
+                _x = agg.get_net().get_numneur()
+                x.append(_x)
+                y.append(_y)
+
+            plot = plt.plot(x, y)
 
             plt.xlabel(x_label)
             plt.ylabel(y_label)
