@@ -170,6 +170,8 @@ public:
                 LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (netOutputDir + netOutputFilename).c_str());
                 LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", m_netParams.c_str());
 
+                double mseUpperFactor = 0;
+                double MSE = 0;
 
                 //Scale data and perform training
                 net.set_scaling_params(data, -1, 1, -1, 1);
@@ -187,13 +189,20 @@ public:
                     {
                         net.reset_MSE();
 
+                        // Run the network on the test data
+                        net.scale_input(data_verif.get_input()[i]);
                         fann_type *calc_out = net.run(data_verif.get_input()[i]);
                         net.descale_output(calc_out);
 
+                        countMSEUpper(data_verif.get_output()[i], calc_out, mseUpperFactor);
+                        std::string log_step = generateStepLog(data_verif, calc_out, i);
 
                         LOGMSG_F_ARG(LOG_NOTICE, "%s\n", log_step.c_str());
                         LOGMSG_ARG(LOG_DEBUG, "%s", log_step.c_str());
                     }
+                    //Number of output taken into account in MSE evaluation!
+                    MSE = mseUpperFactor/(num_output*dataCount);
+                    LOGMSG_ARG(LOG_DEBUG, "XXXXX MSE = %f", MSE);
                 }
 
                 LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (netOutputDir + netOutputFilename).c_str());
