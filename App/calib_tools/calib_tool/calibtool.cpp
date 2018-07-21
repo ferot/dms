@@ -24,7 +24,7 @@ enum scaleID{
  * @param parent -handle for parent, owning this object
  */
 CalibTool::CalibTool(QWidget *parent) :
-        QMainWindow(parent), ui(new Ui::CalibTool) {
+    QMainWindow(parent), ui(new Ui::CalibTool) {
     ui->setupUi(this);
     m_netDir = "nets" ;
     m_dataSetDir = "datasets";
@@ -98,8 +98,8 @@ std::string CalibTool::formVector() {
 
     // X,Y values
     resultVector.append(
-            "\n" + ui->spinBox->text().toStdString() + " "
-                    + ui->spinBox_2->text().toStdString() + "\n");
+                "\n" + ui->spinBox->text().toStdString() + " "
+                + ui->spinBox_2->text().toStdString() + "\n");
     m_dataSet.incrCount();
 
     return resultVector;
@@ -122,14 +122,14 @@ inline std::string CalibTool::scaleInputVector(std::string textVal, int id){
  */
 void CalibTool::saveToFile() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save DataSet"),
-            "", tr("DataSet (*.dat);;All Files (*)"));
+                                                    "", tr("DataSet (*.dat);;All Files (*)"));
     if (fileName.isEmpty())
         return;
     else {
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
             QMessageBox::information(this, tr("Unable to open file"),
-                    file.errorString());
+                                     file.errorString());
             return;
         }
         m_dataSet.setPayload(ui->textEdit->toPlainText().toUtf8().constData());
@@ -156,10 +156,10 @@ void CalibTool::saveFANNDataSetRaw(DataSet& data) {
 
     output
             << std::to_string(data.getCount()) + std::string(" ")
-                    + std::to_string(this->m_fann->getNumInput())
-                    + std::string(" ")
-                    + std::to_string(this->m_fann->getNumOutput())
-                    + std::string("\n");
+               + std::to_string(this->m_fann->getNumInput())
+               + std::string(" ")
+               + std::to_string(this->m_fann->getNumOutput())
+               + std::string("\n");
 
     output << payload;
     output2 << payload;
@@ -183,7 +183,7 @@ void CalibTool::refreshValues(){
  */
 void CalibTool::loadFromFile() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open DataSet"),
-            m_dataSet.getFilePath(), tr("DataSet (*.dat);;All Files (*)"));
+                                                    m_dataSet.getFilePath(), tr("DataSet (*.dat);;All Files (*)"));
 
     if (fileName.isEmpty())
         return;
@@ -193,7 +193,7 @@ void CalibTool::loadFromFile() {
 
         if (!file.open(QIODevice::ReadOnly)) {
             QMessageBox::information(this, tr("Unable to open file"),
-                    file.errorString());
+                                     file.errorString());
             return;
         }
 
@@ -205,9 +205,9 @@ void CalibTool::loadFromFile() {
         refreshValues();
         if (m_dataSet.getPayload().isEmpty()) {
             QMessageBox::information(this, tr("No data in file"),
-                    tr("The dataset you are attempting to open contains no data."));
+                                     tr("The dataset you are attempting to open contains no data."));
         } else {
-			setProgressBar(0);
+            setProgressBar(0);
             ui->textEdit->setText(m_dataSet.getPayload());
             m_fann->setInputFile(fileName.toStdString());
         }
@@ -231,7 +231,7 @@ void CalibTool::setJobCountLabel(int val) {
  * Note: sets it only in text edit widget! TODO: store in kind of structure.
  */
 void CalibTool::on_saveVector_clicked() {
-//append dataset vector to file
+    //append dataset vector to file
     QString buffer = ui->textEdit->toPlainText()
             + QString::fromStdString(formVector());
 
@@ -248,31 +248,31 @@ void CalibTool::on_saveToFileButton_clicked() {
 }
 
 void CalibTool::on_button_start_training_clicked() {
-	m_processCancelled = false;
+    m_processCancelled = false;
     setProgressBar(20);
     printConsole("Generating datasets...\n");
 
-	if (!m_processStarted) {
-		m_setGenerator->generateSet();
-		m_processStarted = true;
+    if (!m_processStarted) {
+        m_setGenerator->generateSet();
+        m_processStarted = true;
         setProgressBar(20);
 
-		int id = 0;
+        int id = 0;
 
-		do {
-			std::shared_ptr<FANNWrapper> ptr = std::make_shared<FANNWrapper>(
-					m_setGenerator->getVector(), ui);
+        do {
+            std::shared_ptr<FANNWrapper> ptr = std::make_shared<FANNWrapper>(
+                        m_setGenerator->getVector(), ui);
             printConsole("Spawning job with id = " + std::to_string(id));
 
-			m_jobs.insert(
-                    std::pair<int, std::shared_ptr<TrainJob>>(id,
-							std::make_shared<TrainJob>(ptr, id)));
-			LOGMSG_ARG(LOG_DEBUG, "INSERTING JOB WITH ID = %d", id);
+            m_jobs.insert(
+                        std::pair<int, std::shared_ptr<TrainJob>>(id,
+                                                                  std::make_shared<TrainJob>(ptr, id)));
+            LOGMSG_ARG(LOG_DEBUG, "INSERTING JOB WITH ID = %d", id);
 
-			id++;
+            id++;
 
 
-		} while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
+        } while (!(m_setGenerator->isLastID()) && m_processCancelled == false);
 
         setProgressBar(30);
         scheduleJobs();
@@ -320,20 +320,19 @@ int getSpinboxInt(QSpinBox * spinBox){
 }
 
 void CalibTool::removeJob(int id) {
-	m_jobs.erase(id);
+    m_jobs.erase(id);
 }
 
 void CalibTool::notifyProcessedJob(int id) {
-	// update UI
+    // update UI
     setJobCountLabel(++m_jobCount);
 
     // update internal state
-	removeJob(id);
-	if (m_jobs.empty()) {
+    removeJob(id);
+    if (m_jobs.empty()) {
         LOGMSG(LOG_TRACE, "Job map empty");
-	}
+    }
 }
-
 
 /**
  * @brief printTextEdit - Helper function to print into calib_tool training section's console.
@@ -344,5 +343,5 @@ void CalibTool::printConsole(std::string str) {
 }
 
 t_map_idJob CalibTool::getJobMap(){
-	return m_jobs;
+    return m_jobs;
 }

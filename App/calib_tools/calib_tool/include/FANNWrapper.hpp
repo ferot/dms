@@ -104,10 +104,10 @@ public:
         inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp?) and to implement in a way to 'recognize' it.
         verifInputFilename = "verif_data.dat";
 
-//        dataSetInputDir = getDataSetExisting(inputFilename);
+        //        dataSetInputDir = getDataSetExisting(inputFilename);
         dataSetInputDir = (inputFilename);
 
-//        verifdataSetInputDir = getDataSetExisting(verifInputFilename);
+        //        verifdataSetInputDir = getDataSetExisting(verifInputFilename);
         verifdataSetInputDir = (verifInputFilename);
 
         netOutputFilename = paramSet.getOutputFilename() + ".net";
@@ -119,36 +119,36 @@ public:
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
-        net.create_standard(4, 9, 5, 5, 2);
+        net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
 
-//        if (paramSet.getNumLayers() == 4) {
-//            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
-//        } else {
-//            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
+        //        if (paramSet.getNumLayers() == 4) {
+        //            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
+        //        } else {
+        //            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
 
-//        }
+        //        }
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
-//        net.set_learning_rate(0.7);
-//        net.set_learning_rate(paramSet.getLearningRate());
+        //        net.set_learning_rate(0.7);
+        //        net.set_learning_rate(paramSet.getLearningRate());
 
 
         net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
         net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
         int act;
         (void)act;
-//        int act = paramSet.getActivationFun(true);
-//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
-//        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
+        //        int act = paramSet.getActivationFun(true);
+        //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+        //        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
 
-//        act = paramSet.getActivationFun(false);
-//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
-//        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
+        //        act = paramSet.getActivationFun(false);
+        //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
+        //        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
         net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
-//        act = paramSet.getTrainingAlg();
-//        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
-//        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
+        //        act = paramSet.getTrainingAlg();
+        //        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
+        //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
 
         net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
@@ -161,63 +161,63 @@ public:
     }
 
     void trainNet(){
-//         if (data.read_train_from_file(dataSetInputDir + inputFilename))
-             if (data.read_train_from_file(dataSetInputDir ))
-            {
-                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (dataSetInputDir + inputFilename).c_str());
-                LOGMSG_F(LOG_NOTICE,"\n-------------------------***********************-----------------------------\n");
-                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (dataSetInputDir + inputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (netOutputDir + netOutputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", m_netParams.c_str());
+        //         if (data.read_train_from_file(dataSetInputDir + inputFilename))
+        if (data.read_train_from_file(dataSetInputDir ))
+        {
+            LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (dataSetInputDir + inputFilename).c_str());
+            LOGMSG_F(LOG_NOTICE,"\n-------------------------***********************-----------------------------\n");
+            LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (dataSetInputDir + inputFilename).c_str());
+            LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (netOutputDir + netOutputFilename).c_str());
+            LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", m_netParams.c_str());
 
-                double mseUpperFactor = 0;
-                double MSE = 0;
+            double mseUpperFactor = 0;
+            double MSE = 0;
 
-                //Scale data and perform training
-                net.set_scaling_params(data, -1, 1, -1, 1);
-                net.scale_train(data);
-                net.train_on_data(data, 5000,
-                                  1000, 0.001);
+            //Scale data and perform training
+            net.set_scaling_params(data, -1, 1, -1, 1);
+            net.scale_train(data);
+            net.train_on_data(data, 5000,
+                              1000, 0.001);
 
-                //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
-                //                if (data_verif.read_train_from_file(verifdataSetInputDir + verifInputFilename)){
-                if (data_verif.read_train_from_file(verifdataSetInputDir)){
+            //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
+            //                if (data_verif.read_train_from_file(verifdataSetInputDir + verifInputFilename)){
+            if (data_verif.read_train_from_file(verifdataSetInputDir)){
 
-                    LOGMSG_F_ARG(LOG_NOTICE, "\n[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (verifdataSetInputDir + verifInputFilename).c_str());
-                    unsigned int dataCount = data_verif.length_train_data();
-                    for (unsigned int i = 0; i < dataCount; i++)
-                    {
-                        net.reset_MSE();
+                LOGMSG_F_ARG(LOG_NOTICE, "\n[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (verifdataSetInputDir + verifInputFilename).c_str());
+                unsigned int dataCount = data_verif.length_train_data();
+                for (unsigned int i = 0; i < dataCount; i++)
+                {
+                    net.reset_MSE();
 
-                        // Run the network on the test data
-                        net.scale_input(data_verif.get_input()[i]);
-                        fann_type *calc_out = net.run(data_verif.get_input()[i]);
-                        net.descale_output(calc_out);
+                    // Run the network on the test data
+                    net.scale_input(data_verif.get_input()[i]);
+                    fann_type *calc_out = net.run(data_verif.get_input()[i]);
+                    net.descale_output(calc_out);
 
-                        countMSEUpper(data_verif.get_output()[i], calc_out, mseUpperFactor);
-                        std::string log_step = generateStepLog(data_verif, calc_out, i);
+                    countMSEUpper(data_verif.get_output()[i], calc_out, mseUpperFactor);
+                    std::string log_step = generateStepLog(data_verif, calc_out, i);
 
-                        LOGMSG_F_ARG(LOG_NOTICE, "%s\n", log_step.c_str());
-                        LOGMSG_ARG(LOG_DEBUG, "%s", log_step.c_str());
-                    }
-                    //Number of output taken into account in MSE evaluation!
-                    MSE = mseUpperFactor/(num_output*dataCount);
-                    LOGMSG_ARG(LOG_DEBUG, "XXXXX MSE = %f", MSE);
+                    LOGMSG_F_ARG(LOG_NOTICE, "%s\n", log_step.c_str());
+                    LOGMSG_ARG(LOG_DEBUG, "%s", log_step.c_str());
                 }
+                //Number of output taken into account in MSE evaluation!
+                MSE = mseUpperFactor/(num_output*dataCount);
+                LOGMSG_ARG(LOG_DEBUG, "XXXXX MSE = %f", MSE);
+            }
 
-                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (netOutputDir + netOutputFilename).c_str());
-                LOGMSG_F(LOG_NOTICE,"\n-------------------------***********************-----------------------------\n");
+            LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (netOutputDir + netOutputFilename).c_str());
+            LOGMSG_F(LOG_NOTICE,"\n-------------------------***********************-----------------------------\n");
 
-                saveReport("reports/", generateReport(MSE));
-                net.save(netOutputDir + netOutputFilename);
-                //Demo purpose only
-                net.save(netOutputFilename);
+            saveReport("reports/", generateReport(MSE));
+            net.save(netOutputDir + netOutputFilename);
+            //Demo purpose only
+            net.save(netOutputFilename);
 
-                //                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
+            //                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
-             } else {
-                 LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
-             }
+        } else {
+            LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
+        }
     }
 
     /**
