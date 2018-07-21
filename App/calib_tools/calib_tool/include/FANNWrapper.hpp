@@ -27,13 +27,13 @@ class CalibTool;
 class FANNWrapper {
 
 
-    std::string outputFilename;
+    std::string netOutputFilename;
     std::string inputFilename;
     std::string verifInputFilename;
-    std::string outputDir;
-    std::string inputDir;
-    std::string verifInputDir;
-    std::string netParams;
+    std::string netOutputDir;
+    std::string dataSetInputDir;
+    std::string verifdataSetInputDir;
+    std::string m_netParams;
 
     FANN::neural_net net;
     FANN::training_data data;
@@ -59,7 +59,7 @@ class FANNWrapper {
                                  float desired_error, unsigned int epochs, void *user_data)
     {
         std::string output = std::string(("Current EPOCH | MSE:\t") + std::to_string(epochs) + " | " + std::to_string(net.get_MSE()));
-
+        LOGMSG_ARG(LOG_DEBUG, "%s\n", output.c_str());
         LOGMSG_F_ARG(LOG_NOTICE, "%s\n", output.c_str());
         return 0;
     }
@@ -67,7 +67,7 @@ class FANNWrapper {
 public:
 
     FANNWrapper( Ui::CalibTool* ui = nullptr, std::string outFile = "trainedNet.net") :
-        outputFilename(outFile),
+        netOutputFilename(outFile),
         num_layers(3), //this includes in and out layers. Thus cannot be less than 2!
         num_neurons_hidden(3),
         desired_error(0.001f),
@@ -80,7 +80,6 @@ public:
         inputFilename = "train_data.dat";
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
-
 
         net.create_standard(num_layers, num_input, num_neurons_hidden, num_output);
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
@@ -95,8 +94,8 @@ public:
         net.set_activation_function_hidden(m_activationFun);
         net.set_activation_function_output(m_activationFun);
 
-//        net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
-//        net.print_parameters();
+        //        net.set_training_algorithm(FANN::TRAIN_QUICKPROP);
+        //        net.print_parameters();
     }
 
     FANNWrapper(paramSet& paramSet, Ui::CalibTool* ui = nullptr) {
@@ -105,15 +104,17 @@ public:
         inputFilename = "train_data.dat"; //TODO: change into unique name in calib tool(based on timestamp?) and to implement in a way to 'recognize' it.
         verifInputFilename = "verif_data.dat";
 
-//        inputDir = getDataSetExisting(inputFilename);
-        inputDir = (inputFilename);
+//        dataSetInputDir = getDataSetExisting(inputFilename);
+        dataSetInputDir = (inputFilename);
 
-//        verifInputDir = getDataSetExisting(verifInputFilename);
-        verifInputDir = (verifInputFilename);
+//        verifdataSetInputDir = getDataSetExisting(verifInputFilename);
+        verifdataSetInputDir = (verifInputFilename);
 
-        outputFilename = paramSet.getOutputFilename() + ".net";
-        outputDir = "nets/" + generateDateString() + "/";
-        createDirectory(outputDir);
+        netOutputFilename = paramSet.getOutputFilename() + ".net";
+        netOutputDir = "nets/" + generateDateString() + "/";
+        createDirectory(netOutputDir);
+        createDirectory("reports");
+
 
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
@@ -134,7 +135,8 @@ public:
 
         net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
         net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
-
+        int act;
+        (void)act;
 //        int act = paramSet.getActivationFun(true);
 //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
 //        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
@@ -148,64 +150,65 @@ public:
 //        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
 //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
 
-        netParams = netParamsToString(paramSet);
+        net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
+
+        m_netParams = netParamsToString(paramSet);
         net.print_parameters();
 
     }
-
 
     ~FANNWrapper(){
     }
 
     void trainNet(){
-//         if (data.read_train_from_file(inputDir + inputFilename))
-             if (data.read_train_from_file(inputDir ))
+//         if (data.read_train_from_file(dataSetInputDir + inputFilename))
+             if (data.read_train_from_file(dataSetInputDir ))
             {
-                // Initialize and train the network with the data
-                net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
+                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (dataSetInputDir + inputFilename).c_str());
+                LOGMSG_F(LOG_NOTICE,"\n-------------------------***********************-----------------------------\n");
+                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (dataSetInputDir + inputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (netOutputDir + netOutputFilename).c_str());
+                LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", m_netParams.c_str());
 
-                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Starting trainNet() on file : %s...", (inputDir + inputFilename).c_str());
-                LOGMSG_F(LOG_NOTICE,"\n---------------------------------------------------------------------\n");
-                LOGMSG_F_ARG(LOG_NOTICE, "[ REPORT FOR TRAINING DATASET : %s ]\n", (inputDir + inputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ NETWORK NAME  : %s ]\n\n", (outputDir + outputFilename).c_str());
-                LOGMSG_F_ARG(LOG_NOTICE, "[ NET PARAMS ]\n%s", netParams.c_str());
 
+                //Scale data and perform training
                 net.set_scaling_params(data, -1, 1, -1, 1);
                 net.scale_train(data);
                 net.train_on_data(data, 5000,
-                    1000, 0.001);
+                                  1000, 0.001);
 
-//                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
-//                if (data_verif.read_train_from_file(verifInputDir + verifInputFilename)){
-                                if (data_verif.read_train_from_file(verifInputDir)){
-                    LOGMSG_F_ARG(LOG_NOTICE, "\n[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (verifInputDir + verifInputFilename).c_str());
+                //                printTextEdit(QString( "Finished training. Now Testing network..."), UI);
+                //                if (data_verif.read_train_from_file(verifdataSetInputDir + verifInputFilename)){
+                if (data_verif.read_train_from_file(verifdataSetInputDir)){
 
-                    for (unsigned int i = 0; i < data_verif.length_train_data(); i++)
+                    LOGMSG_F_ARG(LOG_NOTICE, "\n[ REPORT FOR VERIFICATION DATASET : %s ]\n\n", (verifdataSetInputDir + verifInputFilename).c_str());
+                    unsigned int dataCount = data_verif.length_train_data();
+                    for (unsigned int i = 0; i < dataCount; i++)
                     {
-                        // Run the network on the test data
                         net.reset_MSE();
+
                         fann_type *calc_out = net.run(data_verif.get_input()[i]);
                         net.descale_output(calc_out);
 
-                        std::string report_step = generateReport(data_verif, calc_out, i);
 
-                        LOGMSG_F_ARG(LOG_NOTICE, "%s\n", report_step.c_str());
-                        LOGMSG_ARG(LOG_DEBUG, "%s", report_step.c_str());
+                        LOGMSG_F_ARG(LOG_NOTICE, "%s\n", log_step.c_str());
+                        LOGMSG_ARG(LOG_DEBUG, "%s", log_step.c_str());
                     }
                 }
 
-                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (outputDir + outputFilename).c_str());
-                LOGMSG_F(LOG_NOTICE,"\n---------------------------------------------------------------------\n");
+                LOGMSG_ARG(LOG_DEBUG, "[FANNWRAPPER] Saving network to file : %s", (netOutputDir + netOutputFilename).c_str());
+                LOGMSG_F(LOG_NOTICE,"\n-------------------------***********************-----------------------------\n");
 
-                net.save(outputDir + outputFilename);
+                saveReport("reports/", generateReport(MSE));
+                net.save(netOutputDir + netOutputFilename);
                 //Demo purpose only
-                net.save(outputFilename);
+                net.save(netOutputFilename);
 
-//                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
+                //                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
-        } else {
-            LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
-        }
+             } else {
+                 LOGMSG(LOG_ERROR,"[FANNWRAPPER] Couldn't start train procedure...");
+             }
     }
 
     /**
@@ -246,7 +249,7 @@ public:
         UI->progressBar->setValue(val);
     }
 
-    std::string generateReport(FANN::training_data data, fann_type* calc_out, int i) {
+    std::string generateStepLog(FANN::training_data data, fann_type* calc_out, int i) {
         QString strBffer = "\nTest(";
 
         for(unsigned int idx = 0; idx < num_input; idx++) {
@@ -275,7 +278,10 @@ public:
     */
     std::string netParamsToString(paramSet& paramSet) {
         std::string params;
-        params += "\nnum_input : " + std::to_string(net.get_num_input()) +
+        params +=
+                "\nnet_path : " + netOutputDir + netOutputFilename +
+                "\ndata_set_path : " + dataSetInputDir + inputFilename +
+                "\nnum_input : " + std::to_string(net.get_num_input()) +
                 "\nnum_output : " + std::to_string(net.get_num_output()) +
                 "\nnum_neu_hid : " + std::to_string(paramSet.getNumNeuronsHidden()) +
                 "\nnum_lay : " + std::to_string(net.get_num_layers()) +
