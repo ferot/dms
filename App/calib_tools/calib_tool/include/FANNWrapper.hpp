@@ -2,7 +2,8 @@
 #define FANNWRAPER_HPP
 
 #include <QString>
-
+#include <math.h>
+#include <regex>
 #include "floatfann.h"
 //C++ porting of FANN
 #include "fann_cpp.h"
@@ -267,24 +268,6 @@ public:
     }
 
     /**
-     * @brief checkForDataSetExisting - checks if in dir for current day exist dataset file
-     * if not returns path to default fallback dir with datasets(this should be assured by user!!!).
-     * @return
-     */
-    std::string getDataSetExisting(std::string nameToCompare) {
-        std::string defaultPath = "datasets/";
-        std::string pathToCheck = defaultPath + generateDateString() + "/";
-        auto vec = listdir(pathToCheck);
-
-        for (auto i : vec) {
-            if (i == nameToCompare) {
-                return pathToCheck;
-            }
-        }
-        return defaultPath;
-    }
-
-    /**
     * @brief netParamsToString converts FANN net into string form appropriate for reporting etc.
     * Uses FANN's net structure and paramSet's values to fill basic params
     * @param paramSet - handle for paramSet used to initialize net
@@ -303,6 +286,66 @@ public:
                 "\nmax_epochs : " + std::to_string(paramSet.getMaxEpochs()) + "\n\n";
 
         return params;
+    }
+
+    /**
+     * @brief generateReport - composes report payload from all information about :
+     * network, dataset and MSE (as result of net evalution)
+     * @param MSE
+     * @return
+     */
+    std::string generateReport(double MSE) {
+        std::string report;
+        report += m_netParams;
+        report += "MSE : " + std::to_string(MSE) + "\n";
+
+        return report;
+    }
+
+    /**
+     * @brief saveReport - saves report under specified path
+     * @param filename
+     * @param payload - data to be written
+     */
+    void saveReport(std::string dir, std::string payload) {
+        std::string filename = netOutputFilename;
+
+        //change file extension to .rep based on net name
+        filename = std::regex_replace(filename, std::regex("net"), "rep");
+        std::ofstream output(dir + filename);
+        output << payload;
+
+        output.close();
+    }
+    /**
+     * @brief countMSEUpper - counts sum of squared abs from expected val and ref from training's
+     * validation data set.
+     * @param refVal - reference value from data set
+     * @param resVal - network's result value
+     * @param result - upper half of MSE equation
+     */
+    inline void countMSEUpper(float refVal[], float resVal[], double& result) {
+        for (unsigned int i = 0; i< num_output; i++) {
+            double diff = fann_abs(resVal[i] - refVal[i]);
+            result += pow(diff, 2);
+        }
+    }
+    /**
+     * @brief checkForDataSetExisting - checks if in dir for current day exist dataset file
+     * if not returns path to default fallback dir with datasets(this should be assured by user!!!).
+     * @return
+     */
+    std::string getDataSetExisting(std::string nameToCompare) {
+        std::string defaultPath = "datasets/";
+        std::string pathToCheck = defaultPath + generateDateString() + "/";
+        auto vec = listdir(pathToCheck);
+
+        for (auto i : vec) {
+            if (i == nameToCompare) {
+                return pathToCheck;
+            }
+        }
+        return defaultPath;
     }
 };
 
