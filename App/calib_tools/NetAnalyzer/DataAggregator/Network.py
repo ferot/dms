@@ -12,14 +12,21 @@ class Network:
         self._name = name
 
     """Reads report's file content from provided path"""
-
     def read_content(self, path):
         file_handler = open(path, 'r')
         content = file_handler.read ()
         return content
 
-    """Finds MSE error line and returns value"""
+    def print_net_info(self):
+        print "NET INFO :"
+        print "PATH + NAME : " + self._name
+        print "NUM_INPUT : " + str(self._num_input)
+        print "NUM_OUTPUT : " + str(self._num_output)
+        print "NUM_NEU_HIDD : " + str(self._num_neurons)
+        print "MSE : " + str(self._mse)
 
+
+    """Finds MSE error line and returns value"""
     def get_mse(self):
         return self._mse
 
@@ -36,3 +43,4 @@ class Network:
                 3: "QUICKPROP",
                 4: "SARPROP"}
         return dict[num]
+

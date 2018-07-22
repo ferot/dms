@@ -21,7 +21,7 @@ class Visualizer(object):
                 x.append(_x)
                 y.append(_y)
 
-            plot = plt.plot(x, y)
+            plot = plt.plot(x, y, 'ro')
 
             plt.xlabel(x_label)
             plt.ylabel(y_label)

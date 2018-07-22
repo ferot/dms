@@ -12,6 +12,7 @@ def main():
     viz.draw_plot("MSE", "MSE(neu_nr)")
     viz.show_plots()
 
+    parser.get_best_net_candidate().print_net_info()
 
 if __name__ == "__main__":
     main()
