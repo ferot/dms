@@ -323,6 +323,25 @@ void CalibTool::removeJob(int id) {
     m_jobs.erase(id);
 }
 
+
+/**
+ * @brief runNetAnalyzer - fires net analyzer script to parse reports and get best net candidate
+ * from created temp file by script.
+ * Also assures that best_cand temp file is being removed before creating new.
+ * @return path to
+ */
+std::string runNetAnalyzer() {
+    system("rm best_cand");
+    system("python NetAnalyzer/net_analyzer.py nodraw");
+
+    std::ifstream input("best_cand");
+    std::string filename;
+    input >> filename;
+
+    input.close();
+    return filename;
+}
+
 void CalibTool::notifyProcessedJob(int id) {
     // update UI
     setJobCountLabel(++m_jobCount);
@@ -331,6 +350,12 @@ void CalibTool::notifyProcessedJob(int id) {
     removeJob(id);
     if (m_jobs.empty()) {
         LOGMSG(LOG_TRACE, "Job map empty");
+        std::string netPath = runNetAnalyzer();
+        if(!netPath.empty()) {
+            std::string mvBestNetToDef = "cp " + netPath + " definition.net";
+            system(mvBestNetToDef.c_str());
+            LOGMSG_ARG(LOG_DEBUG, "BEST CANDIDATE = %s", netPath.c_str());
+        }
     }
 }
 
