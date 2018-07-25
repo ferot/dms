@@ -350,10 +350,15 @@ void CalibTool::notifyProcessedJob(int id) {
     removeJob(id);
     if (m_jobs.empty()) {
         LOGMSG(LOG_TRACE, "Job map empty");
+
+        printConsole("\nFinished training. Now running Net Analyzer...");
         std::string netPath = runNetAnalyzer();
         if(!netPath.empty()) {
             std::string mvBestNetToDef = "cp " + netPath + " definition.net";
             system(mvBestNetToDef.c_str());
+            setProgressBar(100);
+
+            printConsole("\nBest network definition candidate is : " + netPath);
             LOGMSG_ARG(LOG_DEBUG, "BEST CANDIDATE = %s", netPath.c_str());
         }
     }
@@ -365,6 +370,7 @@ void CalibTool::notifyProcessedJob(int id) {
  */
 void CalibTool::printConsole(std::string str) {
     ui->text_edit_output->insertPlainText(QString::fromStdString(str) + QString("\n"));
+    ui->text_edit_output->ensureCursorVisible();
 }
 
 t_map_idJob CalibTool::getJobMap(){
