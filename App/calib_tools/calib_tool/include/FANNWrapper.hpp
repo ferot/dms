@@ -119,7 +119,7 @@ public:
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
 
-        net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
+        net.create_standard(3, num_input, paramSet.getNumNeuronsHidden(), num_output);
 
         //        if (paramSet.getNumLayers() == 4) {
         //            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);

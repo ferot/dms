@@ -39,7 +39,12 @@ CalibTool::CalibTool(QWidget *parent) :
     labels_cam2 = {ui->label_c2_x_v, ui->label_c2_y_v, ui->label_c2_s_v};
     labels_cam3 = {ui->label_c3_x_v, ui->label_c3_y_v, ui->label_c3_s_v};
 
-    labels = {labels_cam1, labels_cam2, labels_cam3};
+    labels_cam4 = {ui->label_c4_x_v, ui->label_c4_y_v, ui->label_c4_s_v};
+    labels_cam5 = {ui->label_c5_x_v, ui->label_c5_y_v, ui->label_c5_s_v};
+    labels_cam6 = {ui->label_c6_x_v, ui->label_c6_y_v, ui->label_c6_s_v};
+
+
+    labels = {labels_cam1, labels_cam2, labels_cam3, labels_cam4, labels_cam5, labels_cam6};
 
     m_scaleFactorX = std::stof(Config::getInstance()->getValue("Video", "width"));
     m_scaleFactorY = std::stof(Config::getInstance()->getValue("Video", "height"));

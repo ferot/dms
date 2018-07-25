@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="calib">
        <attribute name="title">
@@ -33,26 +33,103 @@
           <x>20</x>
           <y>30</y>
           <width>781</width>
-          <height>231</height>
+          <height>234</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="8" column="3">
+         <item row="14" column="2">
+          <widget class="QLabel" name="label_c5_x_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="label_x_c1">
+           <property name="text">
+            <string>X:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLabel" name="label_y_c1">
+           <property name="text">
+            <string>Y:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="2">
           <widget class="QLabel" name="label_c2_x_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="5">
+         <item row="4" column="3">
           <widget class="QLabel" name="label_c1_y_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="3">
-          <widget class="QLabel" name="label_c1_x_v">
+         <item row="11" column="0" colspan="5">
+          <widget class="Line" name="line_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="4">
+          <widget class="QLabel" name="label_c1_s_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="5">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="4">
+          <widget class="QLabel" name="label_c2_s_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="3">
+          <widget class="QLabel" name="label_c5_y_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="3">
+          <widget class="QLabel" name="label_c6_y_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="label_23">
+           <property name="text">
+            <string>CAM5</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Actual cameras values:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="2">
+          <widget class="QLabel" name="label_c3_x_v">
            <property name="text">
             <string>0</string>
            </property>
@@ -65,10 +142,24 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="2">
-          <widget class="QLabel" name="label_x_c2">
+         <item row="5" column="0" colspan="5">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="4">
+          <widget class="QLabel" name="label_c3_s_v">
            <property name="text">
-            <string>X:</string>
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="5">
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -79,24 +170,10 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="6">
-          <widget class="QLabel" name="label_s_c1">
+         <item row="16" column="0">
+          <widget class="QLabel" name="label_24">
            <property name="text">
-            <string>SIZE:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="6">
-          <widget class="QLabel" name="label_s_c2">
-           <property name="text">
-            <string>SIZE:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="4">
-          <widget class="QLabel" name="label_y_c1">
-           <property name="text">
-            <string>Y:</string>
+            <string>CAM6</string>
            </property>
           </widget>
          </item>
@@ -107,106 +184,99 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="4">
-          <widget class="QLabel" name="label_y_c2">
-           <property name="text">
-            <string>Y:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Actual cameras values:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2">
-          <widget class="QLabel" name="label_x_c1">
-           <property name="text">
-            <string>X:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="2">
-          <widget class="QLabel" name="label_x_c3">
-           <property name="text">
-            <string>X:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="4">
-          <widget class="QLabel" name="label_y_c3">
-           <property name="text">
-            <string>Y:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="6">
-          <widget class="QLabel" name="label_s_c3">
-           <property name="text">
-            <string>SIZE:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="3">
-          <widget class="QLabel" name="label_c3_x_v">
+         <item row="12" column="2">
+          <widget class="QLabel" name="label_c4_x_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="5">
+         <item row="16" column="2">
+          <widget class="QLabel" name="label_c6_x_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QLabel" name="label_c1_x_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0" colspan="5">
+          <widget class="Line" name="line_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="3">
           <widget class="QLabel" name="label_c2_y_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="5">
+         <item row="10" column="3">
           <widget class="QLabel" name="label_c3_y_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="7">
-          <widget class="QLabel" name="label_c1_s_v">
+         <item row="1" column="4">
+          <widget class="QLabel" name="label_s_c1">
+           <property name="text">
+            <string>SIZE:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="4">
+          <widget class="QLabel" name="label_c4_s_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="7">
-          <widget class="QLabel" name="label_c2_s_v">
+         <item row="16" column="4">
+          <widget class="QLabel" name="label_c6_s_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="7">
-          <widget class="QLabel" name="label_c3_s_v">
+         <item row="12" column="0">
+          <widget class="QLabel" name="label_22">
+           <property name="text">
+            <string>CAM4</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="3">
+          <widget class="QLabel" name="label_c4_y_v">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="8">
-          <widget class="Line" name="line">
+         <item row="14" column="4">
+          <widget class="QLabel" name="label_c5_s_v">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="0" colspan="5">
+          <widget class="Line" name="line_11">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="8">
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0" colspan="8">
-          <widget class="Line" name="line_3">
+         <item row="15" column="0" colspan="5">
+          <widget class="Line" name="line_12">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>

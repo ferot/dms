@@ -55,6 +55,9 @@ private:
 	t_v_qlabel labels_cam1;
 	t_v_qlabel labels_cam2;
 	t_v_qlabel labels_cam3;
+    t_v_qlabel labels_cam4;
+    t_v_qlabel labels_cam5;
+    t_v_qlabel labels_cam6;
 
 	std::vector<t_v_qlabel> labels;
 
