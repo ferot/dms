@@ -133,17 +133,17 @@ public:
         //        net.set_learning_rate(paramSet.getLearningRate());
 
 
-        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
-        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
+//        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
+//        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
         int act;
         (void)act;
-        //        int act = paramSet.getActivationFun(true);
-        //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
-        //        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
+        act = paramSet.getActivationFun(true);
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
+        net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
 
-        //        act = paramSet.getActivationFun(false);
-        //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
-        //        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
+        act = paramSet.getActivationFun(false);
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
+        net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
         net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
         //        act = paramSet.getTrainingAlg();
@@ -211,7 +211,7 @@ public:
             saveReport("reports/", generateReport(MSE));
             net.save(netOutputDir + netOutputFilename);
             //Demo purpose only
-            net.save(netOutputFilename);
+//            net.save(netOutputFilename);
 
             //                printTextEdit(QString("-----------------------------FINISHED----------------------------------"), UI);
 
