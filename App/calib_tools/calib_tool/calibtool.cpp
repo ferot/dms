@@ -330,16 +330,19 @@ void CalibTool::removeJob(int id) {
  * Also assures that best_cand temp file is being removed before creating new.
  * @return path to
  */
-std::string runNetAnalyzer() {
+std::pair<std::string, std::string> runNetAnalyzer() {
     system("rm best_cand");
     system("python NetAnalyzer/net_analyzer.py nodraw");
 
     std::ifstream input("best_cand");
     std::string filename;
+    std::string mse;
+
     input >> filename;
+    input >> mse;
 
     input.close();
-    return filename;
+    return std::pair<std::string, std::string>(filename, mse);
 }
 
 void CalibTool::notifyProcessedJob(int id) {
@@ -352,14 +355,14 @@ void CalibTool::notifyProcessedJob(int id) {
         LOGMSG(LOG_TRACE, "Job map empty");
 
         printConsole("\nFinished training. Now running Net Analyzer...");
-        std::string netPath = runNetAnalyzer();
-        if(!netPath.empty()) {
-            std::string mvBestNetToDef = "cp " + netPath + " definition.net";
+        std::pair<std::string, std::string> outputPair = runNetAnalyzer();
+        if(!outputPair.first.empty()) {
+            std::string mvBestNetToDef = "cp " + outputPair.first + " definition.net";
             system(mvBestNetToDef.c_str());
             setProgressBar(100);
 
-            printConsole("\nBest network definition candidate is : " + netPath);
-            LOGMSG_ARG(LOG_DEBUG, "BEST CANDIDATE = %s", netPath.c_str());
+            printConsole("\nBest network definition candidate is : " + outputPair.first + "\nwith MSE = " + outputPair.second);
+            LOGMSG_ARG(LOG_DEBUG, "BEST CANDIDATE NAME | MSE = %s ", std::string(outputPair.first + " | " + outputPair.second).c_str());
         }
     }
 }

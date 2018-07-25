@@ -15,7 +15,8 @@ def main():
     for arg in sys.argv:
         if "nodraw" in arg:
             with open ('best_cand', 'a') as the_file:
-                the_file.write(best_net.get_name ())
+                str_to_write = best_net.get_name () + " " + str(best_net.get_mse())
+                the_file.write(str_to_write)
         elif len(sys.argv) == 1:
             viz.show_plots()
 
