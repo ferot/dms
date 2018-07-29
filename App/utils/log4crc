@@ -11,7 +11,7 @@
 	</config>
 
 	<category name="root" priority="notice"/>
-        <category name="dms" priority="trace" appender="stdout"/>
+        <category name="dms" priority="debug" appender="stdout"/>
         <category name="fann" priority="trace" appender="myrollingfileappender"/>
 
 

@@ -46,7 +46,7 @@ DispatchEngine::DispatchEngine() {
 	int queueSize = stoi(config->getValue("Other", "queue_size"), nullptr, 10);
 	queueSize = (queueSize != 0) ? queueSize : fixedQueueSize;
 
-	LOGMSG_ARG(LOG_DEBUG, "[DispatchEngine] setting queueSize : %d", queueSize);
+    LOGMSG_ARG(LOG_TRACE, "[DispatchEngine] setting queueSize : %d", queueSize);
 
 	m_eventQueue = std::make_shared<t_eventDeque>(queueSize);
 }
@@ -140,7 +140,7 @@ CommonRC DispatchEngine::registerEvent(eventType type, std::shared_ptr<Command> 
  */
 CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 	CommonRC ret = CMN_RC_SUCCESS;
-	LOGMSG_ARG(LOG_DEBUG, "[enqueueEvent] Enqueued event type : %d",
+    LOGMSG_ARG(LOG_TRACE, "[enqueueEvent] Enqueued event type : %d",
 			(int )event->getEventType());
 
 	m_eventQueue->push_back(move(event));
@@ -155,7 +155,7 @@ CommonRC DispatchEngine::enqueueEvent(t_eventPtr event){
 CommonRC DispatchEngine::startEventReader() {
 	CommonRC ret = CMN_RC_SUCCESS;
 
-	LOGMSG(LOG_DEBUG, "[startEventReader] Starting event-reader thread...");
+    LOGMSG(LOG_TRACE, "[startEventReader] Starting event-reader thread...");
 
 	m_evReaderKill = false;
 	m_th_readerThread = std::thread(&DispatchEngine::eventReader, this);
@@ -173,7 +173,7 @@ CommonRC DispatchEngine::stopEventReader(){
 	m_th_readerThread.join();
 	m_eventQueue->kill();
 
-	LOGMSG(LOG_DEBUG, "[stopEventReader] Joined event-reader thread...");
+    LOGMSG(LOG_TRACE, "[stopEventReader] Joined event-reader thread...");
 
 	return ret;
 }
@@ -187,7 +187,7 @@ CommonRC DispatchEngine::eventReader() {
 	do {
 		auto event = m_eventQueue->pop_front();
 		handleEvent(event.second);
-		LOGMSG_ARG(LOG_DEBUG,
+        LOGMSG_ARG(LOG_TRACE,
 				"[PublishMsgCMD::execute()] Handled event type : %d",
 				event.second->getEventType());
 	} while (!m_evReaderKill);
