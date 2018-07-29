@@ -3,7 +3,7 @@ from ReportParser.ReportParser import ReportParser
 import sys
 
 def main():
-    parser = ReportParser("/home/tf/repos/dms/build/bin/reports/")
+    parser = ReportParser("reports/")
     parser.enlist_reports()
     results = parser.process()
 
