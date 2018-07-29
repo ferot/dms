@@ -6,7 +6,7 @@ file( GLOB core_comp_srcs "src/*.cpp" )
 include_directories(include)
 
 #Below path should be be parametrized!
-set(CMAKE_PREFIX_PATH "/home/tf/qt/5.9.2/gcc_64/")
+set(CMAKE_PREFIX_PATH "/home/tf/mgr/qt5/qtbase")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set (GUI_SRC
