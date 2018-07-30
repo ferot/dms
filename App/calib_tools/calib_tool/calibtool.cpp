@@ -236,12 +236,11 @@ void CalibTool::setJobCountLabel(int val) {
  * Note: sets it only in text edit widget! TODO: store in kind of structure.
  */
 void CalibTool::on_saveVector_clicked() {
-    //append dataset vector to file
-    QString buffer = ui->textEdit->toPlainText()
-            + QString::fromStdString(formVector());
-
     refreshValues();
-    ui->textEdit->setText(buffer);
+
+    //append dataset vector to file
+    ui->textEdit->insertPlainText( QString::fromStdString(formVector()));
+    ui->textEdit->ensureCursorVisible();
 }
 
 void CalibTool::on_loadFromFileButton_clicked() {
