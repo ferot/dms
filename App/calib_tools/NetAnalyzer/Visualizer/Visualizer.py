@@ -21,12 +21,14 @@ class Visualizer(object):
                 x.append(_x)
                 y.append(_y)
 
-            plot = plt.plot(x, y, 'ro')
+            plot = plt.plot(x, y, 'ro', label='rprop')
 
             plt.xlabel(x_label)
             plt.ylabel(y_label)
             plt.title(title)
             plt.grid(True)
+            plt.legend()
+
             self._plots.append(plt)
 
     """Saves plot under provided path"""

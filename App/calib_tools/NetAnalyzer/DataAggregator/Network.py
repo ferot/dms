@@ -2,7 +2,7 @@
 
 
 class Network:
-    def __init__(self, num_input, num_output, num_neurons, mse, name):
+    def __init__(self, num_input, num_output, num_neurons, mse, name, act_fun_out, act_fun_hid):
         self._num_neurons = num_neurons
         self._num_input = num_input
         self._num_output = num_output
@@ -10,6 +10,8 @@ class Network:
         self._mse = mse
         # self._hidden_activation_func = hidden_func
         self._name = name
+        self._act_fun_hid = act_fun_hid
+        self._act_fun_out = act_fun_out
 
     """Reads report's file content from provided path"""
     def read_content(self, path):
@@ -44,3 +46,10 @@ class Network:
                 4: "SARPROP"}
         return dict[num]
 
+    def map_activation_fun(self, num):
+        dict = {0: "LINEAR",
+                4: "SIGMOID_STEPWISE",
+                5: "SIGMOID_SYMMETRIC",
+                6: "SIGMOID_SYMMETRIC_STEPWISE",
+                3: "SIGMOID"}
+        return dict[num]

@@ -58,6 +58,8 @@ class ReportParser:
         num_output = 0
         num_neu = 0
         mse = 0
+        act_fun_hid = -1
+        act_fun_out = -1
 
 
         for item in content:
@@ -71,5 +73,9 @@ class ReportParser:
                 num_output = int(item.split(":")[1].rstrip())
             elif "num_neu_hid" in item:
                 num_neu = int(item.split(":")[1].rstrip())
+            elif "activ_fun_hid" in item:
+                act_fun_hid = int(item.split(":")[1].rstrip())
+            elif "activ_fun_out" in item:
+                act_fun_out = int(item.split(":")[1].rstrip())
 
-        return num_input, num_output, num_neu, mse, net_name
+        return num_input, num_output, num_neu, mse, net_name, act_fun_out, act_fun_hid
