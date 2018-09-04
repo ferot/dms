@@ -130,13 +130,13 @@ public:
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
         //        net.set_learning_rate(0.7);
-        //        net.set_learning_rate(paramSet.getLearningRate());
+                net.set_learning_rate(paramSet.getLearningRate());
 
 
 //        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
 //        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
         int act;
-        (void)act;
+//        (void)act;
         act = paramSet.getActivationFun(true);
         LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
         net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));

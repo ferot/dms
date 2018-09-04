@@ -48,8 +48,8 @@ void ParamSetGenerator::generateSet() {
 				//Rand
                 std::uniform_int_distribution<> distr(FANN::activation_function_enum::LINEAR, FANN::activation_function_enum::COS_SYMMETRIC);// define the range
 
-				set.setActivationFun(static_cast<FANN::activation_function_enum>(distr(eng)), true);
-				set.setActivationFun(static_cast<FANN::activation_function_enum>(distr(eng)), false);
+                set.setActivationFun(static_cast<FANN::activation_function_enum>(getSpinboxInt(UI->spinBox_fun_hidden_type)), true);
+                set.setActivationFun(static_cast<FANN::activation_function_enum>(getSpinboxInt(UI->spinBox_fun_output_type)), false);
 
                 distr = std::uniform_int_distribution<>(FANN::training_algorithm_enum::TRAIN_INCREMENTAL, FANN::training_algorithm_enum::TRAIN_SARPROP);
 				set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(distr(eng)));
