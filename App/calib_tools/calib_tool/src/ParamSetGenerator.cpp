@@ -43,44 +43,39 @@ void ParamSetGenerator::generateSet() {
 			std::vector<paramSet>(m_setCount, paramSet()));
 
     std::for_each(m_setVector->begin(), m_setVector->end(),
-            [this, &eng](paramSet &set) {
+                  [this, &eng](paramSet &set) {
+        std::uniform_int_distribution<> distr(FANN::activation_function_enum::LINEAR, FANN::activation_function_enum::COS_SYMMETRIC);// define the range
+        // Arbitrary
+        distr = std::uniform_int_distribution<>(100000, 500000);
 
-				//Rand
-                std::uniform_int_distribution<> distr(FANN::activation_function_enum::LINEAR, FANN::activation_function_enum::COS_SYMMETRIC);// define the range
+        set.setMaxEpochs(500000);
+        set.setEpochsBetweenReports(1000);
+        set.setDesiredError(getSpinboxFloat(UI->doubleSpinBox_desired_error));
 
-                set.setActivationFun(static_cast<FANN::activation_function_enum>(getSpinboxInt(UI->spinBox_fun_hidden_type)), true);
-                set.setActivationFun(static_cast<FANN::activation_function_enum>(getSpinboxInt(UI->spinBox_fun_output_type)), false);
+        //UI-BASED
+        set.setActivationFun(static_cast<FANN::activation_function_enum>(getSpinboxInt(UI->spinBox_fun_hidden_type)), true);
+        set.setActivationFun(static_cast<FANN::activation_function_enum>(getSpinboxInt(UI->spinBox_fun_output_type)), false);
 
-                distr = std::uniform_int_distribution<>(FANN::training_algorithm_enum::TRAIN_INCREMENTAL, FANN::training_algorithm_enum::TRAIN_SARPROP);
-				set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(distr(eng)));
+        set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(getSpinboxInt(UI->spinBox_train_alg)));
 
-				// Arbitrary
-				distr = std::uniform_int_distribution<>(100000, 500000);
+        distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numneur_min), getSpinboxInt(UI->spinBox_numneur_max));
+        set.setNumNeuronsHidden(distr(eng));
 
-                set.setMaxEpochs(500000);
-				set.setEpochsBetweenReports(1000);
-				set.setDesiredError(getSpinboxFloat(UI->doubleSpinBox_desired_error));
+        std::uniform_real_distribution<> distr_real(getSpinboxFloat(UI->doubleSpinBox_learnrate_min), getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
+        set.setLearningRate(distr_real(eng));
 
-				//UI
+        distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox_funhidsteep_min), getSpinboxFloat(UI->doubleSpinBox_funhidsteep_max));
+        set.setActivationSteepnessHidden(distr_real(eng));
 
-				distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numneur_min), getSpinboxInt(UI->spinBox_numneur_max));
-				set.setNumNeuronsHidden(distr(eng));
+        distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox__funoutpsteep_min), getSpinboxFloat(UI->doubleSpinBox_funoutpsteep_max));
+        set.setActivationSteepnessOutput(distr_real(eng));
 
-				std::uniform_real_distribution<> distr_real(getSpinboxFloat(UI->doubleSpinBox_learnrate_min), getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
-				set.setLearningRate(distr_real(eng));
+        distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numlay_min), getSpinboxInt(UI->spinBox_numlay_max));
+        set.setNumLayers(distr(eng));
 
-				distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox_funhidsteep_min), getSpinboxFloat(UI->doubleSpinBox_funhidsteep_max));
-				set.setActivationSteepnessHidden(distr_real(eng));
-
-				distr_real = std::uniform_real_distribution<>(getSpinboxFloat(UI->doubleSpinBox__funoutpsteep_min), getSpinboxFloat(UI->doubleSpinBox_funoutpsteep_max));
-				set.setActivationSteepnessOutput(distr_real(eng));
-
-                distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numlay_min), getSpinboxInt(UI->spinBox_numlay_max));
-				set.setNumLayers(distr(eng));
-
-				set.setOutputFilename(generateFilename());
-                incrementID();
-			});
+        set.setOutputFilename(generateFilename());
+        incrementID();
+    });
 	// Finished generation let's now allow to get it from the beginning
 	m_lastID = 0;
 }

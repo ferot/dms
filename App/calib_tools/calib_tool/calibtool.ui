@@ -358,7 +358,7 @@
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="2" column="2">
+         <item row="5" column="2">
           <widget class="QSpinBox" name="spinBox_numneur_max">
            <property name="minimum">
             <number>1</number>
@@ -374,24 +374,24 @@
            </property>
           </widget>
          </item>
-         <item row="11" column="0" rowspan="3" colspan="3">
+         <item row="15" column="0" rowspan="3" colspan="3">
           <widget class="QTextEdit" name="text_edit_output"/>
          </item>
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="label_11">
            <property name="text">
             <string>Network generator:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="label_7">
            <property name="text">
             <string>num neurons (hidden)</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="2">
+         <item row="8" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funhidsteep_max">
            <property name="decimals">
             <number>4</number>
@@ -404,17 +404,17 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="2">
-          <widget class="QSpinBox" name="step_spinBox_7"/>
-         </item>
-         <item row="16" column="0" colspan="3">
+         <item row="20" column="0" colspan="3">
           <widget class="QProgressBar" name="progressBar">
            <property name="value">
             <number>0</number>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="12" column="2">
+          <widget class="QSpinBox" name="step_spinBox_7"/>
+         </item>
+         <item row="5" column="1">
           <widget class="QSpinBox" name="spinBox_numneur_min">
            <property name="minimum">
             <number>1</number>
@@ -427,7 +427,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="4" column="1">
           <widget class="QSpinBox" name="spinBox_numlay_min">
            <property name="minimum">
             <number>3</number>
@@ -437,21 +437,21 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="4" column="2">
           <widget class="QSpinBox" name="spinBox_numlay_max">
            <property name="minimum">
             <number>3</number>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="9" column="0">
           <widget class="QLabel" name="label_9">
            <property name="text">
             <string>fun activ steepness (output)</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="2">
+         <item row="9" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funoutpsteep_max">
            <property name="decimals">
             <number>4</number>
@@ -464,21 +464,21 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
+         <item row="1" column="2">
           <widget class="QLabel" name="label_13">
            <property name="text">
             <string>max</string>
            </property>
           </widget>
          </item>
-         <item row="15" column="0">
+         <item row="19" column="0">
           <widget class="QPushButton" name="loadFromFileButton">
            <property name="text">
             <string>Load training set from file...</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="8" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_funhidsteep_min">
            <property name="decimals">
             <number>4</number>
@@ -491,14 +491,14 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="12" column="0">
           <widget class="QCheckBox" name="step_checkBox">
            <property name="text">
             <string>use step </string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="9" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBox__funoutpsteep_min">
            <property name="decimals">
             <number>4</number>
@@ -511,42 +511,42 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="QLabel" name="label_12">
            <property name="text">
             <string>min</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
+         <item row="8" column="0">
           <widget class="QLabel" name="label_8">
            <property name="text">
             <string>fun activ steepness (hidden)</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
+         <item row="12" column="1">
           <widget class="QLabel" name="label_10">
            <property name="text">
             <string>step : </string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>num layers</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="10" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
             <string>learning rate</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
+         <item row="10" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_learnrate_min">
            <property name="decimals">
             <number>7</number>
@@ -565,7 +565,7 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="2">
+         <item row="10" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_learnrate_max">
            <property name="decimals">
             <number>4</number>
@@ -578,14 +578,14 @@
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
+         <item row="14" column="1">
           <widget class="QLabel" name="label_14">
            <property name="text">
             <string>desired error:</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="2">
+         <item row="14" column="2">
           <widget class="QDoubleSpinBox" name="doubleSpinBox_desired_error">
            <property name="decimals">
             <number>3</number>
@@ -598,21 +598,21 @@
            </property>
           </widget>
          </item>
-         <item row="9" column="1">
+         <item row="13" column="1">
           <widget class="QLabel" name="label_15">
            <property name="text">
             <string>nr of param set to generate:</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
+         <item row="14" column="0">
           <widget class="QLabel" name="label_train_output">
            <property name="text">
             <string>Ouput:</string>
            </property>
           </widget>
          </item>
-         <item row="9" column="2">
+         <item row="13" column="2">
           <widget class="QSpinBox" name="spinBox_setCount">
            <property name="minimum">
             <number>1</number>
@@ -622,21 +622,21 @@
            </property>
           </widget>
          </item>
-         <item row="15" column="1">
+         <item row="19" column="1">
           <widget class="QPushButton" name="button_start_training">
            <property name="text">
             <string>start training</string>
            </property>
           </widget>
          </item>
-         <item row="15" column="2">
+         <item row="19" column="2">
           <widget class="QPushButton" name="button_cancel_training">
            <property name="text">
             <string>reset/cancel training</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="label_18">
            <property name="toolTip">
             <string extracomment="0 - LINEAR 3-SIGMOID 4-SIG_STEPWISE 5-SIG_SYMMETRIC 6-SIG_SYM_STEP">0 - LINEAR 3-SIGMOID 4-SIG_STEPWISE 5-SIG_SYMMETRIC 6-SIG_SYM_STEP</string>
@@ -649,14 +649,14 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="label_19">
            <property name="text">
             <string>fun activ type (output)</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="6" column="1">
           <widget class="QSpinBox" name="spinBox_fun_hidden_type">
            <property name="toolTip">
             <string notr="true">0 - LINEAR 3-SIGMOID 4-SIG_STEPWISE 5-SIG_SYMMETRIC 6-SIG_SYM_STEP</string>
@@ -675,10 +675,42 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="7" column="1">
           <widget class="QSpinBox" name="spinBox_fun_output_type">
            <property name="toolTip">
             <string>0 - LINEAR 3-SIGMOID 4-SIG_STEPWISE 5-SIG_SYMMETRIC 6-SIG_SYM_STEP</string>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="label_20">
+           <property name="toolTip">
+            <string extracomment="0 - LINEAR 3-SIGMOID 4-SIG_STEPWISE 5-SIG_SYMMETRIC 6-SIG_SYM_STEP">0 - LINEAR 3-SIGMOID 4-SIG_STEPWISE 5-SIG_SYMMETRIC 6-SIG_SYM_STEP</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>5</number>
+           </property>
+           <property name="text">
+            <string>training algorithm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <widget class="QSpinBox" name="spinBox_train_alg">
+           <property name="toolTip">
+            <string notr="true">0 - BACKPROP 1-BATCH 2-RPROP 3-QUICKPROP 4-SARPROP</string>
+           </property>
+           <property name="whatsThis">
+            <string/>
            </property>
            <property name="minimum">
             <number>0</number>

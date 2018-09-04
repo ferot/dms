@@ -121,22 +121,17 @@ public:
 
         net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
 
-        //        if (paramSet.getNumLayers() == 4) {
-        //            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
-        //        } else {
-        //            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
+        if (paramSet.getNumLayers() == 4) {
+            net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
+        } else {
+            net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
 
-        //        }
+        }
         LOGMSG(LOG_DEBUG, "[FANNWRAPPER]  net.create_standard");
 
-        //        net.set_learning_rate(0.7);
-                net.set_learning_rate(paramSet.getLearningRate());
+        net.set_learning_rate(paramSet.getLearningRate());
 
-
-//        net.set_activation_function_hidden(FANN::activation_function_enum::SIGMOID_SYMMETRIC);
-//        net.set_activation_function_output(FANN::activation_function_enum::LINEAR);
-        int act;
-//        (void)act;
+        int act = -1;
         act = paramSet.getActivationFun(true);
         LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func HIDDEN : %d...", act);
         net.set_activation_function_hidden(static_cast<FANN::activation_function_enum>(act));
@@ -145,10 +140,9 @@ public:
         LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Activation func OUTPUT : %d...", act);
         net.set_activation_function_output(static_cast<FANN::activation_function_enum>(act));
 
-        net.set_training_algorithm(FANN::training_algorithm_enum::TRAIN_RPROP);
-        //        act = paramSet.getTrainingAlg();
-        //        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
-        //        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
+        act = paramSet.getTrainingAlg();
+        net.set_training_algorithm(static_cast<FANN::training_algorithm_enum>(act));
+        LOGMSG_ARG(LOG_TRACE, "[FANNWRAPPER] Training alg : %d...", act);
 
         net.set_callback(printMSE_callback, reinterpret_cast<void*>(UI));
 
@@ -298,6 +292,8 @@ public:
                 "\nactiv_fun_steep_out : " + std::to_string(paramSet.getActivationSteepnessOutput()) +
                 "\nlearn_rate : " + std::to_string(net.get_learning_rate()) +
                 "\ntrain_alg : " + std::to_string(paramSet.getTrainingAlg()) +
+                "\nactiv_fun_out : " + std::to_string(paramSet.getActivationFun(false)) +
+                "\nactiv_fun_hid : " + std::to_string(paramSet.getActivationFun(true)) +
                 "\nmax_epochs : " + std::to_string(paramSet.getMaxEpochs()) + "\n\n";
 
         return params;
