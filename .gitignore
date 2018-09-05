@@ -21,7 +21,7 @@ bin
 *.includes
 *.pro*
 *Debug*
-
+*autosave*
 *.pyc
 *workspace*xml
 
