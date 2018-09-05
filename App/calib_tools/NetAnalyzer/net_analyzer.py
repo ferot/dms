@@ -10,7 +10,6 @@ def main():
     viz = Visualizer(results)
     best_net = parser.get_best_net_candidate ()
 
-    viz.draw_plot("MSE", "MSE(neu_nr)")
 
     for arg in sys.argv:
         if "nodraw" in arg:
@@ -18,10 +17,9 @@ def main():
                 str_to_write = best_net.get_name () + " " + str(best_net.get_mse())
                 the_file.write(str_to_write)
         elif len(sys.argv) == 1:
-            viz.show_plots()
+            viz.draw_plot ("MSE", "MSE(neu_nr)")
 
-
-    # best_net.print_net_info()
+            # best_net.print_net_info()
 
 if __name__ == "__main__":
     main()
