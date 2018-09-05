@@ -18,10 +18,8 @@ class ReportParser:
             content = self._read_content(self._item_queue.get())
             params_tuple = self._extract_net_params(content)
             net = Network(*params_tuple)
-            aggregate = Aggregate(net)
-            self._aggregate_list.append(aggregate)
 
-        # self._aggregate_list = sorted(self._aggregate_list, key=lambda x: x._net._mse, reverse=False)
+            self._aggregate_net(net)
         return self._aggregate_list
 
     """Enlists reports to parse and stores in internal list"""
@@ -31,11 +29,17 @@ class ReportParser:
         for name in files:
             self._item_queue.put(name)
 
-    """ Returns first item with lowest MSE in sorted descending list of nets"""
+    """ Returns best net from all available net architectures"""
     def get_best_net_candidate(self):
-        self._aggregate_list = sorted (self._aggregate_list, key=lambda x: x._net._mse, reverse=False)
+        best_net = Network(0, 0, 0, 1, 0, 0, 0, 0)
 
-        return self._aggregate_list[0].get_net()
+        for agg in self._aggregate_list:
+            temp_list = sorted (Aggregate.get_net_list(agg), key=lambda x: Network.get_mse(x), reverse=False)
+            best_aggregate_net = temp_list[0]
+            if Network.get_mse(best_aggregate_net) < Network.get_mse(best_net):
+                best_net = best_aggregate_net
+
+        return best_net
 
     """Reads report's file content from provided path"""
     def _read_content(self, path):
@@ -60,6 +64,7 @@ class ReportParser:
         mse = 0
         act_fun_hid = -1
         act_fun_out = -1
+        train_alg = -1
 
 
         for item in content:
@@ -77,5 +82,23 @@ class ReportParser:
                 act_fun_hid = int(item.split(":")[1].rstrip())
             elif "activ_fun_out" in item:
                 act_fun_out = int(item.split(":")[1].rstrip())
+            elif "train_alg" in item:
+                train_alg = int(item.split(":")[1].rstrip())
 
-        return num_input, num_output, num_neu, mse, net_name, act_fun_out, act_fun_hid
+            # assume that MSE bigger than one should be treated as 100% (to not overscale diagrams)
+            if mse > 1:
+                mse = 1
+
+        return num_input, num_output, num_neu, mse, net_name, act_fun_out, act_fun_hid, train_alg
+
+    def _aggregate_net(self, net):
+        found_type = False
+        for agg in self._aggregate_list:
+            if Aggregate.get_type(agg) == Network.get_type(net):
+                agg.insert_net(net)
+                found_type = True
+
+        if found_type is False:
+            new_aggregate = Aggregate(Network.get_type(net))
+            new_aggregate.insert_net(net)
+            self._aggregate_list.append(new_aggregate)

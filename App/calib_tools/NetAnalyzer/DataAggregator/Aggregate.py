@@ -2,16 +2,18 @@ from DataAggregator.Network import Network
 
 """Class aggregating network params and other info extracted from reports"""
 class Aggregate:
-    def __init__(self, net):
-        self._net = net
-        self._plot = None
+    def __init__(self, type):
+        self._net_list = []
+        self._type = type
 
-    def get_mse(self):
-        return self._mse
+    def set_type(self, plot):
+        self._type = self._net
 
-    def get_net(self):
-        # type: () -> object
-        return self._net
+    def get_type(self):
+        return self._type
 
-    def set_plot(self, plot):
-        self._plot = plot
+    def insert_net(self, net):
+        self._net_list.append(net)
+
+    def get_net_list(self):
+        return self._net_list

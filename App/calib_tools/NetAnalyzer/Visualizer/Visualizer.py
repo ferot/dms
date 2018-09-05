@@ -1,11 +1,16 @@
 import matplotlib.pyplot as plt
-import numpy as np
+from numpy import pi, linspace, sin
+from DataAggregator.Aggregate import Aggregate
 
 
 class Visualizer(object):
     def __init__(self, aggregates):
         self._aggregates = aggregates
-        self._plots = []
+        self._plot = plt
+        self._col_dict = {0: "ro",
+                1: "bo",
+                2: "go",
+                3: "yo"}
 
     """Draws provided plot handle"""
     def draw_plot(self, title, type):
@@ -15,21 +20,34 @@ class Visualizer(object):
 
             x = []
             y = []
+            col_idx = 0
             for agg in self._aggregates:
-                _y = agg.get_net().get_mse()
-                _x = agg.get_net().get_numneur()
-                x.append(_x)
-                y.append(_y)
+                net_list = Aggregate.get_net_list(agg)
+                dot_type = self._col_dict[col_idx]
+                col_idx += 1
+                if col_idx > 3:
+                    col_idx = 0
+                for net in net_list:
+                    _y = net.get_mse()
+                    _x = net.get_numneur()
+                    x.append(_x)
+                    y.append(_y)
 
-            plot = plt.plot(x, y, 'ro', label='rprop')
+                plt.plot(x, y, dot_type, label=Aggregate.get_type(agg))
+
+
+            # x2 = linspace(0,4*pi, 100)
+            # self._plot = plt.plot(x2, sin(x2), self._col_dict[3], label=Aggregate.get_type(agg))
 
             plt.xlabel(x_label)
             plt.ylabel(y_label)
             plt.title(title)
             plt.grid(True)
             plt.legend()
+            plt.plot()
 
-            self._plots.append(plt)
+            plt.show()
+
 
     """Saves plot under provided path"""
     def save_plots(self):
@@ -37,5 +55,4 @@ class Visualizer(object):
             plot.savefig("plots/" + plot.get_net() + ".png")
 
     def show_plots(self):
-        for plot in self._plots:
-            plot.show()
+        pass
