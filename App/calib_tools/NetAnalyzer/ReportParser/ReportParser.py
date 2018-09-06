@@ -31,7 +31,7 @@ class ReportParser:
 
     """ Returns best net from all available net architectures"""
     def get_best_net_candidate(self):
-        best_net = Network(0, 0, 0, 1, 0, 0, 0, 0)
+        best_net = Network(0, 0, 0, 1, "", 0, 0, 0)
 
         for agg in self._aggregate_list:
             temp_list = sorted (Aggregate.get_net_list(agg), key=lambda x: Network.get_mse(x), reverse=False)
@@ -57,7 +57,7 @@ class ReportParser:
 
     """Extracts net params from content and returns tuple"""
     def _extract_net_params(self, content):
-        net_name = ""
+        net_name = " "
         num_input = 0
         num_output = 0
         num_neu = 0
