@@ -35,7 +35,6 @@ public:
     };
 private:
     bool m_debWinEnabled;
-    bool m_modelDebWinEnabled;
 
     bool m_switchTracker;
 
@@ -50,19 +49,12 @@ private:
 signals:
     void sig_notifyAppQuit();
     void sig_notifyDebugWindow(bool check);
-    void sig_notifyModelDebugWindow(bool check);
     void sig_notifySwitchTrackers(bool check);
     void sig_notifyKeyPressed(int);
 
 public slots:
     void slot_updateDebugWindow(cv::Mat frame);
-    void slot_updateModelDebugWindow(cv::Point2d);
-
-    void slot_switchTrackerClicked(bool checked);
     void slot_debugWindowClicked(bool checked);
-    void slot_modelDebugWindowClicked(bool checked);
-
-//    void updateTrackCoords(); //args to be sent ?
 };
 
 #endif // WINDOW_H

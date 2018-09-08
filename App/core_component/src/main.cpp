@@ -67,12 +67,6 @@ int main(int argc, char **argv) {
 	QObject::connect(&mainWindow, &Window::sig_notifyDebugWindow, &visionEngine,
 			&VisionEngineWrapper::slot_debugWindowClicked);
 
-	QObject::connect(&visionEngine, &VisionEngineWrapper::sig_notifyModelDebugWindow,
-			&mainWindow, &Window::slot_updateModelDebugWindow);
-
-	QObject::connect(&mainWindow, &Window::sig_notifyModelDebugWindow, &visionEngine,
-			&VisionEngineWrapper::slot_modelDebugWindowClicked);
-
 	QObject::connect(&mainWindow, &Window::sig_notifyKeyPressed, &visionEngine,
 			&VisionEngineWrapper::slot_keyHandler);
 
