@@ -20,8 +20,8 @@ class Visualizer(object):
     """Draws provided plot handle"""
     def draw_plot(self, title, type):
         if "MSE(neu_nr)" in type:
-            x_label = "neuron_nr"
-            y_label = "MSE"
+            x_label = "Liczba neuronow"
+            y_label = "Efektywnosc sieci"
 
             x = []
             y = []

@@ -65,3 +65,6 @@ class Network:
                 6: "SIGMOID_SYMMETRIC_STEPWISE",
                 3: "SIGMOID"}
         return dict[num]
+
+    def setMSE(self, mse):
+        self._mse = mse

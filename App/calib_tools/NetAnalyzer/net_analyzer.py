@@ -17,7 +17,7 @@ def main():
                 str_to_write = best_net.get_name() + " " + str(best_net.get_mse())
                 the_file.write(str_to_write)
         elif len(sys.argv) == 1:
-            viz.draw_plot ("MSE", "MSE(neu_nr)")
+            viz.draw_plot ("", "MSE(neu_nr)")
 
             # best_net.print_net_info()
 

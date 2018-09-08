@@ -31,10 +31,10 @@ class ReportParser:
 
     """ Returns best net from all available net architectures"""
     def get_best_net_candidate(self):
-        best_net = Network(0, 0, 0, 1, "", 0, 0, 0)
+        best_net = Network(0, 0, 0, 1, " ", 0, 0, 0)
 
         for agg in self._aggregate_list:
-            temp_list = sorted (Aggregate.get_net_list(agg), key=lambda x: Network.get_mse(x), reverse=False)
+            temp_list = sorted (Aggregate.get_net_list(agg), key=lambda x: Network.get_mse(x), reverse=True)
             best_aggregate_net = temp_list[0]
             if Network.get_mse(best_aggregate_net) < Network.get_mse(best_net):
                 best_net = best_aggregate_net
