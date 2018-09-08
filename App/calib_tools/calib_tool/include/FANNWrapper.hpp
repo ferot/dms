@@ -115,11 +115,8 @@ public:
         createDirectory(netOutputDir);
         createDirectory("reports");
 
-
         num_input = std::stoi(Config::getInstance()->getValue("ANN", "input_num"));
         num_output = std::stoi(Config::getInstance()->getValue("ANN", "output_num"));
-
-        net.create_standard(3, 9, paramSet.getNumNeuronsHidden(), 2);
 
         if (paramSet.getNumLayers() == 4) {
             net.create_standard(4, 9, paramSet.getNumNeuronsHidden(), paramSet.getNumNeuronsHidden(), 2);
@@ -195,7 +192,7 @@ public:
                     LOGMSG_ARG(LOG_DEBUG, "%s", log_step.c_str());
                 }
                 //Number of output taken into account in MSE evaluation!
-                MSE = mseUpperFactor/(num_output*dataCount);
+                MSE = mseUpperFactor/(dataCount);
                 LOGMSG_ARG(LOG_DEBUG, "XXXXX MSE = %f", MSE);
             }
 
@@ -336,10 +333,10 @@ public:
      * @param result - upper half of MSE equation
      */
     inline void countMSEUpper(float refVal[], float resVal[], double& result) {
-        for (unsigned int i = 0; i< num_output; i++) {
-            double diff = fann_abs(resVal[i] - refVal[i]);
-            result += pow(diff, 2);
-        }
+            float x = resVal[0] - refVal[0];
+            float y = resVal[1] - refVal[1];
+
+            result += sqrt(pow(x, 2) + pow(y,2)) < 0.5 ? 1 : 0;
     }
     /**
      * @brief checkForDataSetExisting - checks if in dir for current day exist dataset file

@@ -42,8 +42,10 @@ void ParamSetGenerator::generateSet() {
 	m_setVector = std::make_shared<std::vector<paramSet>>(
 			std::vector<paramSet>(m_setCount, paramSet()));
 
+    int neuNum = getSpinboxInt(UI->spinBox_numneur_min);
+
     std::for_each(m_setVector->begin(), m_setVector->end(),
-                  [this, &eng](paramSet &set) {
+                  [this, &eng, &neuNum](paramSet &set) {
         std::uniform_int_distribution<> distr(FANN::activation_function_enum::LINEAR, FANN::activation_function_enum::COS_SYMMETRIC);// define the range
         // Arbitrary
         distr = std::uniform_int_distribution<>(100000, 500000);
@@ -58,8 +60,14 @@ void ParamSetGenerator::generateSet() {
 
         set.setTrainingAlg(static_cast<FANN::training_algorithm_enum>(getSpinboxInt(UI->spinBox_train_alg)));
 
-        distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numneur_min), getSpinboxInt(UI->spinBox_numneur_max));
-        set.setNumNeuronsHidden(distr(eng));
+        // Step mode in neuron number chosen
+        if(UI->step_numneu_checkbox->isChecked()) {
+            neuNum++;
+        } else {
+            distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numneur_min), getSpinboxInt(UI->spinBox_numneur_max));
+            neuNum = distr(eng);
+        }
+        set.setNumNeuronsHidden(neuNum);
 
         std::uniform_real_distribution<> distr_real(getSpinboxFloat(UI->doubleSpinBox_learnrate_min), getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
         set.setLearningRate(distr_real(eng));
