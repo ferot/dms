@@ -361,8 +361,8 @@ void CalibTool::notifyProcessedJob(int id) {
             system(mvBestNetToDef.c_str());
             setProgressBar(100);
 
-            printConsole("\nBest network definition candidate is : " + outputPair.first + "\nwith MSE = " + outputPair.second);
-            LOGMSG_ARG(LOG_DEBUG, "BEST CANDIDATE NAME | MSE = %s ", std::string(outputPair.first + " | " + outputPair.second).c_str());
+            printConsole("\nBest network definition candidate is : " + outputPair.first + "\nwith highest effectiveness ratio = " + outputPair.second);
+            LOGMSG_ARG(LOG_DEBUG, "BEST CANDIDATE NAME | effectiveness ratio = %s ", std::string(outputPair.first + " | " + outputPair.second).c_str());
         }
     }
 }
