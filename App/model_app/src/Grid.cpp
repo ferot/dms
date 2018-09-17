@@ -96,10 +96,10 @@ void Grid::setPointCoords(t_p_coords coords){
  * @return - cv::Scalar : 3-channel BGR value
  */
 cv::Scalar Grid::mapFreqToFactor(float freq) {
-    if(freq >= 0 && freq < 0.2) {
-        return cv::Scalar(static_cast<int>(255*(1-freq)), 0, 0); //COLD BLUE
-    } else if(freq >= 0.2 && freq < 0.4) {
-        return cv::Scalar(static_cast<int>(255*freq), static_cast<int>(255*freq), 0); //WARMER BLUE-GREEN
+    if(freq == 0) {
+        return cv::Scalar(255, 0, 0); //COLD BLUE
+    } else if(freq > 0 && freq < 0.4) {
+        return cv::Scalar(static_cast<int>(255*(1-freq)), static_cast<int>(255*(1-freq)), 0); //WARMER BLUE-GREEN
     } else if(freq >= 0.4 && freq < 0.6) {
         return cv::Scalar(0, static_cast<int>(255*freq), static_cast<int>(255*freq)); //GREENISH
     } else if (freq >= 0.6 && freq < 0.8) {

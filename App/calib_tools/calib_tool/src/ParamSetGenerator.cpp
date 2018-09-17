@@ -67,7 +67,7 @@ void ParamSetGenerator::generateSet() {
             distr = std::uniform_int_distribution<>(getSpinboxInt(UI->spinBox_numneur_min), getSpinboxInt(UI->spinBox_numneur_max));
             neuNum = distr(eng);
         }
-        set.setNumNeuronsHidden(neuNum);
+        set.setNumNeuronsHidden((neuNum % getSpinboxInt(UI->spinBox_numneur_max)) + 1);
 
         std::uniform_real_distribution<> distr_real(getSpinboxFloat(UI->doubleSpinBox_learnrate_min), getSpinboxFloat(UI->doubleSpinBox_learnrate_max));
         set.setLearningRate(distr_real(eng));
