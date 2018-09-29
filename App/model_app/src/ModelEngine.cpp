@@ -14,8 +14,6 @@
 #include "stateobject.hpp"
 #include "Grid.h"
 
-fann_type input[9]={0};
-
 ModelEngine* ModelEngine::m_instance = nullptr;
 
 ModelEngine* ModelEngine::getInstance() {
@@ -163,7 +161,7 @@ CommonRC ModelEngine::loadNetFile(std::string filepath) {
  * @param input vector for network
  * @return result as (x,y) tuple
  */
-fann_type* ModelEngine::calculateResult(std::array<float, 9> input){
+fann_type* ModelEngine::calculateResult(t_input_array input){
     fann_scale_input(m_ann, input.data());
     fann_type* result = fann_run(m_ann, input.data());
     fann_descale_output(m_ann, result);
@@ -171,13 +169,13 @@ fann_type* ModelEngine::calculateResult(std::array<float, 9> input){
     return result;
 }
 
-std::array<float, 9> ModelEngine::obtainInputVec(){
-    std::array<float, 9> input;
+t_input_array ModelEngine::obtainInputVec(){
+    t_input_array input;
       int curr_index = 0;
 
 	for (int i = 0; i < cam_nrs; i++) {
 		auto& cam_vec = getCoords(i);
-		for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < FEATURE_COUNT; j++) {
             input[curr_index++] = std::stof(cam_vec[j]);
 		}
 	}

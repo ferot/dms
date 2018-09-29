@@ -52,9 +52,7 @@ class CalibTool: public QMainWindow {
 
 private:
 
-	t_v_qlabel labels_cam1;
-	t_v_qlabel labels_cam2;
-	t_v_qlabel labels_cam3;
+    t_v_qlabel labels_cam1, labels_cam2, labels_cam3, labels_cam4;
 
 	std::vector<t_v_qlabel> labels;
 

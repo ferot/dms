@@ -17,7 +17,12 @@
 #include "stateobject.hpp"
 #include "Grid.h"
 
-const int cam_nrs = 3;
+#define FEATURE_COUNT 3
+
+// describes total number of features used (determined by number of cams and features they provide - default: 3)
+#define TOTAL_INPUT_COUNT (cam_nrs*FEATURE_COUNT)
+
+const int cam_nrs = 4;
 
 class StateObject;
 class Grid;
@@ -27,7 +32,7 @@ typedef struct fann t_fann_s;
 typedef std::shared_ptr<fann_type> t_ptr_fann_type;
 typedef std::pair<int,int> t_p_coords;
 typedef std::shared_ptr<Grid> t_ptr_grid;
-
+typedef std::array<float, TOTAL_INPUT_COUNT> t_input_array;
 
 enum State {
 	INIT_S, FIND_TRGT_S, INIT_TRCK_S, RUN_TRCK_S, VERIF_TRGT_S, STOP_S = 0xff
@@ -88,7 +93,6 @@ private:
     Coords m_coords;
 
 	t_fann_s * m_ann;
-
 	bool m_modelWinEnabled;
 
 	//Used for scaling FANN inputs in <0;1> range
@@ -105,8 +109,8 @@ public:
 	~ModelEngine();
 
 	CommonRC loadNetFile(std::string filepath);
-    fann_type* calculateResult(std::array<float,9> input);
-    std::array<float,9> obtainInputVec();
+    fann_type* calculateResult(t_input_array m_input);
+    t_input_array obtainInputVec();
 
 	const t_tup_thrstrs& getCoords(int id);
 	void setCoords(int id, t_tup_thrstrs tuple);
